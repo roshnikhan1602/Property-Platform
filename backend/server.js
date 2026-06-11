@@ -4,10 +4,15 @@ const connectDB = require("./config/db");
 
 dotenv.config();
 
-// Connect Database
 connectDB();
 
 const app = express();
+
+// Middleware
+app.use(express.json());
+
+// Routes
+app.use("/api/properties", require("./routes/propertyRoutes"));
 
 app.get("/", (req, res) => {
   res.send("Property Platform Backend 🚀");
