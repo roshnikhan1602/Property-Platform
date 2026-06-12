@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const otpStore = require("../utils/otpStore");
 
 const registerUser = async (req, res) => {
   try {
@@ -30,6 +31,59 @@ const registerUser = async (req, res) => {
   }
 };
 
+const sendOTP = async (req, res) => {
+  try {
+    const { mobileNumber } = req.body;
+
+    const user = await User.findOne({ mobileNumber });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000);
+
+    otpStore[mobileNumber] = otp;
+
+    res.status(200).json({
+      success: true,
+      message: "OTP generated",
+      otp,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+const verifyOTP = async (req, res) => {
+  try {
+    const { mobileNumber, otp } = req.body;
+
+    if (otpStore[mobileNumber] != otp) {
+      return res.status(400).json({
+        message: "Invalid OTP",
+      });
+    }
+
+    delete otpStore[mobileNumber];
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   registerUser,
+  sendOTP,
+  verifyOTP,
 };
