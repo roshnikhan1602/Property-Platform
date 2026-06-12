@@ -52,8 +52,38 @@ const getPropertyById = async (req, res) => {
   }
 };
 
+const filterProperties = async (req, res) => {
+  try {
+    const filters = {};
+
+    if (req.query.city) {
+      filters.city = req.query.city;
+    }
+
+    if (req.query.listingType) {
+      filters.listingType = req.query.listingType;
+    }
+
+    if (req.query.propertyType) {
+      filters.propertyType = req.query.propertyType;
+    }
+
+    const properties = await Property.find(filters);
+
+    res.status(200).json({
+      success: true,
+      properties,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   addProperty,
   getAllProperties,
   getPropertyById,
+  filterProperties,
 };
