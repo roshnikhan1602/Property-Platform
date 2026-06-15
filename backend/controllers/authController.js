@@ -69,6 +69,11 @@ const verifyOTP = async (req, res) => {
       });
     }
 
+    await User.findOneAndUpdate(
+      { mobileNumber },
+      { isVerified: true }
+    );
+
     delete otpStore[mobileNumber];
 
     res.status(200).json({

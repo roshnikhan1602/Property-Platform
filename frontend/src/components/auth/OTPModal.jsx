@@ -1,0 +1,82 @@
+import { useState } from "react";
+import { verifyOTP } from "../../services/authService";
+
+function OTPModal({
+  mobileNumber,
+  setShowOTPModal,
+}) {
+  const [otp, setOtp] = useState("");
+
+  const handleVerify = async () => {
+    if (!/^[0-9]{6}$/.test(otp)) {
+      alert("Enter a valid 6-digit OTP");
+      return;
+    }
+
+    try {
+      const response = await verifyOTP(
+        mobileNumber,
+        otp
+      );
+
+      console.log(
+        "Verify OTP Response:",
+        response
+      );
+
+      if (response.success) {
+        alert("Login Successful ✅");
+
+        setShowOTPModal(false);
+      } else {
+        alert(
+          response.message || "Invalid OTP"
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong");
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 z-50">
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
+
+        <h2 className="text-3xl font-bold text-center">
+          Property
+          <span className="text-blue-600">
+            Hub
+          </span>
+        </h2>
+
+        <p className="text-center text-gray-500 mt-2 mb-6">
+          Enter the OTP sent to your mobile number
+        </p>
+
+        <input
+          type="text"
+          placeholder="Enter 6-digit OTP"
+          value={otp}
+          onChange={(e) =>
+            setOtp(
+              e.target.value.replace(/\D/g, "")
+            )
+          }
+          maxLength={6}
+          className="w-full border border-gray-300 rounded-lg px-4 py-3 mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <button
+          onClick={handleVerify}
+          className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition"
+        >
+          Verify OTP
+        </button>
+
+      </div>
+    </div>
+  );
+}
+
+export default OTPModal;

@@ -1,6 +1,19 @@
+import { useState } from "react";
+
 import Navbar from "./components/Navbar";
+import LoginModal from "./components/auth/LoginModal";
+import OTPModal from "./components/auth/OTPModal";
 
 function App() {
+  const [showLoginModal, setShowLoginModal] =
+    useState(true);
+
+  const [showOTPModal, setShowOTPModal] =
+    useState(false);
+
+  const [mobileNumber, setMobileNumber] =
+    useState("");
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
@@ -10,6 +23,29 @@ function App() {
           Property Platform 🚀
         </h1>
       </div>
+
+      {showLoginModal && (
+        <LoginModal
+          setShowLoginModal={
+            setShowLoginModal
+          }
+          setShowOTPModal={
+            setShowOTPModal
+          }
+          setMobileNumber={
+            setMobileNumber
+          }
+        />
+      )}
+
+      {showOTPModal && (
+        <OTPModal
+          mobileNumber={mobileNumber}
+          setShowOTPModal={
+            setShowOTPModal
+          }
+        />
+      )}
     </div>
   );
 }
