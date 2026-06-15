@@ -1,20 +1,40 @@
 import { useEffect, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import PropertyCard from "../components/home/PropertyCard";
+import PropertyFilterBar from "../components/property/PropertyFilterBar";
 
 function PropertyListing() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const city = searchParams.get("city");
+  const propertyType = searchParams.get("propertyType");
+  const listingType = searchParams.get("listingType");
+
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/properties"
-        );
+        setLoading(true);
 
+        let url = "http://localhost:5000/api/properties";
+
+        if (city || propertyType || listingType) {
+          const params = new URLSearchParams();
+
+          if (city) params.append("city", city);
+          if (propertyType) params.append("propertyType", propertyType);
+          if (listingType) params.append("listingType", listingType);
+
+          url = `http://localhost:5000/api/properties/filter/search?${params.toString()}`;
+        }
+
+        const response = await fetch(url);
         const data = await response.json();
 
         if (data.success) {
@@ -28,7 +48,7 @@ function PropertyListing() {
     };
 
     fetchProperties();
-  }, []);
+  }, [city, propertyType, listingType]);
 
   return (
     <>
@@ -43,23 +63,72 @@ function PropertyListing() {
           Browse available properties.
         </p>
 
+        <PropertyFilterBar />
+
+        {(city || propertyType || listingType) && (
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+
+            {city && (
+              <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full">
+                📍 {city}
+              </span>
+            )}
+
+            {propertyType && (
+              <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full">
+                🏠 {propertyType}
+              </span>
+            )}
+
+            {listingType && (
+              <span className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full">
+                📋 {listingType}
+              </span>
+            )}
+
+            <button
+              onClick={() => navigate("/properties")}
+              className="bg-red-100 text-red-600 px-4 py-2 rounded-full hover:bg-red-200 transition"
+            >
+              Clear Filters
+            </button>
+
+          </div>
+        )}
+
         {loading ? (
           <p className="mt-10 text-center text-gray-500">
             Loading properties...
           </p>
         ) : properties.length === 0 ? (
-          <p className="mt-10 text-center text-gray-500">
-            No properties found.
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-            {properties.map((property) => (
-              <PropertyCard
-                key={property._id}
-                property={property}
-              />
-            ))}
+          <div className="mt-16 text-center">
+            <div className="text-6xl mb-4">
+              🔍
+            </div>
+
+            <h2 className="text-2xl font-bold text-gray-700">
+              No Properties Found
+            </h2>
+
+            <p className="mt-2 text-gray-500">
+              Try changing your filters or search for another city.
+            </p>
           </div>
+        ) : (
+          <>
+            <p className="mt-6 text-gray-600 font-medium">
+              {properties.length} Properties Found
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+              {properties.map((property) => (
+                <PropertyCard
+                  key={property._id}
+                  property={property}
+                />
+              ))}
+            </div>
+          </>
         )}
       </section>
 
