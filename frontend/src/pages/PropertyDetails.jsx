@@ -136,7 +136,7 @@ function PropertyDetails() {
           </h2>
 
           <p className="text-gray-700">
-            {property.description}
+            {property.description || "No description available."}
           </p>
         </div>
 
@@ -190,6 +190,58 @@ function PropertyDetails() {
                 {property.isApproved ? "Approved" : "Pending"}
               </p>
             </div>
+
+          </div>
+
+        </div>
+
+        {/* Owner Contact Details */}
+        <div className="bg-white shadow rounded-2xl p-6 mt-10">
+
+          <h2 className="text-2xl font-bold mb-6">
+            Owner Contact Details
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div>
+              <p className="text-gray-500">Owner Name</p>
+              <p className="font-semibold text-lg">
+                {property.ownerName || "Not Available"}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-gray-500">Phone Number</p>
+              <p className="font-semibold text-lg">
+                {property.ownerPhone || "Not Available"}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-gray-500">Email Address</p>
+              <p className="font-semibold text-lg break-all">
+                {property.ownerEmail || "Not Available"}
+              </p>
+            </div>
+
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-4 mt-8">
+
+            <a
+              href={`tel:${property.ownerPhone}`}
+              className="bg-green-600 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-green-700 transition"
+            >
+              📞 Call Owner
+            </a>
+
+            <a
+              href={`mailto:${property.ownerEmail}`}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-blue-700 transition"
+            >
+              ✉️ Email Owner
+            </a>
 
           </div>
 

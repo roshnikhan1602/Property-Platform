@@ -7,21 +7,24 @@ import Footer from "../components/layout/Footer";
 function AddProperty() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    price: "",
-    listingType: "",
-    propertyType: "",
-    bedrooms: "",
-    bathrooms: "",
-    area: "",
-    furnishing: "Unfurnished",
-    address: "",
-    city: "",
-    state: "",
-    pincode: "",
-  });
+ const [formData, setFormData] = useState({
+  title: "",
+  description: "",
+  price: "",
+  listingType: "",
+  propertyType: "",
+  bedrooms: "",
+  bathrooms: "",
+  area: "",
+  furnishing: "Unfurnished",
+  address: "",
+  city: "",
+  state: "",
+  pincode: "",
+  ownerName: "",
+  ownerPhone: "",
+  ownerEmail: "",
+});
 
   const handleChange = (e) => {
     setFormData({
@@ -34,19 +37,24 @@ function AddProperty() {
     e.preventDefault();
 
     if (
-      !formData.title ||
-      !formData.price ||
-      !formData.listingType ||
-      !formData.propertyType ||
-      !formData.area ||
-      !formData.address ||
-      !formData.city ||
-      !formData.state ||
-      !formData.pincode
-    ) {
+  !formData.title ||
+  !formData.price ||
+  !formData.listingType ||
+  !formData.propertyType ||
+  !formData.area ||
+  !formData.address ||
+  !formData.city ||
+  !formData.state ||
+  !formData.pincode ||
+  !formData.ownerName ||
+  !formData.ownerPhone ||
+  !formData.ownerEmail
+)
+{
       alert("Please fill all required fields.");
       return;
     }
+    
 
     try {
       const response = await fetch(
@@ -82,7 +90,10 @@ function AddProperty() {
           city: "",
           state: "",
           pincode: "",
-        });
+          ownerName: "",
+          ownerPhone: "",
+          ownerEmail: "",
+      });
 
         navigate("/properties");
       } else {
@@ -327,7 +338,60 @@ function AddProperty() {
               </div>
 
             </div>
+            <div className="mt-8">
+  <h2 className="text-2xl font-semibold mb-4">
+    Owner Information
+  </h2>
 
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    <div>
+      <label className="block mb-2 font-medium">
+        Owner Name <span className="text-red-500">*</span>
+      </label>
+
+      <input
+        type="text"
+        name="ownerName"
+        value={formData.ownerName}
+        onChange={handleChange}
+        placeholder="Enter owner name"
+        className="w-full border border-gray-300 rounded-lg px-4 py-3"
+      />
+    </div>
+
+    <div>
+      <label className="block mb-2 font-medium">
+        Phone Number <span className="text-red-500">*</span>
+      </label>
+
+      <input
+        type="tel"
+        name="ownerPhone"
+        value={formData.ownerPhone}
+        onChange={handleChange}
+        placeholder="Enter phone number"
+        className="w-full border border-gray-300 rounded-lg px-4 py-3"
+      />
+    </div>
+
+    <div>
+      <label className="block mb-2 font-medium">
+        Email <span className="text-red-500">*</span>
+      </label>
+
+      <input
+        type="email"
+        name="ownerEmail"
+        value={formData.ownerEmail}
+        onChange={handleChange}
+        placeholder="Enter email address"
+        className="w-full border border-gray-300 rounded-lg px-4 py-3"
+      />
+    </div>
+
+  </div>
+</div>
             <button
               type="submit"
               className="w-full mt-8 bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"

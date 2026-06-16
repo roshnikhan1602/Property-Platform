@@ -15,6 +15,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/properties", require("./routes/propertyRoutes"));
+app.use("/api/wishlist", require("./routes/wishlistRoutes"));
 
 app.get("/", (req, res) => {
   res.send("Property Platform Backend 🚀");

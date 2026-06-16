@@ -33,17 +33,21 @@ function Navbar() {
         {/* Actions */}
         <div className="flex items-center gap-4">
 
-          <Link to="/add-property">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-              Post Property
-            </button>
+          <Link
+            to="/add-property"
+            className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-700 hover:text-white transition duration-300 cursor-pointer"
+          >
+            Post Property
           </Link>
 
-          <button className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition">
+          <button
+            className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-700 hover:text-white transition duration-300 cursor-pointer"
+          >
             Login
           </button>
 
         </div>
+
       </div>
     </nav>
   );

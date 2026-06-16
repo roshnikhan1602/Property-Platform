@@ -70,6 +70,25 @@ const propertySchema = new mongoose.Schema(
       required: true,
     },
 
+    ownerName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    ownerPhone: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    ownerEmail: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
+
     images: [
       {
         type: String,
