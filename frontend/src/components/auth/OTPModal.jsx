@@ -3,6 +3,7 @@ import { verifyOTP } from "../../services/authService";
 
 function OTPModal({
   mobileNumber,
+  userName,
   setShowOTPModal,
 }) {
   const [otp, setOtp] = useState("");
@@ -25,9 +26,21 @@ function OTPModal({
       );
 
       if (response.success) {
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            _id: response.user._id,
+            name: response.user.name,
+            mobileNumber:
+              response.user.mobileNumber,
+          })
+        );
+
         alert("Login Successful ✅");
 
         setShowOTPModal(false);
+
+        window.location.reload();
       } else {
         alert(
           response.message || "Invalid OTP"

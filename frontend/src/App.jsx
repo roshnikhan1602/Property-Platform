@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Navbar from "./components/Navbar";
 import LoginModal from "./components/auth/LoginModal";
@@ -6,13 +6,25 @@ import OTPModal from "./components/auth/OTPModal";
 
 function App() {
   const [showLoginModal, setShowLoginModal] =
-    useState(true);
+    useState(false);
 
   const [showOTPModal, setShowOTPModal] =
     useState(false);
 
   const [mobileNumber, setMobileNumber] =
     useState("");
+
+  const [userName, setUserName] =
+    useState("");
+
+  useEffect(() => {
+    const user =
+      localStorage.getItem("user");
+
+    if (!user) {
+      setShowLoginModal(true);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -35,12 +47,14 @@ function App() {
           setMobileNumber={
             setMobileNumber
           }
+          setUserName={setUserName}
         />
       )}
 
       {showOTPModal && (
         <OTPModal
           mobileNumber={mobileNumber}
+          userName={userName}
           setShowOTPModal={
             setShowOTPModal
           }

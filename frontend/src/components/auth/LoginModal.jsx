@@ -5,6 +5,7 @@ function LoginModal({
   setShowLoginModal,
   setShowOTPModal,
   setMobileNumber,
+  setUserName,
 }) {
   const [name, setName] = useState("");
   const [mobileNumberInput, setMobileNumberInput] =
@@ -64,6 +65,8 @@ function LoginModal({
       );
 
       if (otpResponse.success) {
+        setUserName(name);
+
         setMobileNumber(
           mobileNumberInput
         );
