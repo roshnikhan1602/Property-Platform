@@ -1,7 +1,68 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function PropertyCard({ property }) {
   const navigate = useNavigate();
+
+  const [saved, setSaved] = useState(false);
+
+  const userId = "507f1f77bcf86cd799439011";
+
+  useEffect(() => {
+    const checkWishlist = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/wishlist/${userId}`
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+          const exists = data.wishlist.some(
+            (item) => item.propertyId?._id === property._id
+          );
+
+          if (exists) {
+            setSaved(true);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    checkWishlist();
+  }, [property._id]);
+
+  const handleWishlist = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/wishlist/add",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId,
+            propertyId: property._id,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSaved(true);
+        alert("Property added to wishlist ❤️");
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong.");
+    }
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300">
@@ -62,12 +123,28 @@ function PropertyCard({ property }) {
 
         </div>
 
-        <button
-          onClick={() => navigate(`/properties/${property._id}`)}
-          className="w-full mt-6 bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition"
-        >
-          View Details
-        </button>
+        <div className="grid grid-cols-2 gap-3 mt-6">
+
+          <button
+            onClick={() => navigate(`/properties/${property._id}`)}
+            className="bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition cursor-pointer"
+          >
+            View Details
+          </button>
+
+          <button
+            onClick={handleWishlist}
+            disabled={saved}
+            className={`py-3 rounded-xl font-medium transition cursor-pointer ${
+              saved
+                ? "bg-red-500 text-white"
+                : "border border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+            }`}
+          >
+            {saved ? "❤️ Saved" : "❤️ Wishlist"}
+          </button>
+
+        </div>
 
       </div>
     </div>

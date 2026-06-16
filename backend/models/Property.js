@@ -10,7 +10,6 @@ const propertySchema = new mongoose.Schema(
 
     description: {
       type: String,
-      required: true,
     },
 
     price: {
@@ -69,6 +68,25 @@ const propertySchema = new mongoose.Schema(
     pincode: {
       type: String,
       required: true,
+    },
+
+    ownerName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    ownerPhone: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    ownerEmail: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
     },
 
     images: [

@@ -57,7 +57,10 @@ const filterProperties = async (req, res) => {
     const filters = {};
 
     if (req.query.city) {
-      filters.city = req.query.city;
+      filters.city = {
+        $regex: req.query.city,
+        $options: "i",
+      };
     }
 
     if (req.query.listingType) {
