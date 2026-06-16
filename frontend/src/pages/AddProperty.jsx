@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Navbar from "../components/layout/Navbar";
@@ -6,6 +6,15 @@ import Footer from "../components/layout/Footer";
 
 function AddProperty() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+  const user = localStorage.getItem("user");
+
+  if (!user) {
+    alert("Please login to post a property.");
+    navigate("/");
+  }
+}, [navigate]);
 
  const [formData, setFormData] = useState({
   title: "",

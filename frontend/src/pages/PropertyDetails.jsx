@@ -10,6 +10,10 @@ function PropertyDetails() {
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
   useEffect(() => {
     const fetchProperty = async () => {
       try {
@@ -23,7 +27,10 @@ function PropertyDetails() {
           setProperty(data.property);
         }
       } catch (error) {
-        console.error("Error fetching property:", error);
+        console.error(
+          "Error fetching property:",
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -66,7 +73,6 @@ function PropertyDetails() {
 
       <section className="max-w-7xl mx-auto px-6 py-10">
 
-        {/* Image Placeholder */}
         <div className="h-96 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
           <div className="text-7xl">🏠</div>
 
@@ -75,7 +81,6 @@ function PropertyDetails() {
           </p>
         </div>
 
-        {/* Property Header */}
         <div className="mt-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
 
           <div>
@@ -84,44 +89,54 @@ function PropertyDetails() {
             </h1>
 
             <p className="text-gray-600 mt-2">
-              📍 {property.address}, {property.city}, {property.state}
+              📍 {property.address},{" "}
+              {property.city},{" "}
+              {property.state}
             </p>
           </div>
 
           <div>
             <h2 className="text-4xl font-bold text-blue-600">
-              ₹ {property.price.toLocaleString()}
+              ₹{" "}
+              {property.price.toLocaleString()}
             </h2>
           </div>
 
         </div>
 
-        {/* Property Info */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
 
           <div className="bg-white shadow rounded-xl p-4">
-            <p className="text-gray-500">Property Type</p>
+            <p className="text-gray-500">
+              Property Type
+            </p>
             <h3 className="font-semibold">
               {property.propertyType}
             </h3>
           </div>
 
           <div className="bg-white shadow rounded-xl p-4">
-            <p className="text-gray-500">Listing Type</p>
+            <p className="text-gray-500">
+              Listing Type
+            </p>
             <h3 className="font-semibold">
               {property.listingType}
             </h3>
           </div>
 
           <div className="bg-white shadow rounded-xl p-4">
-            <p className="text-gray-500">Area</p>
+            <p className="text-gray-500">
+              Area
+            </p>
             <h3 className="font-semibold">
               {property.area} sq.ft
             </h3>
           </div>
 
           <div className="bg-white shadow rounded-xl p-4">
-            <p className="text-gray-500">Furnishing</p>
+            <p className="text-gray-500">
+              Furnishing
+            </p>
             <h3 className="font-semibold">
               {property.furnishing}
             </h3>
@@ -129,18 +144,17 @@ function PropertyDetails() {
 
         </div>
 
-        {/* Description */}
         <div className="bg-white shadow rounded-2xl p-6 mt-10">
           <h2 className="text-2xl font-bold mb-4">
             Description
           </h2>
 
           <p className="text-gray-700">
-            {property.description || "No description available."}
+            {property.description ||
+              "No description available."}
           </p>
         </div>
 
-        {/* Additional Details */}
         <div className="bg-white shadow rounded-2xl p-6 mt-10">
 
           <h2 className="text-2xl font-bold mb-6">
@@ -150,44 +164,60 @@ function PropertyDetails() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
 
             <div>
-              <p className="text-gray-500">Bedrooms</p>
+              <p className="text-gray-500">
+                Bedrooms
+              </p>
               <p className="font-semibold">
                 {property.bedrooms}
               </p>
             </div>
 
             <div>
-              <p className="text-gray-500">Bathrooms</p>
+              <p className="text-gray-500">
+                Bathrooms
+              </p>
               <p className="font-semibold">
                 {property.bathrooms}
               </p>
             </div>
 
             <div>
-              <p className="text-gray-500">Pincode</p>
+              <p className="text-gray-500">
+                Pincode
+              </p>
               <p className="font-semibold">
                 {property.pincode}
               </p>
             </div>
 
             <div>
-              <p className="text-gray-500">Views</p>
+              <p className="text-gray-500">
+                Views
+              </p>
               <p className="font-semibold">
                 {property.views}
               </p>
             </div>
 
             <div>
-              <p className="text-gray-500">Status</p>
+              <p className="text-gray-500">
+                Status
+              </p>
               <p className="font-semibold">
-                {property.isActive ? "Active" : "Inactive"}
+                {property.isActive
+                  ? "Active"
+                  : "Inactive"}
               </p>
             </div>
 
             <div>
-              <p className="text-gray-500">Approval</p>
+              <p className="text-gray-500">
+                Approval
+              </p>
               <p className="font-semibold">
-                {property.isApproved ? "Approved" : "Pending"}
+                {property.isApproved
+                  ? "Approved"
+                  : "Pending"}
               </p>
             </div>
 
@@ -195,55 +225,83 @@ function PropertyDetails() {
 
         </div>
 
-        {/* Owner Contact Details */}
         <div className="bg-white shadow rounded-2xl p-6 mt-10">
 
           <h2 className="text-2xl font-bold mb-6">
             Owner Contact Details
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {user ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-            <div>
-              <p className="text-gray-500">Owner Name</p>
-              <p className="font-semibold text-lg">
-                {property.ownerName || "Not Available"}
+                <div>
+                  <p className="text-gray-500">
+                    Owner Name
+                  </p>
+                  <p className="font-semibold text-lg">
+                    {property.ownerName ||
+                      "Not Available"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-gray-500">
+                    Phone Number
+                  </p>
+                  <p className="font-semibold text-lg">
+                    {property.ownerPhone ||
+                      "Not Available"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-gray-500">
+                    Email Address
+                  </p>
+                  <p className="font-semibold text-lg break-all">
+                    {property.ownerEmail ||
+                      "Not Available"}
+                  </p>
+                </div>
+
+              </div>
+
+              <div className="flex flex-col md:flex-row gap-4 mt-8">
+
+                <a
+                  href={`tel:${property.ownerPhone}`}
+                  className="bg-green-600 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-green-700 transition"
+                >
+                  📞 Call Owner
+                </a>
+
+                <a
+                  href={`mailto:${property.ownerEmail}`}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-blue-700 transition"
+                >
+                  ✉️ Email Owner
+                </a>
+
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-6">
+              <p className="text-lg text-gray-600 mb-4">
+                Login to view owner contact
+                details
               </p>
+
+            <button
+  onClick={() => {
+    window.location.href = "/";
+  }}
+  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+>
+  Login
+</button>
             </div>
-
-            <div>
-              <p className="text-gray-500">Phone Number</p>
-              <p className="font-semibold text-lg">
-                {property.ownerPhone || "Not Available"}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-gray-500">Email Address</p>
-              <p className="font-semibold text-lg break-all">
-                {property.ownerEmail || "Not Available"}
-              </p>
-            </div>
-
-          </div>
-
-          <div className="flex flex-col md:flex-row gap-4 mt-8">
-
-            <a
-              href={`tel:${property.ownerPhone}`}
-              className="bg-green-600 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-green-700 transition"
-            >
-              📞 Call Owner
-            </a>
-
-            <a
-              href={`mailto:${property.ownerEmail}`}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-blue-700 transition"
-            >
-              ✉️ Email Owner
-            </a>
-
-          </div>
+          )}
 
         </div>
 
