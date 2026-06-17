@@ -4,6 +4,7 @@ import Navbar from "../components/layout/Navbar";
 import HeroSection from "../components/home/HeroSection";
 import SearchBar from "../components/home/SearchBar";
 import FeaturedProperties from "../components/home/FeaturedProperties";
+import RecentlyViewed from "../components/property/RecentlyViewed";
 import Footer from "../components/layout/Footer";
 
 import LoginModal from "../components/auth/LoginModal";
@@ -32,6 +33,7 @@ function Home() {
 
       <HeroSection />
       <SearchBar />
+      <RecentlyViewed />
       <FeaturedProperties />
       <Footer />
 

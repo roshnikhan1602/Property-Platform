@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FaRegHeart } from "react-icons/fa";
 
 function Navbar({ setShowLoginModal = () => {} }) {
   const [user, setUser] = useState(null);
@@ -7,6 +8,7 @@ function Navbar({ setShowLoginModal = () => {} }) {
     useState(false);
 
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loggedInUser =
@@ -61,6 +63,7 @@ function Navbar({ setShowLoginModal = () => {} }) {
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
+
           <Link
             to="/"
             className="font-medium hover:text-blue-600 transition"
@@ -94,6 +97,14 @@ function Navbar({ setShowLoginModal = () => {} }) {
             Post Property
           </Link>
 
+          <button
+            onClick={() => navigate("/wishlist")}
+            className="text-2xl text-gray-400 hover:text-red-500 hover:scale-110 transition-all duration-300 cursor-pointer"
+            title="Wishlist"
+          >
+            <FaRegHeart />
+          </button>
+
           {user ? (
             <div
               className="relative"
@@ -105,7 +116,7 @@ function Navbar({ setShowLoginModal = () => {} }) {
                     !showDropdown
                   )
                 }
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer"
               >
                 <div className="w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
                   {user.name
@@ -122,7 +133,7 @@ function Navbar({ setShowLoginModal = () => {} }) {
                 <div className="absolute right-0 mt-2 w-36 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-3 text-red-500 hover:bg-gray-100"
+                    className="w-full text-left px-4 py-3 text-red-500 hover:bg-gray-100 cursor-pointer"
                   >
                     Logout
                   </button>
@@ -134,7 +145,7 @@ function Navbar({ setShowLoginModal = () => {} }) {
               onClick={() =>
                 setShowLoginModal(true)
               }
-              className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-700 hover:text-white transition duration-300"
+              className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-700 hover:text-white transition duration-300 cursor-pointer"
             >
               Login
             </button>

@@ -1,14 +1,29 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
 function PropertyDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
+  const handleShare = async () => {
+  try {
+    await navigator.clipboard.writeText(
+      window.location.href
+    );
+
+    alert(
+      "Property link copied successfully!"
+    );
+  } catch (error) {
+    console.error(error);
+    alert("Unable to copy link.");
+  }
+};
 
   const user = JSON.parse(
     localStorage.getItem("user")
@@ -25,6 +40,35 @@ function PropertyDetails() {
 
         if (data.success) {
           setProperty(data.property);
+        
+          await fetch(
+              `http://localhost:5000/api/properties/${id}/view`,
+              {
+                method: "PUT",
+              }
+            );
+
+          // Recently Viewed Properties
+          const recentlyViewed =
+            JSON.parse(
+              localStorage.getItem("recentlyViewed")
+            ) || [];
+
+          const filteredProperties =
+            recentlyViewed.filter(
+              (item) =>
+                item._id !== data.property._id
+            );
+
+          const updatedProperties = [
+            data.property,
+            ...filteredProperties,
+          ].slice(0, 5);
+
+          localStorage.setItem(
+            "recentlyViewed",
+            JSON.stringify(updatedProperties)
+          );
         }
       } catch (error) {
         console.error(
@@ -304,6 +348,29 @@ function PropertyDetails() {
           )}
 
         </div>
+
+       {/* Similar Properties + Share */}
+          <div className="mt-10 flex flex-col md:flex-row justify-center gap-4">
+
+            <button
+              onClick={() =>
+                navigate(
+                  `/properties?type=${property.propertyType}&listingType=${property.listingType}`
+                )
+              }
+              className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-indigo-700 transition"
+            >
+              View Similar Properties
+            </button>
+
+            <button
+              onClick={handleShare}
+              className="bg-green-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-green-700 transition"
+            >
+              🔗 Share Property
+            </button>
+
+          </div>
 
       </section>
 

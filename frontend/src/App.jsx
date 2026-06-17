@@ -7,12 +7,16 @@ import AddProperty from "./pages/AddProperty";
 import MyProperties from "./pages/MyProperties";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import EditProperty from "./pages/EditProperty";
+import Wishlist from "./pages/Wishlist";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
         <Route
           path="/properties"
@@ -42,6 +46,11 @@ function App() {
         <Route
           path="/owner-dashboard"
           element={<OwnerDashboard />}
+        />
+
+        <Route
+          path="/wishlist"
+          element={<Wishlist />}
         />
       </Routes>
     </BrowserRouter>
