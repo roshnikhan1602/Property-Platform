@@ -90,13 +90,6 @@ function Navbar({ setShowLoginModal = () => {} }) {
 
         <div className="flex items-center gap-4">
 
-          <Link
-            to="/add-property"
-            className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-700 hover:text-white transition duration-300"
-          >
-            Post Property
-          </Link>
-
           <button
             onClick={() => navigate("/wishlist")}
             className="text-2xl text-gray-400 hover:text-red-500 hover:scale-110 transition-all duration-300 cursor-pointer"
