@@ -10,8 +10,10 @@ const registerUser = async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(400).json({
+      return res.status(200).json({
+        success: true,
         message: "User already exists",
+        user: existingUser,
       });
     }
 
@@ -76,11 +78,12 @@ const verifyOTP = async (req, res) => {
       });
     }
 
-   const user = await User.findOneAndUpdate(
-  { mobileNumber },
-  { isVerified: true },
-  { returnDocument: "after" }
-);
+    const user =
+      await User.findOneAndUpdate(
+        { mobileNumber },
+        { isVerified: true },
+        { returnDocument: "after" }
+      );
 
     delete otpStore[mobileNumber];
 

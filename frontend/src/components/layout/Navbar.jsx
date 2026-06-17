@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-function Navbar({ setShowLoginModal }) {
+function Navbar({ setShowLoginModal = () => {} }) {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] =
     useState(false);
@@ -74,6 +74,15 @@ function Navbar({ setShowLoginModal }) {
           >
             Properties
           </Link>
+
+          {user && (
+            <Link
+              to="/my-properties"
+              className="font-medium hover:text-blue-600 transition"
+            >
+              My Properties
+            </Link>
+          )}
         </div>
 
         <div className="flex items-center gap-4">

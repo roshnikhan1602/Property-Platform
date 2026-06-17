@@ -1,39 +1,61 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import {
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
-function AddProperty() {
+function EditProperty() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+
+    if (!user) {
+      alert("Please login to post a property.");
+      navigate("/");
+    }
+  }, [navigate]);
+
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    price: "",
+    listingType: "",
+    propertyType: "",
+    bedrooms: "",
+    bathrooms: "",
+    area: "",
+    furnishing: "Unfurnished",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    ownerName: "",
+    ownerPhone: "",
+    ownerEmail: "",
+  });
 
   useEffect(() => {
-  const user = localStorage.getItem("user");
+    const fetchProperty = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/properties/${id}`
+        );
 
-  if (!user) {
-    alert("Please login to post a property.");
-    navigate("/");
-  }
-}, [navigate]);
+        const data = await response.json();
 
- const [formData, setFormData] = useState({
-  title: "",
-  description: "",
-  price: "",
-  listingType: "",
-  propertyType: "",
-  bedrooms: "",
-  bathrooms: "",
-  area: "",
-  furnishing: "Unfurnished",
-  address: "",
-  city: "",
-  state: "",
-  pincode: "",
-  ownerName: "",
-  ownerPhone: "",
-  ownerEmail: "",
-});
+        if (data.success) {
+          setFormData(data.property);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProperty();
+  }, [id]);
 
   const handleChange = (e) => {
     setFormData({
@@ -46,38 +68,37 @@ function AddProperty() {
     e.preventDefault();
 
     if (
-  !formData.title ||
-  !formData.price ||
-  !formData.listingType ||
-  !formData.propertyType ||
-  !formData.area ||
-  !formData.address ||
-  !formData.city ||
-  !formData.state ||
-  !formData.pincode ||
-  !formData.ownerName ||
-  !formData.ownerPhone ||
-  !formData.ownerEmail
-)
-{
+      !formData.title ||
+      !formData.price ||
+      !formData.listingType ||
+      !formData.propertyType ||
+      !formData.area ||
+      !formData.address ||
+      !formData.city ||
+      !formData.state ||
+      !formData.pincode ||
+      !formData.ownerName ||
+      !formData.ownerPhone ||
+      !formData.ownerEmail
+    ) {
       alert("Please fill all required fields.");
       return;
     }
-    
-const user = JSON.parse(
-  localStorage.getItem("user")
-);
+
+    const user = JSON.parse(
+      localStorage.getItem("user")
+    );
     try {
       const response = await fetch(
-        "http://localhost:5000/api/properties",
+        `http://localhost:5000/api/properties/${id}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             ...formData,
-           owner: user._id,
+            owner: user._id,
           }),
         }
       );
@@ -85,7 +106,7 @@ const user = JSON.parse(
       const data = await response.json();
 
       if (data.success) {
-        alert("Property added successfully!");
+        alert("Property updated successfully!");
 
         setFormData({
           title: "",
@@ -104,11 +125,11 @@ const user = JSON.parse(
           ownerName: "",
           ownerPhone: "",
           ownerEmail: "",
-      });
+        });
 
-        navigate("/properties");
+      navigate("/my-properties");
       } else {
-        alert("Failed to add property.");
+        alert("Failed to update property.");
       }
     } catch (error) {
       console.error(error);
@@ -124,12 +145,8 @@ const user = JSON.parse(
         <div className="bg-white shadow-lg rounded-2xl p-8">
 
           <h1 className="text-4xl font-bold">
-            Add Property
+            Edit Property
           </h1>
-
-          <p className="mt-2 text-gray-600">
-            List your property on PropertyHub.
-          </p>
 
           <p className="mt-2 text-sm text-gray-500">
             <span className="text-red-500">*</span> indicates required fields
@@ -350,64 +367,64 @@ const user = JSON.parse(
 
             </div>
             <div className="mt-8">
-  <h2 className="text-2xl font-semibold mb-4">
-    Owner Information
-  </h2>
+              <h2 className="text-2xl font-semibold mb-4">
+                Owner Information
+              </h2>
 
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-    <div>
-      <label className="block mb-2 font-medium">
-        Owner Name <span className="text-red-500">*</span>
-      </label>
+                <div>
+                  <label className="block mb-2 font-medium">
+                    Owner Name <span className="text-red-500">*</span>
+                  </label>
 
-      <input
-        type="text"
-        name="ownerName"
-        value={formData.ownerName}
-        onChange={handleChange}
-        placeholder="Enter owner name"
-        className="w-full border border-gray-300 rounded-lg px-4 py-3"
-      />
-    </div>
+                  <input
+                    type="text"
+                    name="ownerName"
+                    value={formData.ownerName}
+                    onChange={handleChange}
+                    placeholder="Enter owner name"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  />
+                </div>
 
-    <div>
-      <label className="block mb-2 font-medium">
-        Phone Number <span className="text-red-500">*</span>
-      </label>
+                <div>
+                  <label className="block mb-2 font-medium">
+                    Phone Number <span className="text-red-500">*</span>
+                  </label>
 
-      <input
-        type="tel"
-        name="ownerPhone"
-        value={formData.ownerPhone}
-        onChange={handleChange}
-        placeholder="Enter phone number"
-        className="w-full border border-gray-300 rounded-lg px-4 py-3"
-      />
-    </div>
+                  <input
+                    type="tel"
+                    name="ownerPhone"
+                    value={formData.ownerPhone}
+                    onChange={handleChange}
+                    placeholder="Enter phone number"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  />
+                </div>
 
-    <div>
-      <label className="block mb-2 font-medium">
-        Email <span className="text-red-500">*</span>
-      </label>
+                <div>
+                  <label className="block mb-2 font-medium">
+                    Email <span className="text-red-500">*</span>
+                  </label>
 
-      <input
-        type="email"
-        name="ownerEmail"
-        value={formData.ownerEmail}
-        onChange={handleChange}
-        placeholder="Enter email address"
-        className="w-full border border-gray-300 rounded-lg px-4 py-3"
-      />
-    </div>
+                  <input
+                    type="email"
+                    name="ownerEmail"
+                    value={formData.ownerEmail}
+                    onChange={handleChange}
+                    placeholder="Enter email address"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  />
+                </div>
 
-  </div>
-</div>
+              </div>
+            </div>
             <button
               type="submit"
               className="w-full mt-8 bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"
             >
-              Submit Property
+              Update Property
             </button>
 
           </form>
@@ -420,4 +437,4 @@ const user = JSON.parse(
   );
 }
 
-export default AddProperty;
+export default EditProperty;
