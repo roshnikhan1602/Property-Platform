@@ -33,7 +33,9 @@ const getAllProperties = async (req, res) => {
 
 const getPropertyById = async (req, res) => {
   try {
-    const property = await Property.findById(req.params.id);
+    const property = await Property.findById(
+      req.params.id
+    );
 
     if (!property) {
       return res.status(404).json({
@@ -44,6 +46,37 @@ const getPropertyById = async (req, res) => {
     res.status(200).json({
       success: true,
       property,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+const incrementViews = async (req, res) => {
+  try {
+    const property =
+      await Property.findByIdAndUpdate(
+        req.params.id,
+        {
+          $inc: { views: 1 },
+        },
+        {
+          new: true,
+        }
+      );
+
+    if (!property) {
+      return res.status(404).json({
+        success: false,
+        message: "Property not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      views: property.views,
     });
   } catch (error) {
     res.status(500).json({
@@ -64,14 +97,17 @@ const filterProperties = async (req, res) => {
     }
 
     if (req.query.listingType) {
-      filters.listingType = req.query.listingType;
+      filters.listingType =
+        req.query.listingType;
     }
 
     if (req.query.propertyType) {
-      filters.propertyType = req.query.propertyType;
+      filters.propertyType =
+        req.query.propertyType;
     }
 
-    const properties = await Property.find(filters);
+    const properties =
+      await Property.find(filters);
 
     res.status(200).json({
       success: true,
@@ -88,5 +124,6 @@ module.exports = {
   addProperty,
   getAllProperties,
   getPropertyById,
+  incrementViews,
   filterProperties,
 };

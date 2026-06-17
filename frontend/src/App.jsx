@@ -4,12 +4,16 @@ import Home from "./pages/Home";
 import PropertyListing from "./pages/PropertyListing";
 import PropertyDetails from "./pages/PropertyDetails";
 import AddProperty from "./pages/AddProperty";
+import Wishlist from "./pages/Wishlist";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
         <Route
           path="/properties"
@@ -24,6 +28,11 @@ function App() {
         <Route
           path="/add-property"
           element={<AddProperty />}
+        />
+
+        <Route
+          path="/wishlist"
+          element={<Wishlist />}
         />
       </Routes>
     </BrowserRouter>

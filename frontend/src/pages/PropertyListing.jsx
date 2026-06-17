@@ -9,39 +9,71 @@ import PropertyFilterBar from "../components/property/PropertyFilterBar";
 function PropertyListing() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const city = searchParams.get("city");
-  const propertyType = searchParams.get("propertyType");
-  const listingType = searchParams.get("listingType");
+  const propertyType =
+    searchParams.get("propertyType") ||
+    searchParams.get("type");
+
+  const listingType =
+    searchParams.get("listingType");
 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
         setLoading(true);
 
-        let url = "http://localhost:5000/api/properties";
+        const response = await fetch(
+          "http://localhost:5000/api/properties"
+        );
 
-        if (city || propertyType || listingType) {
-          const params = new URLSearchParams();
-
-          if (city) params.append("city", city);
-          if (propertyType) params.append("propertyType", propertyType);
-          if (listingType) params.append("listingType", listingType);
-
-          url = `http://localhost:5000/api/properties/filter/search?${params.toString()}`;
-        }
-
-        const response = await fetch(url);
         const data = await response.json();
 
         if (data.success) {
-          setProperties(data.properties);
+          let filteredProperties =
+            data.properties;
+
+          if (city) {
+            filteredProperties =
+              filteredProperties.filter(
+                (property) =>
+                  property.city
+                    ?.toLowerCase()
+                    .includes(
+                      city.toLowerCase()
+                    )
+              );
+          }
+
+          if (propertyType) {
+            filteredProperties =
+              filteredProperties.filter(
+                (property) =>
+                  property.propertyType ===
+                  propertyType
+              );
+          }
+
+          if (listingType) {
+            filteredProperties =
+              filteredProperties.filter(
+                (property) =>
+                  property.listingType ===
+                  listingType
+              );
+          }
+
+          setProperties(filteredProperties);
         }
       } catch (error) {
-        console.error("Error fetching properties:", error);
+        console.error(
+          "Error fetching properties:",
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -55,6 +87,7 @@ function PropertyListing() {
       <Navbar />
 
       <section className="max-w-7xl mx-auto px-6 py-10">
+
         <h1 className="text-4xl font-bold">
           All Properties
         </h1>
@@ -65,7 +98,9 @@ function PropertyListing() {
 
         <PropertyFilterBar />
 
-        {(city || propertyType || listingType) && (
+        {(city ||
+          propertyType ||
+          listingType) && (
           <div className="mt-6 flex flex-wrap items-center gap-3">
 
             {city && (
@@ -87,7 +122,9 @@ function PropertyListing() {
             )}
 
             <button
-              onClick={() => navigate("/properties")}
+              onClick={() =>
+                navigate("/properties")
+              }
               className="bg-red-100 text-red-600 px-4 py-2 rounded-full hover:bg-red-200 transition"
             >
               Clear Filters
@@ -102,17 +139,19 @@ function PropertyListing() {
           </p>
         ) : properties.length === 0 ? (
           <div className="mt-16 text-center">
+
             <div className="text-6xl mb-4">
               🔍
             </div>
 
             <h2 className="text-2xl font-bold text-gray-700">
-              No Properties Found
+              No Similar Properties Found
             </h2>
 
             <p className="mt-2 text-gray-500">
-              Try changing your filters or search for another city.
+              Try changing your filters.
             </p>
+
           </div>
         ) : (
           <>
@@ -121,15 +160,20 @@ function PropertyListing() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-              {properties.map((property) => (
-                <PropertyCard
-                  key={property._id}
-                  property={property}
-                />
-              ))}
+
+              {properties.map(
+                (property) => (
+                  <PropertyCard
+                    key={property._id}
+                    property={property}
+                  />
+                )
+              )}
+
             </div>
           </>
         )}
+
       </section>
 
       <Footer />
