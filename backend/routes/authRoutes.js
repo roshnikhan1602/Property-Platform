@@ -7,11 +7,18 @@ const {
   sendOTP,
   verifyOTP,
   getProfile,
+  updateProfile,
 } = require("../controllers/authController");
 
 router.post("/register", registerUser);
 router.post("/send-otp", sendOTP);
 router.post("/verify-otp", verifyOTP);
+
 router.get("/profile/:id", getProfile);
+
+router.put(
+  "/profile/:id",
+  updateProfile
+);
 
 module.exports = router;

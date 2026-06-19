@@ -8,11 +8,17 @@ import MyProperties from "./pages/MyProperties";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import EditProperty from "./pages/EditProperty";
 import Wishlist from "./pages/Wishlist";
+import OwnerProfile from "./pages/OwnerProfile";
+import AdminDashboard from "./pages/AdminDashboard";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route
           path="/"
           element={<Home />}
@@ -30,28 +36,67 @@ function App() {
 
         <Route
           path="/add-property"
-          element={<AddProperty />}
+          element={
+            <ProtectedRoute>
+              <AddProperty />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/edit-property/:id"
-          element={<EditProperty />}
+          element={
+            <ProtectedRoute>
+              <EditProperty />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/my-properties"
-          element={<MyProperties />}
+          element={
+            <ProtectedRoute>
+              <MyProperties />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/owner-dashboard"
-          element={<OwnerDashboard />}
+          element={
+            <ProtectedRoute>
+              <OwnerDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/owner-profile"
+          element={
+            <ProtectedRoute>
+              <OwnerProfile />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/wishlist"
-          element={<Wishlist />}
+          element={
+            <ProtectedRoute>
+              <Wishlist />
+            </ProtectedRoute>
+          }
         />
+
+        <Route
+          path="/admin-dashboard"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
+
       </Routes>
     </BrowserRouter>
   );

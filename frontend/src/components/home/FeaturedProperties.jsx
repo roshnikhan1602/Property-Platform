@@ -18,10 +18,20 @@ function FeaturedProperties() {
         const data = await response.json();
 
         if (data.success) {
-          setProperties(data.properties.slice(0, 3));
+          const approvedProperties =
+            data.properties.filter(
+              (property) => property.isApproved
+            );
+
+          setProperties(
+            approvedProperties.slice(0, 3)
+          );
         }
       } catch (error) {
-        console.error("Error fetching properties:", error);
+        console.error(
+          "Error fetching properties:",
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -51,7 +61,7 @@ function FeaturedProperties() {
         </p>
       ) : properties.length === 0 ? (
         <p className="text-center text-gray-500">
-          No properties found.
+          No approved properties found.
         </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
