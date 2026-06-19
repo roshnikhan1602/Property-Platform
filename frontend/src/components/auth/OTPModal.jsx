@@ -28,12 +28,7 @@ function OTPModal({
       if (response.success) {
         localStorage.setItem(
           "user",
-          JSON.stringify({
-            _id: response.user._id,
-            name: response.user.name,
-            mobileNumber:
-              response.user.mobileNumber,
-          })
+          JSON.stringify(response.user)
         );
 
         alert("Login Successful ✅");

@@ -44,7 +44,10 @@ function PropertyListing() {
 
         if (data.success) {
           let filteredProperties =
-            data.properties;
+            data.properties.filter(
+              (property) =>
+                property.isApproved
+            );
 
           if (city) {
             filteredProperties =
@@ -133,6 +136,13 @@ function PropertyListing() {
       <Navbar />
 
       <section className="max-w-7xl mx-auto px-6 py-10">
+
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-6 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg font-medium transition"
+        >
+          ← Back
+        </button>
 
         <h1 className="text-4xl font-bold">
           All Properties

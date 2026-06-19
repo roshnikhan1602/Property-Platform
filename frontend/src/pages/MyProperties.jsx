@@ -111,9 +111,15 @@ function MyProperties() {
                   📍 {property.city}, {property.state}
                 </p>
 
-                <p className="text-blue-600 font-bold text-2xl mt-4">
-                  ₹ {property.price.toLocaleString()}
-                </p>
+                <div className="mt-4">
+                  <p className="text-blue-600 font-bold text-2xl">
+                    ₹ {property.price.toLocaleString()}
+                  </p>
+
+                  <p className="text-sm text-gray-500 mt-1">
+                    👁️ {property.views || 0} Views
+                  </p>
+                </div>
 
                 <div className="flex gap-2 mt-5">
 

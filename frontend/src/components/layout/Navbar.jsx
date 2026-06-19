@@ -71,7 +71,8 @@ function Navbar({ setShowLoginModal = () => {} }) {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    window.location.reload();
+    setShowDropdown(false);
+    navigate("/");
   };
 
   const isTransparent =
@@ -126,20 +127,6 @@ function Navbar({ setShowLoginModal = () => {} }) {
           >
             Properties
           </Link>
-
-          {user && (
-            <Link
-              to="/my-properties"
-              className={`font-medium transition ${
-                isTransparent
-                  ? "text-white hover:text-blue-300"
-                  : "text-gray-700 hover:text-blue-600"
-              }`}
-            >
-              My Properties
-            </Link>
-          )}
-
         </div>
 
         <div className="flex items-center gap-4">
@@ -189,13 +176,47 @@ function Navbar({ setShowLoginModal = () => {} }) {
               </button>
 
               {showDropdown && (
-                <div className="absolute right-0 mt-2 w-36 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+
+                  <Link
+                    to="/owner-profile"
+                    className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
+                    onClick={() =>
+                      setShowDropdown(false)
+                    }
+                  >
+                    Profile
+                  </Link>
+
+                  {user.role === "admin" ? (
+                    <Link
+                      to="/admin-dashboard"
+                      className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
+                      onClick={() =>
+                        setShowDropdown(false)
+                      }
+                    >
+                      Admin Dashboard
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/owner-dashboard"
+                      className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
+                      onClick={() =>
+                        setShowDropdown(false)
+                      }
+                    >
+                      Owner Dashboard
+                    </Link>
+                  )}
+
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-3 text-red-500 hover:bg-gray-100 cursor-pointer"
                   >
                     Logout
                   </button>
+
                 </div>
               )}
             </div>
