@@ -10,6 +10,7 @@ function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  
   const userId = "507f1f77bcf86cd799439011";
 
   useEffect(() => {

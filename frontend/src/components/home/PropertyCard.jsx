@@ -19,7 +19,8 @@ function PropertyCard({ property }) {
 
         if (data.success) {
           const exists = data.wishlist.some(
-            (item) => item.propertyId?._id === property._id
+            (item) =>
+              item.propertyId?._id === property._id
           );
 
           if (exists) {
@@ -41,7 +42,8 @@ function PropertyCard({ property }) {
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
           },
           body: JSON.stringify({
             userId,
@@ -54,7 +56,9 @@ function PropertyCard({ property }) {
 
       if (data.success) {
         setSaved(true);
-        alert("Property added to wishlist ❤️");
+        alert(
+          "Property added to wishlist ❤️"
+        );
       } else {
         alert(data.message);
       }
@@ -63,6 +67,16 @@ function PropertyCard({ property }) {
       alert("Something went wrong.");
     }
   };
+
+  const postedDate = property.createdAt
+    ? new Date(
+        property.createdAt
+      ).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : "N/A";
 
   return (
     <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300">
@@ -96,7 +110,13 @@ function PropertyCard({ property }) {
         </div>
 
         <p className="text-gray-500 mt-2">
-          📍 {property.city}, {property.state}
+          📍 {property.locality},{" "}
+          {property.city},{" "}
+          {property.state}
+        </p>
+
+        <p className="text-xs text-gray-400 mt-1">
+          Posted on {postedDate}
         </p>
 
         <div className="mt-4 flex justify-between text-sm text-gray-600">
@@ -118,7 +138,8 @@ function PropertyCard({ property }) {
           </p>
 
           <h4 className="text-3xl font-bold text-blue-600">
-            ₹ {property.price.toLocaleString()}
+            ₹{" "}
+            {property.price.toLocaleString()}
           </h4>
 
         </div>
@@ -126,7 +147,11 @@ function PropertyCard({ property }) {
         <div className="grid grid-cols-2 gap-3 mt-6">
 
           <button
-            onClick={() => navigate(`/properties/${property._id}`)}
+            onClick={() =>
+              navigate(
+                `/properties/${property._id}`
+              )
+            }
             className="bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition cursor-pointer"
           >
             View Details
@@ -141,7 +166,9 @@ function PropertyCard({ property }) {
                 : "border border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
             }`}
           >
-            {saved ? "❤️ Saved" : "❤️ Wishlist"}
+            {saved
+              ? "❤️ Saved"
+              : "❤️ Wishlist"}
           </button>
 
         </div>

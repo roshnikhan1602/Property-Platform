@@ -9,18 +9,27 @@ import PropertyFilterBar from "../components/property/PropertyFilterBar";
 function PropertyListing() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
-  
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const city = searchParams.get("city");
+
+  const locality =
+    searchParams.get("locality");
+
   const propertyType =
     searchParams.get("propertyType") ||
     searchParams.get("type");
 
   const listingType =
     searchParams.get("listingType");
+
+  const minPrice =
+    searchParams.get("minPrice");
+
+  const maxPrice =
+    searchParams.get("maxPrice");
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -49,6 +58,18 @@ function PropertyListing() {
               );
           }
 
+          if (locality) {
+            filteredProperties =
+              filteredProperties.filter(
+                (property) =>
+                  property.locality
+                    ?.toLowerCase()
+                    .includes(
+                      locality.toLowerCase()
+                    )
+              );
+          }
+
           if (propertyType) {
             filteredProperties =
               filteredProperties.filter(
@@ -67,6 +88,24 @@ function PropertyListing() {
               );
           }
 
+          if (minPrice) {
+            filteredProperties =
+              filteredProperties.filter(
+                (property) =>
+                  property.price >=
+                  Number(minPrice)
+              );
+          }
+
+          if (maxPrice) {
+            filteredProperties =
+              filteredProperties.filter(
+                (property) =>
+                  property.price <=
+                  Number(maxPrice)
+              );
+          }
+
           setProperties(filteredProperties);
         }
       } catch (error) {
@@ -80,7 +119,14 @@ function PropertyListing() {
     };
 
     fetchProperties();
-  }, [city, propertyType, listingType]);
+  }, [
+    city,
+    locality,
+    propertyType,
+    listingType,
+    minPrice,
+    maxPrice,
+  ]);
 
   return (
     <>
@@ -99,13 +145,22 @@ function PropertyListing() {
         <PropertyFilterBar />
 
         {(city ||
+          locality ||
           propertyType ||
-          listingType) && (
+          listingType ||
+          minPrice ||
+          maxPrice) && (
           <div className="mt-6 flex flex-wrap items-center gap-3">
 
             {city && (
               <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full">
                 📍 {city}
+              </span>
+            )}
+
+            {locality && (
+              <span className="bg-orange-100 text-orange-700 px-4 py-2 rounded-full">
+                🏘️ {locality}
               </span>
             )}
 
@@ -118,6 +173,12 @@ function PropertyListing() {
             {listingType && (
               <span className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full">
                 📋 {listingType}
+              </span>
+            )}
+
+            {(minPrice || maxPrice) && (
+              <span className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full">
+                💰 Price Filter Applied
               </span>
             )}
 
@@ -145,7 +206,7 @@ function PropertyListing() {
             </div>
 
             <h2 className="text-2xl font-bold text-gray-700">
-              No Similar Properties Found
+              No Properties Found
             </h2>
 
             <p className="mt-2 text-gray-500">

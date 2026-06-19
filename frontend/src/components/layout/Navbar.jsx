@@ -1,14 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import { FaRegHeart } from "react-icons/fa";
 
 function Navbar({ setShowLoginModal = () => {} }) {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] =
     useState(false);
+  const [scrolled, setScrolled] =
+    useState(false);
 
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const loggedInUser =
@@ -44,17 +51,51 @@ function Navbar({ setShowLoginModal = () => {} }) {
     };
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener(
+      "scroll",
+      handleScroll
+    );
+
+    return () => {
+      window.removeEventListener(
+        "scroll",
+        handleScroll
+      );
+    };
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem("user");
     window.location.reload();
   };
 
+  const isTransparent =
+    location.pathname === "/" &&
+    !scrolled;
+
   return (
-    <nav className="sticky top-0 bg-white shadow-md z-50">
+    <nav
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        isTransparent
+          ? "bg-transparent"
+          : "bg-white shadow-md"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
         <Link to="/">
-          <h1 className="text-2xl font-bold cursor-pointer">
+          <h1
+            className={`text-2xl font-bold cursor-pointer ${
+              isTransparent
+                ? "text-white drop-shadow-lg"
+                : "text-gray-900"
+            }`}
+          >
             Property
             <span className="text-blue-600">
               Hub
@@ -66,14 +107,22 @@ function Navbar({ setShowLoginModal = () => {} }) {
 
           <Link
             to="/"
-            className="font-medium hover:text-blue-600 transition"
+            className={`font-medium transition ${
+              isTransparent
+                ? "text-white hover:text-blue-300"
+                : "text-gray-700 hover:text-blue-600"
+            }`}
           >
             Home
           </Link>
 
           <Link
             to="/properties"
-            className="font-medium hover:text-blue-600 transition"
+            className={`font-medium transition ${
+              isTransparent
+                ? "text-white hover:text-blue-300"
+                : "text-gray-700 hover:text-blue-600"
+            }`}
           >
             Properties
           </Link>
@@ -81,18 +130,29 @@ function Navbar({ setShowLoginModal = () => {} }) {
           {user && (
             <Link
               to="/my-properties"
-              className="font-medium hover:text-blue-600 transition"
+              className={`font-medium transition ${
+                isTransparent
+                  ? "text-white hover:text-blue-300"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
             >
               My Properties
             </Link>
           )}
+
         </div>
 
         <div className="flex items-center gap-4">
 
           <button
-            onClick={() => navigate("/wishlist")}
-            className="text-2xl text-gray-400 hover:text-red-500 hover:scale-110 transition-all duration-300 cursor-pointer"
+            onClick={() =>
+              navigate("/wishlist")
+            }
+            className={`text-2xl hover:text-red-500 hover:scale-110 transition-all duration-300 cursor-pointer ${
+              isTransparent
+                ? "text-white drop-shadow-lg"
+                : "text-gray-400"
+            }`}
             title="Wishlist"
           >
             <FaRegHeart />
@@ -117,7 +177,13 @@ function Navbar({ setShowLoginModal = () => {} }) {
                     .toUpperCase()}
                 </div>
 
-                <span className="font-medium text-gray-700">
+                <span
+                  className={`font-medium ${
+                    isTransparent
+                      ? "text-white drop-shadow-lg"
+                      : "text-gray-700"
+                  }`}
+                >
                   {user.name}
                 </span>
               </button>
@@ -138,7 +204,11 @@ function Navbar({ setShowLoginModal = () => {} }) {
               onClick={() =>
                 setShowLoginModal(true)
               }
-              className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-700 hover:text-white transition duration-300 cursor-pointer"
+              className={`px-4 py-2 rounded-lg font-medium transition duration-300 cursor-pointer ${
+                isTransparent
+                  ? "bg-white text-blue-600 hover:bg-gray-100"
+                  : "border border-blue-600 text-blue-600 hover:bg-blue-700 hover:text-white"
+              }`}
             >
               Login
             </button>

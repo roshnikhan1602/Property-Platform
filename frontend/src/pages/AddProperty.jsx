@@ -30,6 +30,7 @@ function AddProperty() {
   city: "",
   state: "",
   pincode: "",
+  locality: "",
   ownerName: "",
   ownerPhone: "",
   ownerEmail: "",
@@ -53,6 +54,7 @@ function AddProperty() {
   !formData.area ||
   !formData.address ||
   !formData.city ||
+  !formData.locality ||
   !formData.state ||
   !formData.pincode ||
   !formData.ownerName ||
@@ -96,6 +98,7 @@ const user = JSON.parse(
           bedrooms: "",
           bathrooms: "",
           area: "",
+          locality: "",
           furnishing: "Unfurnished",
           address: "",
           city: "",
@@ -301,7 +304,7 @@ const user = JSON.parse(
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
 
               <div>
                 <label className="block mb-2 font-medium">
@@ -314,6 +317,20 @@ const user = JSON.parse(
                   value={formData.city}
                   onChange={handleChange}
                   placeholder="Enter city"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-medium">
+                  Locality <span className="text-red-500">*</span>
+                </label>
+
+                <input
+                  type="text"
+                  name="locality"
+                  value={formData.locality}
+                  onChange={handleChange}
+                  placeholder="Ex: Whitefield, BTM, HSR"
                   className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 />
               </div>

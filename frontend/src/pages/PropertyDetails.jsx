@@ -133,10 +133,8 @@ function PropertyDetails() {
             </h1>
 
             <p className="text-gray-600 mt-2">
-              📍 {property.address},{" "}
-              {property.city},{" "}
-              {property.state}
-            </p>
+            📍 {property.locality}, {property.address}, {property.city}, {property.state}
+          </p>
           </div>
 
           <div>
@@ -231,6 +229,15 @@ function PropertyDetails() {
               </p>
               <p className="font-semibold">
                 {property.pincode}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-gray-500">
+                Locality
+              </p>
+              <p className="font-semibold">
+                {property.locality}
               </p>
             </div>
 

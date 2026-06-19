@@ -70,6 +70,11 @@ const propertySchema = new mongoose.Schema(
       required: true,
     },
 
+    locality: {
+      type: String,
+      required: true,
+    },
+
     ownerName: {
       type: String,
       required: true,
