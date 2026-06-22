@@ -18,7 +18,9 @@ const addProperty = async (req, res) => {
 
 const getAllProperties = async (req, res) => {
   try {
-    const properties = await Property.find();
+    const properties = await Property.find().sort({
+      views: -1,
+    });
 
     res.status(200).json({
       success: true,
@@ -160,6 +162,13 @@ const filterProperties = async (req, res) => {
     if (req.query.city) {
       filters.city = {
         $regex: req.query.city,
+        $options: "i",
+      };
+    }
+
+    if (req.query.locality) {
+      filters.locality = {
+        $regex: req.query.locality,
         $options: "i",
       };
     }
