@@ -124,6 +124,7 @@ function PropertyDetails() {
             Property Image Coming Soon
           </p>
         </div>
+        
 
         <div className="mt-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
 
@@ -138,7 +139,7 @@ function PropertyDetails() {
           </div>
 
           <div>
-            <h2 className="text-4xl font-bold text-blue-600">
+            <h2 className="text-4xl font-bold text-blue-600"> 
               ₹{" "}
               {property.price.toLocaleString()}
             </h2>
@@ -344,15 +345,54 @@ function PropertyDetails() {
               </p>
 
             <button
-  onClick={() => {
-    window.location.href = "/";
-  }}
-  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
->
-  Login
-</button>
+              onClick={() => {
+                window.location.href = "/";
+              }}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+            >
+              Login
+            </button>
             </div>
           )}
+
+        </div>
+
+        {/* Location Map */}
+        <div className="bg-white shadow rounded-2xl p-6 mt-10">
+
+          <h2 className="text-2xl font-bold mb-6">
+            📍 Property Location
+          </h2>
+
+          <div className="overflow-hidden rounded-xl border">
+
+            <iframe
+              title="Property Location"
+              width="100%"
+              height="400"
+              loading="lazy"
+              allowFullScreen
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(
+                `${property.address}, ${property.locality}, ${property.city}, ${property.state}`
+              )}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+            ></iframe>
+
+          </div>
+
+          <div className="mt-4 text-center">
+
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                `${property.address}, ${property.locality}, ${property.city}, ${property.state}`
+              )}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+            >
+              Open in Google Maps
+            </a>
+
+          </div>
 
         </div>
 

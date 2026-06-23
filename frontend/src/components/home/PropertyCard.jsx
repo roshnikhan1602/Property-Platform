@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 function PropertyCard({ property }) {
   const navigate = useNavigate();
@@ -37,34 +38,32 @@ function PropertyCard({ property }) {
 
   const handleWishlist = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/wishlist/add",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify({
-            userId,
-            propertyId: property._id,
-          }),
-        }
-      );
+      const url = saved
+        ? "http://localhost:5000/api/wishlist/remove"
+        : "http://localhost:5000/api/wishlist/add";
 
-      const data = await response.json();
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          propertyId: property._id,
+        }),
+      });
+
+      const data =
+        await response.json();
 
       if (data.success) {
-        setSaved(true);
-        alert(
-          "Property added to wishlist ❤️"
-        );
+        setSaved(!saved);
       } else {
         alert(data.message);
       }
     } catch (error) {
       console.error(error);
-      alert("Something went wrong.");
     }
   };
 
@@ -78,11 +77,29 @@ function PropertyCard({ property }) {
       })
     : "N/A";
 
+  const rating =
+    property.rating || 4.5;
+
+  const filledStars =
+    Math.floor(rating);
+
   return (
     <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300">
 
       {/* Property Image */}
-      <div className="h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
+      <div className="relative h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
+
+        {/* Wishlist Heart */}
+        <button
+          onClick={handleWishlist}
+          className="absolute top-4 right-4 bg-white/90 p-3 rounded-full shadow-md hover:scale-110 transition-all duration-300 cursor-pointer"
+        >
+          {saved ? (
+            <FaHeart className="text-red-500 text-xl" />
+          ) : (
+            <FaRegHeart className="text-gray-600 text-xl" />
+          )}
+        </button>
 
         <div className="text-5xl">
           🏠
@@ -144,7 +161,7 @@ function PropertyCard({ property }) {
 
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mt-6">
+        <div className="flex items-center justify-between mt-6">
 
           <button
             onClick={() =>
@@ -152,24 +169,27 @@ function PropertyCard({ property }) {
                 `/properties/${property._id}`
               )
             }
-            className="bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition cursor-pointer"
+            className="bg-blue-600 text-white py-3 px-6 rounded-xl font-medium hover:bg-blue-700 transition cursor-pointer"
           >
             View Details
           </button>
 
-          <button
-            onClick={handleWishlist}
-            disabled={saved}
-            className={`py-3 rounded-xl font-medium transition cursor-pointer ${
-              saved
-                ? "bg-red-500 text-white"
-                : "border border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-            }`}
-          >
-            {saved
-              ? "❤️ Saved"
-              : "❤️ Wishlist"}
-          </button>
+          <div className="text-right">
+
+            <div className="text-yellow-500 text-2xl">
+              {"★".repeat(
+                filledStars
+              )}
+              {"☆".repeat(
+                5 - filledStars
+              )}
+            </div>
+
+            <span className="text-sm font-medium text-gray-600">
+              {rating} Rating
+            </span>
+
+          </div>
 
         </div>
 
