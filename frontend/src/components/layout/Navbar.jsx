@@ -88,6 +88,7 @@ function Navbar({
     setShowDropdown(false);
 
     navigate("/");
+    window.location.reload();
   };
 
   const isTransparent =
@@ -96,11 +97,11 @@ function Navbar({
 
   return (
     <nav
-     className={`${
-  isTransparent
-    ? "bg-transparent"
-    : "bg-white/95 backdrop-blur-md shadow-md"
-} z-50 transition-all duration-300`}
+      className={`${
+        isTransparent
+          ? "fixed top-0 left-0 w-full bg-transparent"
+          : "sticky top-0 bg-white/95 backdrop-blur-md shadow-md"
+      } z-50 transition-all duration-300`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
