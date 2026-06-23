@@ -53,56 +53,55 @@ function PropertyCard({ property }) {
     checkWishlist();
   }, [property._id]);
 
-  const handleWishlist =
-    async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:5000/api/wishlist/add",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-            body: JSON.stringify({
-              userId,
-              propertyId:
-                property._id,
-            }),
-          }
-        );
+  const handleWishlist = async () => {
+    try {
+      const url = saved
+        ? "http://localhost:5000/api/wishlist/remove"
+        : "http://localhost:5000/api/wishlist/add";
 
-        const data =
-          await response.json();
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          propertyId: property._id,
+        }),
+      });
 
-        if (data.success) {
-          setSaved(true);
+      const data =
+        await response.json();
 
-          setToast({
-            show: true,
-            message:
-              "Property added to wishlist",
-            type: "success",
-          });
-        } else {
-          setToast({
-            show: true,
-            message:
-              data.message,
-            type: "error",
-          });
-        }
-      } catch (error) {
-        console.error(error);
+      if (data.success) {
+        setSaved(!saved);
 
         setToast({
           show: true,
-          message:
-            "Something went wrong",
+          message: saved
+            ? "Property removed from wishlist"
+            : "Property added to wishlist",
+          type: "success",
+        });
+      } else {
+        setToast({
+          show: true,
+          message: data.message,
           type: "error",
         });
       }
-    };
+    } catch (error) {
+      console.error(error);
+
+      setToast({
+        show: true,
+        message:
+          "Something went wrong",
+        type: "error",
+      });
+    }
+  };
 
   const postedDate =
     property.createdAt
@@ -135,21 +134,16 @@ function PropertyCard({ property }) {
       )}
 
       <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300">
-
         <div className="h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
-
           <FaHome className="text-5xl text-blue-600" />
 
           <p className="mt-3 text-gray-600 font-medium">
             Property Image Coming Soon
           </p>
-
         </div>
 
         <div className="p-5">
-
           <div className="flex justify-between items-start gap-3">
-
             <h3 className="text-xl font-bold text-gray-800">
               {property.title}
             </h3>
@@ -157,12 +151,10 @@ function PropertyCard({ property }) {
             <span className="bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
               {property.listingType}
             </span>
-
           </div>
 
           <p className="text-gray-500 mt-2 flex items-center gap-2">
             <FaMapMarkerAlt className="text-red-500" />
-
             {property.locality},{" "}
             {property.city},{" "}
             {property.state}
@@ -173,7 +165,6 @@ function PropertyCard({ property }) {
           </p>
 
           <div className="mt-4 flex justify-between text-sm text-gray-600">
-
             <span className="bg-gray-100 px-3 py-1 rounded-full">
               {property.propertyType}
             </span>
@@ -181,11 +172,9 @@ function PropertyCard({ property }) {
             <span className="bg-gray-100 px-3 py-1 rounded-full">
               {property.area} sq.ft
             </span>
-
           </div>
 
           <div className="mt-5">
-
             <p className="text-sm text-gray-500">
               Starting From
             </p>
@@ -194,11 +183,9 @@ function PropertyCard({ property }) {
               ₹{" "}
               {property.price.toLocaleString()}
             </h4>
-
           </div>
 
           <div className="grid grid-cols-2 gap-3 mt-6">
-
             <button
               onClick={() =>
                 navigate(
@@ -211,10 +198,7 @@ function PropertyCard({ property }) {
             </button>
 
             <button
-              onClick={
-                handleWishlist
-              }
-              disabled={saved}
+              onClick={handleWishlist}
               className={`py-3 rounded-xl font-medium transition cursor-pointer flex items-center justify-center gap-2 ${
                 saved
                   ? "bg-red-500 text-white"
@@ -233,11 +217,8 @@ function PropertyCard({ property }) {
                 </>
               )}
             </button>
-
           </div>
-
         </div>
-
       </div>
     </>
   );

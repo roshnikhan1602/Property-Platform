@@ -242,6 +242,7 @@ function AddProperty() {
                   <option value="">Select Listing Type</option>
                   <option value="Rent">Rent</option>
                   <option value="Sale">Sale</option>
+                   <option value="Sale">Lease</option>
                 </select>
               </div>
 

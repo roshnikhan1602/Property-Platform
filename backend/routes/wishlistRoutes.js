@@ -10,8 +10,11 @@ const {
 
 router.post("/add", addToWishlist);
 
-router.get("/:userId", getWishlist);
+router.post(
+  "/remove",
+  removeFromWishlist
+);
 
-router.delete("/:id", removeFromWishlist);
+router.get("/:userId", getWishlist);
 
 module.exports = router;
