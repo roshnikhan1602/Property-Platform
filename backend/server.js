@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const pgRoutes = require("./routes/pgRoutes");
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use("/api/properties", require("./routes/propertyRoutes"));
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/wishlist", require("./routes/wishlistRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
+app.use("/api/pgs", pgRoutes);
 
 app.get("/", (req, res) => {
   res.send("Property Platform Backend 🚀");

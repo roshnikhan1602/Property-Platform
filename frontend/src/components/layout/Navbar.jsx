@@ -144,6 +144,17 @@ function Navbar({
             Properties
           </Link>
 
+          <Link
+            to="/pgs"
+            className={`font-medium transition ${
+              isTransparent
+                ? "text-white hover:text-blue-300"
+                : "text-gray-700 hover:text-blue-600"
+            }`}
+          >
+            PG
+          </Link>
+
         </div>
 
         <div className="flex items-center gap-4">

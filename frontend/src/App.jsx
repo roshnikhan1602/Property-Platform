@@ -15,6 +15,10 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 
+import PGListing from "./pages/PGListing";
+import PGDetails from "./pages/PGDetails";
+import AddPG from "./pages/AddPG";
+
 function App() {
   return (
     <BrowserRouter>
@@ -104,6 +108,24 @@ function App() {
             <AdminRoute>
               <AdminDashboard />
             </AdminRoute>
+          }
+        />
+        <Route
+          path="/pgs"
+          element={<PGListing />}
+        />
+
+        <Route
+          path="/pgs/:id"
+          element={<PGDetails />}
+        />
+
+        <Route
+          path="/add-pg"
+          element={
+            <ProtectedRoute>
+              <AddPG />
+            </ProtectedRoute>
           }
         />
 

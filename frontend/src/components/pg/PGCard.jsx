@@ -1,0 +1,116 @@
+import { useNavigate } from "react-router-dom";
+import {
+  FaMapMarkerAlt,
+  FaWifi,
+  FaSnowflake,
+  FaUtensils,
+  FaBed,
+} from "react-icons/fa";
+
+function PGCard({ pg }) {
+  const navigate = useNavigate();
+
+  const postedDate = pg.createdAt
+    ? new Date(pg.createdAt).toLocaleDateString(
+        "en-IN",
+        {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }
+      )
+    : "N/A";
+
+  return (
+    <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300">
+
+      <div className="relative h-56 bg-gradient-to-br from-green-100 to-emerald-100 flex flex-col items-center justify-center">
+
+        <FaBed className="text-5xl text-green-600" />
+
+        <p className="mt-3 text-gray-600 font-medium">
+          PG Image Coming Soon
+        </p>
+
+      </div>
+
+      <div className="p-5">
+
+        <div className="flex justify-between items-start gap-3">
+
+          <h3 className="text-xl font-bold text-gray-800">
+            {pg.title}
+          </h3>
+
+          <span className="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
+            {pg.sharingType}
+          </span>
+
+        </div>
+
+        <p className="text-gray-500 mt-2 flex items-center gap-2">
+          <FaMapMarkerAlt className="text-red-500" />
+          {pg.locality}, {pg.city}
+        </p>
+
+        <p className="text-xs text-gray-400 mt-1">
+          Posted on {postedDate}
+        </p>
+
+        <div className="flex flex-wrap gap-2 mt-4">
+
+          <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">
+            {pg.genderPreference}
+          </span>
+
+          {pg.wifiAvailable && (
+            <span className="bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1">
+              <FaWifi />
+              WiFi
+            </span>
+          )}
+
+          {pg.acAvailable && (
+            <span className="bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1">
+              <FaSnowflake />
+              AC
+            </span>
+          )}
+
+          {pg.foodAvailable && (
+            <span className="bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1">
+              <FaUtensils />
+              Food
+            </span>
+          )}
+
+        </div>
+
+        <div className="mt-5">
+
+          <p className="text-sm text-gray-500">
+            Monthly Rent
+          </p>
+
+          <h4 className="text-3xl font-bold text-green-600">
+            ₹ {pg.rent.toLocaleString()}
+          </h4>
+
+        </div>
+
+        <button
+          onClick={() =>
+            navigate(`/pgs/${pg._id}`)
+          }
+          className="w-full mt-6 bg-green-600 text-white py-3 rounded-xl font-medium hover:bg-green-700 transition"
+        >
+          View PG Details
+        </button>
+
+      </div>
+
+    </div>
+  );
+}
+
+export default PGCard;

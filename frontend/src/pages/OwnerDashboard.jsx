@@ -102,6 +102,13 @@ function OwnerDashboard() {
             Add Property
           </Link>
 
+          <Link
+            to="/add-pg"
+            className="bg-purple-600 text-white px-8 py-4 rounded-xl font-medium text-center hover:bg-purple-700 transition"
+          >
+            Add PG
+          </Link>
+
         </div>
 
       </section>

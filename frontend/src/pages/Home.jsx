@@ -31,7 +31,11 @@ function Home() {
         }
       />
 
-      <HeroSection />
+      <HeroSection
+        setShowLoginModal={
+          setShowLoginModal
+        }
+      />
 
       <SearchBar />
 
