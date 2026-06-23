@@ -14,6 +14,12 @@ function OwnerProfile() {
   const [totalViews, setTotalViews] =
     useState(0);
 
+  const [successMessage, setSuccessMessage] =
+    useState("");
+
+  const [errorMessage, setErrorMessage] =
+    useState("");
+
   useEffect(() => {
     const loggedInUser = JSON.parse(
       localStorage.getItem("user")
@@ -56,6 +62,9 @@ function OwnerProfile() {
   ) => {
     e.preventDefault();
 
+    setSuccessMessage("");
+    setErrorMessage("");
+
     try {
       const response = await fetch(
         `http://localhost:5000/api/auth/profile/${user._id}`,
@@ -83,13 +92,26 @@ function OwnerProfile() {
 
         setUser(data.user);
 
-        alert(
-          "Profile updated successfully"
+        setSuccessMessage(
+          "Profile updated successfully."
         );
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 3000);
+      } else {
+        setErrorMessage(
+          "Failed to update profile."
+        );
+        setTimeout(() => {
+          setErrorMessage("");
+        }, 3000);
       }
     } catch (error) {
       console.error(error);
-      alert("Failed to update profile");
+
+      setErrorMessage(
+        "Failed to update profile."
+      );
     }
   };
 
@@ -97,26 +119,49 @@ function OwnerProfile() {
     <>
       <Navbar />
 
-      <section className="max-w-4xl mx-auto px-6 py-10">
+      <section className="max-w-5xl mx-auto px-6 pt-28 pb-10">
 
-        <h1 className="text-4xl font-bold mb-8">
-          {user?.role === "admin"
-            ? "Admin Profile"
-            : "Owner Profile"}
-        </h1>
+        <div className="bg-white rounded-3xl shadow-lg p-8">
 
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="flex flex-col items-center text-center border-b pb-8">
+
+            <div className="w-24 h-24 rounded-full bg-blue-600 text-white flex items-center justify-center text-4xl font-bold">
+              {name?.charAt(0).toUpperCase()}
+            </div>
+
+            <h1 className="text-3xl font-bold mt-4">
+              {name}
+            </h1>
+
+            <span className="mt-2 px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium capitalize">
+              {user?.role || "user"}
+            </span>
+
+          </div>
+
+          {successMessage && (
+            <div className="mt-6 bg-green-100 text-green-700 px-4 py-3 rounded-lg">
+              {successMessage}
+            </div>
+          )}
+
+          {errorMessage && (
+            <div className="mt-6 bg-red-100 text-red-700 px-4 py-3 rounded-lg">
+              {errorMessage}
+            </div>
+          )}
 
           <form
             onSubmit={
               handleUpdateProfile
             }
-            className="space-y-5"
+            className="mt-8 space-y-6"
           >
+
             <div>
-              <p className="text-gray-500 mb-1">
+              <label className="block text-gray-600 mb-2">
                 Name
-              </p>
+              </label>
 
               <input
                 type="text"
@@ -126,14 +171,14 @@ function OwnerProfile() {
                     e.target.value
                   )
                 }
-                className="w-full border rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <div>
-              <p className="text-gray-500 mb-1">
+              <label className="block text-gray-600 mb-2">
                 Mobile Number
-              </p>
+              </label>
 
               <input
                 type="text"
@@ -142,14 +187,14 @@ function OwnerProfile() {
                   ""
                 }
                 disabled
-                className="w-full border rounded-lg px-4 py-3 bg-gray-100"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 bg-gray-100"
               />
             </div>
 
             <div>
-              <p className="text-gray-500 mb-1">
-                Email
-              </p>
+              <label className="block text-gray-600 mb-2">
+                Email (Optional)
+              </label>
 
               <input
                 type="email"
@@ -159,49 +204,39 @@ function OwnerProfile() {
                     e.target.value
                   )
                 }
-                className="w-full border rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
-            <div>
-              <p className="text-gray-500">
-                Role
-              </p>
+            {user?.role === "owner" && (
+              <div className="grid md:grid-cols-2 gap-6">
 
-              <h2 className="text-xl font-semibold capitalize">
-                {user?.role ||
-                  "user"}
-              </h2>
-            </div>
-
-            {user?.role !==
-              "admin" && (
-              <>
-                <div>
+                <div className="bg-gray-50 border rounded-2xl p-6">
                   <p className="text-gray-500">
                     Total Properties
                   </p>
 
-                  <h2 className="text-xl font-semibold">
+                  <h2 className="text-4xl font-bold text-blue-600 mt-2">
                     {totalProperties}
                   </h2>
                 </div>
 
-                <div>
+                <div className="bg-gray-50 border rounded-2xl p-6">
                   <p className="text-gray-500">
                     Total Views
                   </p>
 
-                  <h2 className="text-xl font-semibold">
+                  <h2 className="text-4xl font-bold text-green-600 mt-2">
                     {totalViews}
                   </h2>
                 </div>
-              </>
+
+              </div>
             )}
 
             <button
               type="submit"
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+              className="bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-700 transition font-medium cursor-pointer"
             >
               Update Profile
             </button>

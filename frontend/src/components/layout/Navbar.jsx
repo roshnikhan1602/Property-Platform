@@ -4,16 +4,27 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import { FaRegHeart } from "react-icons/fa";
 
-function Navbar({ setShowLoginModal = () => {} }) {
+import {
+  FaRegHeart,
+  FaUserCircle,
+  FaTachometerAlt,
+  FaSignOutAlt,
+} from "react-icons/fa";
+
+function Navbar({
+  setShowLoginModal = () => {},
+}) {
   const [user, setUser] = useState(null);
+
   const [showDropdown, setShowDropdown] =
     useState(false);
+
   const [scrolled, setScrolled] =
     useState(false);
 
   const dropdownRef = useRef(null);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -27,7 +38,9 @@ function Navbar({ setShowLoginModal = () => {} }) {
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (
+      event
+    ) => {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(
@@ -71,7 +84,9 @@ function Navbar({ setShowLoginModal = () => {} }) {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+
     setShowDropdown(false);
+
     navigate("/");
   };
 
@@ -84,7 +99,7 @@ function Navbar({ setShowLoginModal = () => {} }) {
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
         isTransparent
           ? "bg-transparent"
-          : "bg-white shadow-md"
+          : "bg-white/95 backdrop-blur-md shadow-md"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -127,6 +142,7 @@ function Navbar({ setShowLoginModal = () => {} }) {
           >
             Properties
           </Link>
+
         </div>
 
         <div className="flex items-center gap-4">
@@ -158,7 +174,7 @@ function Navbar({ setShowLoginModal = () => {} }) {
                 }
                 className="flex items-center gap-2 cursor-pointer"
               >
-                <div className="w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
+                <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold shadow-md">
                   {user.name
                     ?.charAt(0)
                     .toUpperCase()}
@@ -176,7 +192,7 @@ function Navbar({ setShowLoginModal = () => {} }) {
               </button>
 
               {showDropdown && (
-                <div className="absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden">
 
                   <Link
                     to="/owner-profile"
@@ -185,36 +201,71 @@ function Navbar({ setShowLoginModal = () => {} }) {
                       setShowDropdown(false)
                     }
                   >
-                    Profile
+                    <div className="flex items-center gap-2">
+                      <FaUserCircle />
+                      Profile
+                    </div>
                   </Link>
 
-                  {user.role === "admin" ? (
+                  {user.role ===
+                  "admin" ? (
                     <Link
                       to="/admin-dashboard"
                       className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
                       onClick={() =>
-                        setShowDropdown(false)
+                        setShowDropdown(
+                          false
+                        )
                       }
                     >
-                      Admin Dashboard
+                      <div className="flex items-center gap-2">
+                        <FaTachometerAlt />
+                        Admin Dashboard
+                      </div>
                     </Link>
-                  ) : (
+                  ) : user.role ===
+                    "owner" ? (
                     <Link
                       to="/owner-dashboard"
                       className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
                       onClick={() =>
-                        setShowDropdown(false)
+                        setShowDropdown(
+                          false
+                        )
                       }
                     >
-                      Owner Dashboard
+                      <div className="flex items-center gap-2">
+                        <FaTachometerAlt />
+                        Owner Dashboard
+                      </div>
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/user-dashboard"
+                      className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
+                      onClick={() =>
+                        setShowDropdown(
+                          false
+                        )
+                      }
+                    >
+                      <div className="flex items-center gap-2">
+                        <FaTachometerAlt />
+                        User Dashboard
+                      </div>
                     </Link>
                   )}
 
                   <button
-                    onClick={handleLogout}
+                    onClick={
+                      handleLogout
+                    }
                     className="w-full text-left px-4 py-3 text-red-500 hover:bg-gray-100 cursor-pointer"
                   >
-                    Logout
+                    <div className="flex items-center gap-2">
+                      <FaSignOutAlt />
+                      Logout
+                    </div>
                   </button>
 
                 </div>

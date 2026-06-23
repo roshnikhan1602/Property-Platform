@@ -4,37 +4,50 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
+import Toast from "../components/common/Toast";
+import { FaHome } from "react-icons/fa";
+
 function AddProperty() {
   const navigate = useNavigate();
 
   useEffect(() => {
-  const user = localStorage.getItem("user");
+    const user = localStorage.getItem("user");
 
-  if (!user) {
-    alert("Please login to post a property.");
-    navigate("/");
-  }
-}, [navigate]);
+    if (!user) {
+      setToast({
+        show: true,
+        message: "Please login to post a property",
+        type: "error",
+      });
 
- const [formData, setFormData] = useState({
-  title: "",
-  description: "",
-  price: "",
-  listingType: "",
-  propertyType: "",
-  bedrooms: "",
-  bathrooms: "",
-  area: "",
-  furnishing: "Unfurnished",
-  address: "",
-  city: "",
-  state: "",
-  pincode: "",
-  locality: "",
-  ownerName: "",
-  ownerPhone: "",
-  ownerEmail: "",
-});
+      navigate("/");
+    }
+  }, [navigate]);
+
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    price: "",
+    listingType: "",
+    propertyType: "",
+    bedrooms: "",
+    bathrooms: "",
+    area: "",
+    furnishing: "Unfurnished",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    locality: "",
+    ownerName: "",
+    ownerPhone: "",
+    ownerEmail: "",
+  });
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
 
   const handleChange = (e) => {
     setFormData({
@@ -47,28 +60,32 @@ function AddProperty() {
     e.preventDefault();
 
     if (
-  !formData.title ||
-  !formData.price ||
-  !formData.listingType ||
-  !formData.propertyType ||
-  !formData.area ||
-  !formData.address ||
-  !formData.city ||
-  !formData.locality ||
-  !formData.state ||
-  !formData.pincode ||
-  !formData.ownerName ||
-  !formData.ownerPhone ||
-  !formData.ownerEmail
-)
-{
-      alert("Please fill all required fields.");
+      !formData.title ||
+      !formData.price ||
+      !formData.listingType ||
+      !formData.propertyType ||
+      !formData.area ||
+      !formData.address ||
+      !formData.city ||
+      !formData.locality ||
+      !formData.state ||
+      !formData.pincode ||
+      !formData.ownerName ||
+      !formData.ownerPhone ||
+      !formData.ownerEmail
+    ) {
+      setToast({
+        show: true,
+        message: "Please fill all required fields",
+        type: "error",
+      });
+
       return;
     }
-    
-const user = JSON.parse(
-  localStorage.getItem("user")
-);
+
+    const user = JSON.parse(
+      localStorage.getItem("user")
+    );
     try {
       const response = await fetch(
         "http://localhost:5000/api/properties",
@@ -79,7 +96,7 @@ const user = JSON.parse(
           },
           body: JSON.stringify({
             ...formData,
-           owner: user._id,
+            owner: user._id,
           }),
         }
       );
@@ -87,7 +104,15 @@ const user = JSON.parse(
       const data = await response.json();
 
       if (data.success) {
-        alert("Property added successfully!");
+        const updatedUser = {
+          ...user,
+          role: "owner",
+        };
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify(updatedUser)
+        );
 
         setFormData({
           title: "",
@@ -107,26 +132,55 @@ const user = JSON.parse(
           ownerName: "",
           ownerPhone: "",
           ownerEmail: "",
-      });
+        });
 
-        navigate("/properties");
+        setToast({
+          show: true,
+          message: "Property added successfully",
+          type: "success",
+        });
+
+        setTimeout(() => {
+          navigate("/owner-dashboard");
+        }, 1200);
       } else {
-        alert("Failed to add property.");
+        setToast({
+          show: true,
+          message: "Failed to add property",
+          type: "error",
+        });
       }
     } catch (error) {
       console.error(error);
-      alert("Something went wrong.");
+      setToast({
+        show: true,
+        message: "Something went wrong",
+        type: "error",
+      });
     }
   };
 
   return (
     <>
       <Navbar />
-
-      <section className="max-w-5xl mx-auto px-6 py-10">
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({
+              show: false,
+              message: "",
+              type: "success",
+            })
+          }
+        />
+      )}
+     <section className="max-w-5xl mx-auto px-6 pt-28 pb-10">
         <div className="bg-white shadow-lg rounded-2xl p-8">
 
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-4xl font-bold flex items-center gap-3">
+            <FaHome className="text-blue-600" />
             Add Property
           </h1>
 
@@ -367,59 +421,59 @@ const user = JSON.parse(
 
             </div>
             <div className="mt-8">
-  <h2 className="text-2xl font-semibold mb-4">
-    Owner Information
-  </h2>
+              <h2 className="text-2xl font-semibold mb-4">
+                Owner Information
+              </h2>
 
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-    <div>
-      <label className="block mb-2 font-medium">
-        Owner Name <span className="text-red-500">*</span>
-      </label>
+                <div>
+                  <label className="block mb-2 font-medium">
+                    Owner Name <span className="text-red-500">*</span>
+                  </label>
 
-      <input
-        type="text"
-        name="ownerName"
-        value={formData.ownerName}
-        onChange={handleChange}
-        placeholder="Enter owner name"
-        className="w-full border border-gray-300 rounded-lg px-4 py-3"
-      />
-    </div>
+                  <input
+                    type="text"
+                    name="ownerName"
+                    value={formData.ownerName}
+                    onChange={handleChange}
+                    placeholder="Enter owner name"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  />
+                </div>
 
-    <div>
-      <label className="block mb-2 font-medium">
-        Phone Number <span className="text-red-500">*</span>
-      </label>
+                <div>
+                  <label className="block mb-2 font-medium">
+                    Phone Number <span className="text-red-500">*</span>
+                  </label>
 
-      <input
-        type="tel"
-        name="ownerPhone"
-        value={formData.ownerPhone}
-        onChange={handleChange}
-        placeholder="Enter phone number"
-        className="w-full border border-gray-300 rounded-lg px-4 py-3"
-      />
-    </div>
+                  <input
+                    type="tel"
+                    name="ownerPhone"
+                    value={formData.ownerPhone}
+                    onChange={handleChange}
+                    placeholder="Enter phone number"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  />
+                </div>
 
-    <div>
-      <label className="block mb-2 font-medium">
-        Email <span className="text-red-500">*</span>
-      </label>
+                <div>
+                  <label className="block mb-2 font-medium">
+                    Email <span className="text-red-500">*</span>
+                  </label>
 
-      <input
-        type="email"
-        name="ownerEmail"
-        value={formData.ownerEmail}
-        onChange={handleChange}
-        placeholder="Enter email address"
-        className="w-full border border-gray-300 rounded-lg px-4 py-3"
-      />
-    </div>
+                  <input
+                    type="email"
+                    name="ownerEmail"
+                    value={formData.ownerEmail}
+                    onChange={handleChange}
+                    placeholder="Enter email address"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  />
+                </div>
 
-  </div>
-</div>
+              </div>
+            </div>
             <button
               type="submit"
               className="w-full mt-8 bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"

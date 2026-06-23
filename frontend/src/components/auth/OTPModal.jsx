@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { verifyOTP } from "../../services/authService";
+import Toast from "../common/Toast";
 
 function OTPModal({
   mobileNumber,
@@ -8,9 +9,19 @@ function OTPModal({
 }) {
   const [otp, setOtp] = useState("");
 
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
+
   const handleVerify = async () => {
     if (!/^[0-9]{6}$/.test(otp)) {
-      alert("Enter a valid 6-digit OTP");
+      setToast({
+        show: true,
+        message: "Enter a valid 6-digit OTP",
+        type: "error",
+      });
       return;
     }
 
@@ -31,24 +42,53 @@ function OTPModal({
           JSON.stringify(response.user)
         );
 
-        alert("Login Successful ✅");
+        setToast({
+          show: true,
+          message: "Login Successful",
+          type: "success",
+        });
 
-        setShowOTPModal(false);
-
-        window.location.reload();
+        setTimeout(() => {
+          setShowOTPModal(false);
+          window.location.reload();
+        }, 1000);
       } else {
-        alert(
-          response.message || "Invalid OTP"
-        );
+        setToast({
+          show: true,
+          message:
+            response.message ||
+            "Invalid OTP",
+          type: "error",
+        });
       }
     } catch (error) {
       console.error(error);
-      alert("Something went wrong");
+
+      setToast({
+        show: true,
+        message: "Something went wrong",
+        type: "error",
+      });
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 z-50">
+
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({
+              show: false,
+              message: "",
+              type: "success",
+            })
+          }
+        />
+      )}
+
       <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
 
         <h2 className="text-3xl font-bold text-center">
@@ -59,7 +99,7 @@ function OTPModal({
         </h2>
 
         <p className="text-center text-gray-500 mt-2 mb-6">
-          Enter the OTP sent to your mobile number
+          Enter the OTP sent to {mobileNumber}
         </p>
 
         <input
@@ -77,12 +117,13 @@ function OTPModal({
 
         <button
           onClick={handleVerify}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition"
+          className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer"
         >
           Verify OTP
         </button>
 
       </div>
+
     </div>
   );
 }

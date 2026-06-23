@@ -2,18 +2,25 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import Toast from "../components/common/Toast";
+
 
 function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [properties, setProperties] =
     useState([]);
 
-  const [activeTab, setActiveTab] =
-    useState("");
-
+ const [activeTab, setActiveTab] =
+  useState("pending");
+  
   const [selectedUser, setSelectedUser] =
     useState(null);
 
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
   const navigate = useNavigate();
 
   const fetchData = () => {
@@ -65,11 +72,20 @@ function AdminDashboard() {
         await response.json();
 
       if (data.success) {
-        alert("Property Approved");
+       setToast({
+  show: true,
+  message: "Property approved successfully",
+  type: "success",
+});
         fetchData();
       }
     } catch (error) {
       console.error(error);
+      setToast({
+        show: true,
+        message: "Failed to approve property",
+        type: "error",
+      });
     }
   };
 
@@ -87,11 +103,20 @@ function AdminDashboard() {
           await response.json();
 
         if (data.success) {
-          alert("Property Disapproved");
+          setToast({
+  show: true,
+  message: "Property disapproved successfully",
+  type: "success",
+});
           fetchData();
         }
       } catch (error) {
         console.error(error);
+        setToast({
+          show: true,
+          message: "Failed to disapprove property",
+          type: "error",
+        });
       }
     };
 
@@ -115,11 +140,20 @@ function AdminDashboard() {
         await response.json();
 
       if (data.success) {
-        alert("Property Deleted");
+        setToast({
+          show: true,
+          message: "Property deleted successfully",
+          type: "success",
+        }); 
         fetchData();
       }
     } catch (error) {
       console.error(error);
+      setToast({
+        show: true,
+        message: "Failed to delete property",
+        type: "error",
+      });
     }
   };
 
@@ -136,6 +170,11 @@ function AdminDashboard() {
       }
     } catch (error) {
       console.error(error);
+      setToast({
+        show: true,
+        message: "Failed to load user details",
+        type: "error",
+      });
     }
   };
 
@@ -157,21 +196,46 @@ function AdminDashboard() {
       const data = await response.json();
 
       if (data.success) {
-        alert("User Deleted");
+        setToast({
+          show: true,
+          message: "User deleted successfully",
+          type: "success",
+        });
         fetchData();
       } else {
-        alert(data.message);
+        setToast({
+          show: true,
+          message: data.message,
+          type: "error",
+        });
       }
     } catch (error) {
       console.error(error);
+      setToast({
+        show: true,
+        message: "Failed to delete user",
+        type: "error",
+      });
     }
   };
 
   return (
     <>
       <Navbar />
-
-      <section className="max-w-7xl mx-auto px-6 py-10">
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({
+              show: false,
+              message: "",
+              type: "success",
+            })
+          }
+        />
+      )}
+      <section className="max-w-7xl mx-auto px-6 pt-28 pb-10">
 
         <h1 className="text-4xl font-bold mb-8">
           Admin Dashboard

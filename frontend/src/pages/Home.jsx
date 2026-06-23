@@ -24,7 +24,7 @@ function Home() {
     useState("");
 
   return (
-    <div>
+    <>
       <Navbar
         setShowLoginModal={
           setShowLoginModal
@@ -32,9 +32,13 @@ function Home() {
       />
 
       <HeroSection />
+
       <SearchBar />
+
       <RecentlyViewed />
+
       <FeaturedProperties />
+
       <Footer />
 
       {showLoginModal && (
@@ -61,7 +65,7 @@ function Home() {
           }
         />
       )}
-    </div>
+    </>
   );
 }
 
