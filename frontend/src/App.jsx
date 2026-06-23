@@ -11,6 +11,8 @@ import EditProperty from "./pages/EditProperty";
 import Wishlist from "./pages/Wishlist";
 import OwnerProfile from "./pages/OwnerProfile";
 import AdminDashboard from "./pages/AdminDashboard";
+import ContactSupport from "./pages/ContactSupport";
+import About from "./pages/About";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
@@ -33,6 +35,16 @@ function App() {
         <Route
           path="/properties/:id"
           element={<PropertyDetails />}
+        />
+
+        <Route
+          path="/contact-support"
+          element={<ContactSupport />}
+        />
+
+        <Route
+          path="/about"
+          element={<About />}
         />
 
         <Route
