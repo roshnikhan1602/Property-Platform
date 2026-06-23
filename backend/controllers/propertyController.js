@@ -1,8 +1,16 @@
 const Property = require("../models/Property");
+const User = require("../models/User");
 
 const addProperty = async (req, res) => {
   try {
     const property = await Property.create(req.body);
+
+    await User.findByIdAndUpdate(
+      req.body.owner,
+      {
+        role: "owner",
+      }
+    );
 
     res.status(201).json({
       success: true,
@@ -113,9 +121,24 @@ const deleteProperty = async (req, res) => {
       });
     }
 
+    const remainingProperties =
+      await Property.countDocuments({
+        owner: property.owner,
+      });
+
+    if (remainingProperties === 0) {
+      await User.findByIdAndUpdate(
+        property.owner,
+        {
+          role: "user",
+        }
+      );
+    }
+
     res.status(200).json({
       success: true,
-      message: "Property deleted successfully",
+      message:
+        "Property deleted successfully",
     });
   } catch (error) {
     res.status(500).json({
@@ -126,16 +149,15 @@ const deleteProperty = async (req, res) => {
 
 const incrementViews = async (req, res) => {
   try {
-    const property =
-      await Property.findByIdAndUpdate(
-        req.params.id,
-        {
-          $inc: { views: 1 },
-        },
-        {
-          new: true,
-        }
-      );
+    const property = await Property.findByIdAndUpdate(
+      req.params.id,
+      {
+        $inc: { views: 1 },
+      },
+      {
+        new: true,
+      }
+    );
 
     if (!property) {
       return res.status(404).json({

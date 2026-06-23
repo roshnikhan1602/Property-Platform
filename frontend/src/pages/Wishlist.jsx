@@ -10,12 +10,19 @@ function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  
-  const userId = "507f1f77bcf86cd799439011";
+  const loggedInUser = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+  const userId = loggedInUser?._id;
 
   useEffect(() => {
-    fetchWishlist();
-  }, []);
+    if (userId) {
+      fetchWishlist();
+    } else {
+      setLoading(false);
+    }
+  }, [userId]);
 
   const fetchWishlist = async () => {
     try {
@@ -47,8 +54,6 @@ function Wishlist() {
       const data = await response.json();
 
       if (data.success) {
-        alert("Property removed from wishlist");
-
         setWishlist(
           wishlist.filter(
             (item) => item._id !== wishlistId
@@ -57,7 +62,6 @@ function Wishlist() {
       }
     } catch (error) {
       console.error(error);
-      alert("Something went wrong");
     }
   };
 

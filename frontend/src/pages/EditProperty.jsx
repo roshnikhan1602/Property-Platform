@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import Toast from "../components/common/Toast";
 
 function EditProperty() {
   const navigate = useNavigate();
@@ -13,7 +14,11 @@ function EditProperty() {
     const user = localStorage.getItem("user");
 
     if (!user) {
-      alert("Please login to post a property.");
+      setToast({
+        show: true,
+        message: "Please login first",
+        type: "error",
+      });
       navigate("/");
     }
   }, [navigate]);
@@ -35,6 +40,12 @@ function EditProperty() {
     ownerName: "",
     ownerPhone: "",
     ownerEmail: "",
+  });
+
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success",
   });
 
   useEffect(() => {
@@ -81,7 +92,11 @@ function EditProperty() {
       !formData.ownerPhone ||
       !formData.ownerEmail
     ) {
-      alert("Please fill all required fields.");
+      setToast({
+        show: true,
+        message: "Please fill all required fields",
+        type: "error",
+      });
       return;
     }
 
@@ -106,7 +121,11 @@ function EditProperty() {
       const data = await response.json();
 
       if (data.success) {
-        alert("Property updated successfully!");
+        setToast({
+          show: true,
+          message: "Property updated successfully",
+          type: "success",
+        });
 
         setFormData({
           title: "",
@@ -127,21 +146,43 @@ function EditProperty() {
           ownerEmail: "",
         });
 
-      navigate("/my-properties");
+        setTimeout(() => {
+          navigate("/my-properties");
+        }, 1200);
       } else {
-        alert("Failed to update property.");
+        setToast({
+          show: true,
+          message: "Failed to update property",
+          type: "error",
+        });
       }
     } catch (error) {
       console.error(error);
-      alert("Something went wrong.");
+      setToast({
+        show: true,
+        message: "Something went wrong",
+        type: "error",
+      });
     }
   };
 
   return (
     <>
       <Navbar />
-
-      <section className="max-w-5xl mx-auto px-6 py-10">
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({
+              show: false,
+              message: "",
+              type: "success",
+            })
+          }
+        />
+      )}
+      <section className="max-w-5xl mx-auto px-6 pt-28 pb-10">
         <div className="bg-white shadow-lg rounded-2xl p-8">
 
           <h1 className="text-4xl font-bold">

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { registerUser, sendOTP } from "../../services/authService";
+import Toast from "../common/Toast";
 
 function LoginModal({
   setShowLoginModal,
@@ -13,6 +14,12 @@ function LoginModal({
   const [email, setEmail] = useState("");
 
   const [errors, setErrors] = useState({});
+
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "error",
+  });
 
   const handleSubmit = async () => {
     const newErrors = {};
@@ -77,12 +84,32 @@ function LoginModal({
       }
     } catch (error) {
       console.error(error);
-      alert("Something went wrong");
+
+      setToast({
+        show: true,
+        message: "Something went wrong",
+        type: "error",
+      });
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 z-50">
+
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({
+              show: false,
+              message: "",
+              type: "error",
+            })
+          }
+        />
+      )}
+
       <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
 
         <h2 className="text-3xl font-bold text-center">
@@ -163,6 +190,7 @@ function LoginModal({
         </p>
 
       </div>
+
     </div>
   );
 }

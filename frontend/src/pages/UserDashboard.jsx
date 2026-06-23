@@ -1,0 +1,128 @@
+import { Link } from "react-router-dom";
+import {
+  FaHeart,
+  FaHistory,
+  FaBuilding,
+  FaUserCircle,
+} from "react-icons/fa";
+
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
+
+function UserDashboard() {
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+  return (
+    <>
+      <Navbar />
+
+      <section className="max-w-7xl mx-auto px-6 pt-28 pb-10">
+
+        <div className="mb-10">
+          <h1 className="text-4xl font-bold text-gray-900">
+            Dashboard
+          </h1>
+
+          <p className="text-gray-600 mt-2">
+            Welcome back, {user?.name}
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <Link
+            to="/wishlist"
+            className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 transition-all duration-300"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <FaHeart className="text-red-500 text-2xl" />
+
+              <span className="text-sm text-gray-400">
+                View →
+              </span>
+            </div>
+
+            <h2 className="text-xl font-semibold text-gray-900">
+              Wishlist
+            </h2>
+
+            <p className="text-gray-500 mt-2">
+              Manage your saved properties
+            </p>
+          </Link>
+
+          <Link
+            to="/"
+            className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 transition-all duration-300"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <FaHistory className="text-blue-500 text-2xl" />
+
+              <span className="text-sm text-gray-400">
+                View →
+              </span>
+            </div>
+
+            <h2 className="text-xl font-semibold text-gray-900">
+              Recently Viewed
+            </h2>
+
+            <p className="text-gray-500 mt-2">
+              Access recently viewed listings
+            </p>
+          </Link>
+
+          <Link
+            to="/properties"
+            className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 transition-all duration-300"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <FaBuilding className="text-green-500 text-2xl" />
+
+              <span className="text-sm text-gray-400">
+                View →
+              </span>
+            </div>
+
+            <h2 className="text-xl font-semibold text-gray-900">
+              Browse Properties
+            </h2>
+
+            <p className="text-gray-500 mt-2">
+              Explore available properties
+            </p>
+          </Link>
+
+          <Link
+            to="/owner-profile"
+            className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 transition-all duration-300"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <FaUserCircle className="text-purple-500 text-2xl" />
+
+              <span className="text-sm text-gray-400">
+                View →
+              </span>
+            </div>
+
+            <h2 className="text-xl font-semibold text-gray-900">
+              Profile
+            </h2>
+
+            <p className="text-gray-500 mt-2">
+              Manage your account settings
+            </p>
+          </Link>
+
+        </div>
+
+      </section>
+
+      <Footer />
+    </>
+  );
+}
+
+export default UserDashboard;

@@ -6,6 +6,7 @@ import PropertyDetails from "./pages/PropertyDetails";
 import AddProperty from "./pages/AddProperty";
 import MyProperties from "./pages/MyProperties";
 import OwnerDashboard from "./pages/OwnerDashboard";
+import UserDashboard from "./pages/UserDashboard";
 import EditProperty from "./pages/EditProperty";
 import Wishlist from "./pages/Wishlist";
 import OwnerProfile from "./pages/OwnerProfile";
@@ -66,6 +67,15 @@ function App() {
           element={
             <ProtectedRoute>
               <OwnerDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/user-dashboard"
+          element={
+            <ProtectedRoute>
+              <UserDashboard />
             </ProtectedRoute>
           }
         />
