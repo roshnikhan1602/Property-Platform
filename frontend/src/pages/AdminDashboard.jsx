@@ -7,16 +7,16 @@ import Toast from "../components/common/Toast";
 
 function AdminDashboard() {
   const [users, setUsers] = useState([]);
-  
+
   const [properties, setProperties] =
     useState([]);
 
-    const [supportMessages, setSupportMessages] =
-  useState([]);
+  const [supportMessages, setSupportMessages] =
+    useState([]);
 
- const [activeTab, setActiveTab] =
-  useState("");
-  
+  const [activeTab, setActiveTab] =
+    useState("");
+
   const [selectedUser, setSelectedUser] =
     useState(null);
 
@@ -27,13 +27,13 @@ function AdminDashboard() {
   });
 
   const [replyText, setReplyText] =
-  useState("");
+    useState("");
 
-const [selectedMessageId, setSelectedMessageId] =
-  useState(null);
+  const [selectedMessageId, setSelectedMessageId] =
+    useState(null);
 
-const [showReplyModal, setShowReplyModal] =
-  useState(false);
+  const [showReplyModal, setShowReplyModal] =
+    useState(false);
 
   const navigate = useNavigate();
 
@@ -58,17 +58,17 @@ const [showReplyModal, setShowReplyModal] =
         }
       });
 
-      fetch(
-  "http://localhost:5000/api/support"
-)
-  .then((res) => res.json())
-  .then((data) => {
-    if (data.success) {
-      setSupportMessages(
-        data.messages
-      );
-    }
-  });
+    fetch(
+      "http://localhost:5000/api/support"
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setSupportMessages(
+            data.messages
+          );
+        }
+      });
   };
 
   useEffect(() => {
@@ -98,11 +98,11 @@ const [showReplyModal, setShowReplyModal] =
         await response.json();
 
       if (data.success) {
-       setToast({
-  show: true,
-  message: "Property approved successfully",
-  type: "success",
-});
+        setToast({
+          show: true,
+          message: "Property approved successfully",
+          type: "success",
+        });
         fetchData();
       }
     } catch (error) {
@@ -130,10 +130,10 @@ const [showReplyModal, setShowReplyModal] =
 
         if (data.success) {
           setToast({
-  show: true,
-  message: "Property disapproved successfully",
-  type: "success",
-});
+            show: true,
+            message: "Property disapproved successfully",
+            type: "success",
+          });
           fetchData();
         }
       } catch (error) {
@@ -170,7 +170,7 @@ const [showReplyModal, setShowReplyModal] =
           show: true,
           message: "Property deleted successfully",
           type: "success",
-        }); 
+        });
         fetchData();
       }
     } catch (error) {
@@ -184,69 +184,69 @@ const [showReplyModal, setShowReplyModal] =
   };
 
   const handleResolve = async (id) => {
-  try {
-    const response = await fetch(
-      `http://localhost:5000/api/support/resolve/${id}`,
-      {
-        method: "PUT",
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/support/resolve/${id}`,
+        {
+          method: "PUT",
+        }
+      );
+
+      const data =
+        await response.json();
+
+      if (data.success) {
+        fetchData();
+
+        setToast({
+          show: true,
+          message:
+            "Ticket resolved",
+          type: "success",
+        });
       }
-    );
-
-    const data =
-      await response.json();
-
-    if (data.success) {
-      fetchData();
-
-      setToast({
-        show: true,
-        message:
-          "Ticket resolved",
-        type: "success",
-      });
+    } catch (error) {
+      console.error(error);
     }
-  } catch (error) {
-    console.error(error);
-  }
-};
+  };
 
-const handleReply = async () => {
-  try {
-    const response = await fetch(
-      `http://localhost:5000/api/support/reply/${selectedMessageId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-        body: JSON.stringify({
-          reply: replyText,
-        }),
+  const handleReply = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/support/reply/${selectedMessageId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            reply: replyText,
+          }),
+        }
+      );
+
+      const data =
+        await response.json();
+
+      if (data.success) {
+        fetchData();
+
+        setShowReplyModal(false);
+
+        setReplyText("");
+
+        setToast({
+          show: true,
+          message:
+            "Reply sent successfully",
+          type: "success",
+        });
       }
-    );
-
-    const data =
-      await response.json();
-
-    if (data.success) {
-      fetchData();
-
-      setShowReplyModal(false);
-
-      setReplyText("");
-
-      setToast({
-        show: true,
-        message:
-          "Reply sent successfully",
-        type: "success",
-      });
+    } catch (error) {
+      console.error(error);
     }
-  } catch (error) {
-    console.error(error);
-  }
-};
+  };
 
   const handleViewUser = async (id) => {
     try {
@@ -332,7 +332,7 @@ const handleReply = async () => {
           Admin Dashboard
         </h1>
 
-       <div className="grid md:grid-cols-5 gap-6 mb-10">
+        <div className="grid md:grid-cols-5 gap-6 mb-10">
 
           <div
             onClick={() =>
@@ -436,36 +436,34 @@ const handleReply = async () => {
             </p>
           </div>
 
-<div
-  onClick={() =>
-    setActiveTab("support")
-  }
-  className={`shadow-lg rounded-2xl p-8 cursor-pointer hover:shadow-xl ${
-    activeTab === "support"
-      ? "bg-red-600 text-white"
-      : "bg-white"
-  }`}
->
-  <h2
-    className={
-      activeTab === "support"
-        ? "text-white font-medium"
-        : "text-gray-500"
-    }
-  >
-    Support
-  </h2>
+          <div
+            onClick={() =>
+              setActiveTab("support")
+            }
+            className={`shadow-lg rounded-2xl p-8 cursor-pointer hover:shadow-xl ${activeTab === "support"
+              ? "bg-red-600 text-white"
+              : "bg-white"
+              }`}
+          >
+            <h2
+              className={
+                activeTab === "support"
+                  ? "text-white font-medium"
+                  : "text-gray-500"
+              }
+            >
+              Support
+            </h2>
 
-  <p
-    className={`text-5xl font-bold mt-3 ${
-      activeTab === "support"
-        ? "text-white"
-        : "text-red-600"
-    }`}
-  >
-    {supportMessages.length}
-  </p>
-</div>
+            <p
+              className={`text-5xl font-bold mt-3 ${activeTab === "support"
+                ? "text-white"
+                : "text-red-600"
+                }`}
+            >
+              {supportMessages.length}
+            </p>
+          </div>
         </div>
 
         {activeTab === "users" && (
@@ -783,114 +781,133 @@ const handleReply = async () => {
           </div>
         )}
 
-{activeTab === "support" && (
-  <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        {activeTab === "support" && (
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
 
-    <div className="p-6 border-b">
-      <h2 className="text-2xl font-bold">
-        Support Messages
-      </h2>
-    </div>
+            <div className="p-6 border-b">
+              <h2 className="text-2xl font-bold">
+                Support Messages
+              </h2>
+            </div>
 
-    <div className="overflow-x-auto">
-      <table className="w-full">
+            <div className="overflow-x-auto">
+              <table className="w-full">
 
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="text-left px-6 py-4">
-              Name
-            </th>
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="text-left px-6 py-4">
+                      Name
+                    </th>
 
-            <th className="text-left px-6 py-4">
-              Email
-            </th>
+                    <th className="text-left px-6 py-4">
+                      Email
+                    </th>
 
-            <th className="text-left px-6 py-4">
-              Message
-            </th>
+                    <th className="text-left px-6 py-4">
+                      Message
+                    </th>
+                    <th className="text-left px-6 py-4">
+                      Date
+                    </th>
+                    <th className="text-left px-6 py-4">
+                      Status
+                    </th>
+                    <th className="text-left px-6 py-4">
+                      Reply
+                    </th>
 
-            <th className="text-left px-6 py-4">
-              Status
-            </th>
-            <th className="text-left px-6 py-4">
-  Reply
-</th>
+                    <th className="text-left px-6 py-4">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
 
-<th className="text-left px-6 py-4">
-  Actions
-</th>
-          </tr>
-        </thead>
+                <tbody>
 
-        <tbody>
+                  {supportMessages.map(
+                    (item) => (
+                      <tr
+                        key={item._id}
+                        className="border-t hover:bg-gray-50"
+                      >
+                        <td className="px-6 py-4 font-medium">
+                          {item.name}
+                        </td>
 
-          {supportMessages.map(
-            (item) => (
-              <tr
-                key={item._id}
-                className="border-t hover:bg-gray-50"
-              >
-                <td className="px-6 py-4 font-medium">
-                  {item.name}
-                </td>
+                        <td className="px-6 py-4">
+                          {item.email}
+                        </td>
 
-                <td className="px-6 py-4">
-                  {item.email}
-                </td>
+                        <td className="px-6 py-4 max-w-md">
+                          {item.message}
+                        </td>
 
-                <td className="px-6 py-4 max-w-md">
-                  {item.message}
-                </td>
+                        <td className="px-6 py-4">
+                          {new Date(
+                            item.createdAt
+                          ).toLocaleString()}
+                        </td>
 
-                <td className="px-6 py-4">
-                  <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm">
-                    {item.status}
-                  </span>
-                </td>
+                        <td className="px-6 py-4">
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm ${item.status === "Pending"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : item.status === "Replied"
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-green-100 text-green-700"
+                              }`}
+                          >
+                            {item.status}
+                          </span>
+                        </td>
 
-                <td className="px-6 py-4">
-  {item.reply || "-"}
-</td>
+                        <td className="px-6 py-4">
+                          {item.reply || "-"}
+                        </td>
 
-<td className="px-6 py-4">
-  <div className="flex gap-2">
+                        <td className="px-6 py-4">
+                          <div className="flex gap-2">
 
-   <button
-  disabled={item.status === "Resolved"}
-  onClick={() => {
-    setSelectedMessageId(item._id);
-    setShowReplyModal(true);
-  }}
-  className="bg-blue-600 text-white px-3 py-2 rounded-lg disabled:opacity-50"
->
-  Reply
-</button>
-    <button
-      onClick={() =>
-        handleResolve(
-          item._id
-        )
-      }
-      className="bg-green-600 text-white px-3 py-2 rounded-lg"
-    >
-      Resolve
-    </button>
+                            <button
+                              disabled={
+                                item.status === "Replied" ||
+                                item.status === "Resolved"
+                              }
+                              onClick={() => {
+                                setSelectedMessageId(item._id);
+                                setShowReplyModal(true);
+                              }}
+                              className="bg-blue-600 text-white px-3 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              Reply
+                            </button>
+                            <button
+                              disabled={
+                                item.status === "Resolved"
+                              }
+                              onClick={() =>
+                                handleResolve(item._id)
+                              }
+                             className="bg-green-600 text-white px-3 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              Resolve
+                            </button>
 
-  </div>
-</td>
-              </tr>
-            )
-          )}
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  )}
 
-        </tbody>
+                </tbody>
 
-      </table>
-    </div>
+              </table>
+            </div>
 
-  </div>
-)}
+          </div>
+        )}
       </section>
-      
+
       {selectedUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
@@ -942,54 +959,54 @@ const handleReply = async () => {
         </div>
       )}
       {showReplyModal && (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
-    <div className="bg-white p-6 rounded-2xl w-full max-w-md">
+          <div className="bg-white p-6 rounded-2xl w-full max-w-md">
 
-     <h2 className="text-xl font-bold mb-4">
-  Reply to {supportMessages.find(
-    (msg) => msg._id === selectedMessageId
-  )?.name}
-</h2>
+            <h2 className="text-xl font-bold mb-4">
+              Reply to {supportMessages.find(
+                (msg) => msg._id === selectedMessageId
+              )?.name}
+            </h2>
 
-      <textarea
-        rows="5"
-        value={replyText}
-        onChange={(e) =>
-          setReplyText(
-            e.target.value
-          )
-        }
-        className="w-full border rounded-lg p-3"
-        placeholder="Type your reply..."
-      />
+            <textarea
+              rows="5"
+              value={replyText}
+              onChange={(e) =>
+                setReplyText(
+                  e.target.value
+                )
+              }
+              className="w-full border rounded-lg p-3"
+              placeholder="Type your reply..."
+            />
 
-      <div className="flex gap-3 mt-4">
+            <div className="flex gap-3 mt-4">
 
-        <button
-          onClick={handleReply}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-        >
-          Send Reply
-        </button>
+              <button
+                onClick={handleReply}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+              >
+                Send Reply
+              </button>
 
-        <button
-          onClick={() =>
-            setShowReplyModal(
-              false
-            )
-          }
-          className="bg-gray-500 text-white px-4 py-2 rounded-lg"
-        >
-          Cancel
-        </button>
+              <button
+                onClick={() =>
+                  setShowReplyModal(
+                    false
+                  )
+                }
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg"
+              >
+                Cancel
+              </button>
 
-      </div>
+            </div>
 
-    </div>
+          </div>
 
-  </div>
-)}
+        </div>
+      )}
       <Footer />
     </>
   );

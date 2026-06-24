@@ -5,12 +5,14 @@ const addProperty = async (req, res) => {
   try {
     const property = await Property.create(req.body);
 
-    await User.findByIdAndUpdate(
-      req.body.owner,
-      {
-        role: "owner",
-      }
+    const user = await User.findById(
+      req.body.owner
     );
+
+    if (user && user.role === "user") {
+      user.role = "owner";
+      await user.save();
+    }
 
     res.status(201).json({
       success: true,
@@ -127,12 +129,17 @@ const deleteProperty = async (req, res) => {
       });
 
     if (remainingProperties === 0) {
-      await User.findByIdAndUpdate(
-        property.owner,
-        {
-          role: "user",
-        }
+      const user = await User.findById(
+        property.owner
       );
+
+      if (
+        user &&
+        user.role === "owner"
+      ) {
+        user.role = "user";
+        await user.save();
+      }
     }
 
     res.status(200).json({
