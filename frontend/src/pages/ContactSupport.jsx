@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Toast from "../components/common/Toast";
@@ -27,6 +27,12 @@ function ContactSupport() {
       type: "success",
     });
 
+  const [myTickets, setMyTickets] =
+    useState([]);
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -34,7 +40,31 @@ function ContactSupport() {
         e.target.value,
     });
   };
+  const fetchMyTickets = async () => {
+    const user = JSON.parse(
+      localStorage.getItem("user")
+    );
 
+    if (!user?._id) return;
+
+    try {
+      const response =
+        await fetch(
+          `http://localhost:5000/api/support/user/${user._id}`
+        );
+
+      const data =
+        await response.json();
+
+      if (data.success) {
+        setMyTickets(
+          data.messages
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -81,6 +111,18 @@ function ContactSupport() {
     try {
       setLoading(true);
 
+      const user = JSON.parse(
+        localStorage.getItem("user")
+      );
+
+      if (!user?._id) {
+        return setToast({
+          show: true,
+          message:
+            "Please login to submit a support ticket",
+          type: "error",
+        });
+      }
       const response =
         await fetch(
           "http://localhost:5000/api/support",
@@ -90,9 +132,10 @@ function ContactSupport() {
               "Content-Type":
                 "application/json",
             },
-            body: JSON.stringify(
-              formData
-            ),
+            body: JSON.stringify({
+              userId: user._id,
+              ...formData,
+            }),
           }
         );
 
@@ -112,6 +155,7 @@ function ContactSupport() {
           email: "",
           message: "",
         });
+        fetchMyTickets();
       } else {
         setToast({
           show: true,
@@ -133,7 +177,9 @@ function ContactSupport() {
       setLoading(false);
     }
   };
-
+  useEffect(() => {
+    fetchMyTickets();
+  }, []);
   return (
     <>
       <Navbar />
@@ -288,12 +334,94 @@ function ContactSupport() {
               </form>
 
             </div>
-
           </div>
 
         </div>
       </div>
+      
+     {user && (
+  <div className="max-w-6xl mx-auto px-6 pb-16">
 
+    <div className="bg-white p-8 rounded-2xl shadow-md">
+
+      <h2 className="text-2xl font-semibold mb-6">
+        My Support Tickets
+      </h2>
+
+      {myTickets.length === 0 ? (
+        <p className="text-gray-500">
+          No support tickets found.
+        </p>
+      ) : (
+        <div className="overflow-x-auto">
+
+          <table className="w-full">
+
+            <thead>
+              <tr className="border-b">
+
+                <th className="text-left py-3">
+                  Date
+                </th>
+
+                <th className="text-left py-3">
+                  Status
+                </th>
+
+                <th className="text-left py-3">
+                  Message
+                </th>
+
+                <th className="text-left py-3">
+                  Admin Reply
+                </th>
+
+              </tr>
+            </thead>
+
+            <tbody>
+
+              {myTickets.map(
+                (ticket) => (
+                  <tr
+                    key={ticket._id}
+                    className="border-b"
+                  >
+
+                    <td className="py-3">
+                      {new Date(
+                        ticket.createdAt
+                      ).toLocaleDateString()}
+                    </td>
+
+                    <td className="py-3">
+                      {ticket.status}
+                    </td>
+
+                    <td className="py-3">
+                      {ticket.message}
+                    </td>
+
+                    <td className="py-3">
+                      {ticket.reply || "-"}
+                    </td>
+
+                  </tr>
+                )
+              )}
+
+            </tbody>
+
+          </table>
+
+        </div>
+      )}
+
+    </div>
+
+  </div>
+)}
+    
       <Footer />
     </>
   );
