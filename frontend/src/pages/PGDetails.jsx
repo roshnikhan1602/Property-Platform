@@ -71,7 +71,7 @@ function PGDetails() {
 
       <section className="max-w-7xl mx-auto px-6 pt-28 pb-10">
 
-        <div className="h-96 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-100 flex flex-col items-center justify-center">
+        <div className="h-96 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
 
           <div className="text-7xl">
             🛏️
@@ -98,7 +98,7 @@ function PGDetails() {
           </div>
 
           <div>
-            <h2 className="text-4xl font-bold text-green-600">
+            <h2 className="text-4xl font-bold text-blue-600">
               ₹ {pg.rent?.toLocaleString()}
             </h2>
 
@@ -109,7 +109,7 @@ function PGDetails() {
 
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-10">
 
           <div className="bg-white shadow rounded-xl p-4">
             <p className="text-gray-500">
@@ -117,7 +117,10 @@ function PGDetails() {
             </p>
 
             <h3 className="font-semibold">
-              {pg.genderPreference}
+              {pg.genderPreference ===
+              "Unisex"
+                ? "Co-live"
+                : pg.genderPreference}
             </h3>
           </div>
 
@@ -148,6 +151,18 @@ function PGDetails() {
 
             <h3 className="font-semibold">
               {pg.pincode}
+            </h3>
+          </div>
+
+          <div className="bg-white shadow rounded-xl p-4">
+            <p className="text-gray-500">
+              Deposit
+            </p>
+
+            <h3 className="font-semibold text-blue-600">
+              ₹{" "}
+              {pg.depositAmount?.toLocaleString() ||
+                0}
             </h3>
           </div>
 
@@ -212,6 +227,43 @@ function PGDetails() {
           </div>
 
         </div>
+        <div className="bg-white shadow rounded-2xl p-6 mt-10">
+
+  <h2 className="text-2xl font-bold mb-6">
+    📍 PG Location
+  </h2>
+
+  <div className="overflow-hidden rounded-xl border">
+
+    <iframe
+      title="PG Location"
+      width="100%"
+      height="400"
+      loading="lazy"
+      allowFullScreen
+      src={`https://maps.google.com/maps?q=${encodeURIComponent(
+        `${pg.locality}, ${pg.city}, ${pg.state}`
+      )}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+    ></iframe>
+
+  </div>
+
+  <div className="mt-4 text-center">
+
+    <a
+      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+        `${pg.locality}, ${pg.city}, ${pg.state}`
+      )}`}
+      target="_blank"
+      rel="noreferrer"
+      className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+    >
+      Open in Google Maps
+    </a>
+
+  </div>
+
+</div>
 
         <div className="bg-white shadow rounded-2xl p-6 mt-10">
 
@@ -259,7 +311,7 @@ function PGDetails() {
 
                 <a
                   href={`tel:${pg.ownerPhone}`}
-                  className="bg-green-600 text-white px-6 py-3 rounded-lg text-center hover:bg-green-700 transition"
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg text-center hover:bg-blue-700 transition"
                 >
                   📞 Call Owner
                 </a>

@@ -17,6 +17,11 @@ const pgSchema = new mongoose.Schema(
       required: true,
     },
 
+      depositAmount: {
+      type: Number,
+      default: 0,
+    },
+
     sharingType: {
       type: String,
       enum: ["Single", "Double", "Triple"],

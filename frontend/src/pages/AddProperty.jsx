@@ -242,7 +242,6 @@ function AddProperty() {
                   <option value="">Select Listing Type</option>
                   <option value="Rent">Rent</option>
                   <option value="Sale">Sale</option>
-                  <option value="Lease">Lease</option>
                    <option value="Sale">Lease</option>
                    8f952b9e27dbfcb6fd165bc9719ff1af71cea33
                 </select>

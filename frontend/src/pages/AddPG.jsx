@@ -21,6 +21,7 @@ function AddPG() {
     title: "",
     description: "",
     rent: "",
+    depositAmount: "",
     sharingType: "",
     genderPreference: "",
     foodAvailable: false,
@@ -117,6 +118,7 @@ function AddPG() {
           title: "",
           description: "",
           rent: "",
+          depositAmount: "",
           sharingType: "",
           genderPreference: "",
           foodAvailable: false,
@@ -228,6 +230,21 @@ function AddPG() {
 
               <div>
                 <label className="block mb-2 font-medium">
+                  Security Deposit
+                </label>
+
+                <input
+                  type="number"
+                  name="depositAmount"
+                  value={formData.depositAmount}
+                  onChange={handleChange}
+                  placeholder="Enter Deposit Amount"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 font-medium">
                   Sharing Type *
                 </label>
 
@@ -287,7 +304,7 @@ function AddPG() {
                   </option>
 
                   <option value="Unisex">
-                    Unisex
+                    Co-live
                   </option>
                 </select>
               </div>
@@ -491,7 +508,7 @@ function AddPG() {
 
             <button
               type="submit"
-              className="w-full mt-8 bg-green-600 text-white py-4 rounded-xl font-medium hover:bg-green-700 transition"
+             className="w-full mt-8 bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"
             >
               Submit PG
             </button>

@@ -21,6 +21,8 @@ import PGListing from "./pages/PGListing";
 import PGDetails from "./pages/PGDetails";
 import AddPG from "./pages/AddPG";
 
+import MyPGs from "./pages/MyPGs";
+
 function App() {
   return (
     <BrowserRouter>
@@ -140,6 +142,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/my-pgs"
+          element={
+            <ProtectedRoute>
+              <MyPGs />
+            </ProtectedRoute>
+          }
+/>
 
       </Routes>
     </BrowserRouter>

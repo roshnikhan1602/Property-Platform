@@ -20,10 +20,15 @@ function PropertyCard({ property }) {
     type: "success",
   });
 
-  const userId =
-    "507f1f77bcf86cd799439011";
+  const loggedInUser = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+  const userId = loggedInUser?._id;
 
   useEffect(() => {
+    if (!userId) return;
+
     const checkWishlist = async () => {
       try {
         const response = await fetch(
@@ -51,9 +56,19 @@ function PropertyCard({ property }) {
     };
 
     checkWishlist();
-  }, [property._id]);
+  }, [property._id, userId]);
 
   const handleWishlist = async () => {
+    if (!userId) {
+      setToast({
+        show: true,
+        message: "Please login first",
+        type: "error",
+      });
+
+      return;
+    }
+
     try {
       const url = saved
         ? "http://localhost:5000/api/wishlist/remove"

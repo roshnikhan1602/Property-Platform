@@ -45,29 +45,48 @@ function PGListing() {
   const handleSearch = () => {
     let result = [...pgs];
 
-    if (city) {
+    if (city.trim()) {
       result = result.filter((pg) =>
         pg.city
-          ?.toLowerCase()
-          .includes(city.toLowerCase())
+          ?.trim()
+          .toLowerCase()
+          .includes(
+            city.trim().toLowerCase()
+          )
       );
     }
 
     if (gender) {
       result = result.filter(
         (pg) =>
-          pg.genderPreference === gender
+          pg.genderPreference
+            ?.trim()
+            .toLowerCase() ===
+          gender.trim().toLowerCase()
       );
     }
 
     if (sharingType) {
       result = result.filter(
         (pg) =>
-          pg.sharingType === sharingType
+          pg.sharingType
+            ?.trim()
+            .toLowerCase() ===
+          sharingType
+            .trim()
+            .toLowerCase()
       );
     }
 
     setFilteredPgs(result);
+  };
+
+  const handleClearFilters = () => {
+    setCity("");
+    setGender("");
+    setSharingType("");
+
+    setFilteredPgs(pgs);
   };
 
   return (
@@ -106,19 +125,19 @@ function PGListing() {
               className="border border-gray-300 rounded-lg px-4 py-3"
             >
               <option value="">
-                Gender
+                Gender Preference
               </option>
 
-              <option value="Male">
-                Male
+              <option value="Boys">
+                Boys
               </option>
 
-              <option value="Female">
-                Female
+              <option value="Girls">
+                Girls
               </option>
 
-              <option value="Any">
-                Any
+              <option value="Unisex">
+                Co-live
               </option>
             </select>
 
@@ -150,7 +169,7 @@ function PGListing() {
 
             <button
               onClick={handleSearch}
-              className="bg-green-600 text-white rounded-lg px-6 py-3 hover:bg-green-700 transition"
+              className="bg-blue-600 text-white rounded-lg px-6 py-3 hover:bg-blue-700 transition cursor-pointer"
             >
               Search PG
             </button>
@@ -158,6 +177,40 @@ function PGListing() {
           </div>
 
         </div>
+
+        {(city || gender || sharingType) && (
+          <div className="flex flex-wrap gap-3 mt-6">
+
+            {city && (
+              <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm">
+                📍 {city}
+              </span>
+            )}
+
+            {gender && (
+              <span className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm">
+                🛏️{" "}
+                {gender === "Unisex"
+                  ? "Co-live"
+                  : gender}
+              </span>
+            )}
+
+            {sharingType && (
+              <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm">
+                👥 {sharingType}
+              </span>
+            )}
+
+            <button
+              onClick={handleClearFilters}
+              className="bg-red-100 text-red-600 px-5 py-2 rounded-full hover:bg-red-200 transition cursor-pointer"
+            >
+              Clear Filters
+            </button>
+
+          </div>
+        )}
 
         {loading ? (
           <p className="text-center mt-10">
@@ -173,6 +226,10 @@ function PGListing() {
             <h2 className="text-2xl font-bold mt-4">
               No PG Found
             </h2>
+
+            <p className="text-gray-500 mt-2">
+              Try changing your filters.
+            </p>
 
           </div>
         ) : (
