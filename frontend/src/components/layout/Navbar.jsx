@@ -13,7 +13,7 @@ import {
 } from "react-icons/fa";
 
 function Navbar({
-  setShowLoginModal = () => {},
+  setShowLoginModal = () => { },
 }) {
   const [user, setUser] = useState(null);
 
@@ -97,21 +97,19 @@ function Navbar({
 
   return (
     <nav
-      className={`${
-        isTransparent
+      className={`${isTransparent
           ? "fixed top-0 left-0 w-full bg-transparent"
           : "sticky top-0 bg-white/95 backdrop-blur-md shadow-md"
-      } z-50 transition-all duration-300`}
+        } z-50 transition-all duration-300`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
         <Link to="/">
           <h1
-            className={`text-2xl font-bold cursor-pointer ${
-              isTransparent
+            className={`text-2xl font-bold cursor-pointer ${isTransparent
                 ? "text-white drop-shadow-lg"
                 : "text-gray-900"
-            }`}
+              }`}
           >
             Property
             <span className="text-blue-600">
@@ -124,33 +122,30 @@ function Navbar({
 
           <Link
             to="/"
-            className={`font-medium transition ${
-              isTransparent
+            className={`font-medium transition ${isTransparent
                 ? "text-white hover:text-blue-300"
                 : "text-gray-700 hover:text-blue-600"
-            }`}
+              }`}
           >
             Home
           </Link>
 
           <Link
             to="/properties"
-            className={`font-medium transition ${
-              isTransparent
+            className={`font-medium transition ${isTransparent
                 ? "text-white hover:text-blue-300"
                 : "text-gray-700 hover:text-blue-600"
-            }`}
+              }`}
           >
             Properties
           </Link>
 
           <Link
             to="/pgs"
-            className={`font-medium transition ${
-              isTransparent
+            className={`font-medium transition ${isTransparent
                 ? "text-white hover:text-blue-300"
                 : "text-gray-700 hover:text-blue-600"
-            }`}
+              }`}
           >
             PG
           </Link>
@@ -163,11 +158,10 @@ function Navbar({
             onClick={() =>
               navigate("/wishlist")
             }
-            className={`text-2xl hover:text-red-500 hover:scale-110 transition-all duration-300 cursor-pointer ${
-              isTransparent
+            className={`text-2xl hover:text-red-500 hover:scale-110 transition-all duration-300 cursor-pointer ${isTransparent
                 ? "text-white drop-shadow-lg"
                 : "text-gray-400"
-            }`}
+              }`}
             title="Wishlist"
           >
             <FaRegHeart />
@@ -193,11 +187,10 @@ function Navbar({
                 </div>
 
                 <span
-                  className={`font-medium ${
-                    isTransparent
+                  className={`font-medium ${isTransparent
                       ? "text-white drop-shadow-lg"
                       : "text-gray-700"
-                  }`}
+                    }`}
                 >
                   {user.name}
                 </span>
@@ -220,7 +213,7 @@ function Navbar({
                   </Link>
 
                   {user.role ===
-                  "admin" ? (
+                    "admin" ? (
                     <Link
                       to="/admin-dashboard"
                       className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
@@ -288,11 +281,10 @@ function Navbar({
               onClick={() =>
                 setShowLoginModal(true)
               }
-              className={`px-4 py-2 rounded-lg font-medium transition duration-300 cursor-pointer ${
-                isTransparent
+              className={`px-4 py-2 rounded-lg font-medium transition duration-300 cursor-pointer ${isTransparent
                   ? "bg-white text-blue-600 hover:bg-gray-100"
                   : "border border-blue-600 text-blue-600 hover:bg-blue-700 hover:text-white"
-              }`}
+                }`}
             >
               Login
             </button>

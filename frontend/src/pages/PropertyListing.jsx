@@ -6,7 +6,9 @@ import Footer from "../components/layout/Footer";
 import PropertyCard from "../components/home/PropertyCard";
 import PropertyFilterBar from "../components/property/PropertyFilterBar";
 
-function PropertyListing() {
+function PropertyListing({
+  setShowLoginModal,
+}) {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -133,7 +135,11 @@ function PropertyListing() {
 
   return (
     <>
-      <Navbar />
+    <Navbar
+  setShowLoginModal={
+    setShowLoginModal
+  }
+/>
 
       <section className="max-w-7xl mx-auto px-6 py-10">
 

@@ -9,7 +9,9 @@ import {
   FaMapMarkerAlt,
 } from "react-icons/fa";
 
-function ContactSupport() {
+function ContactSupport({
+  setShowLoginModal,
+}) {
   const [formData, setFormData] =
     useState({
       name: "",
@@ -182,7 +184,11 @@ function ContactSupport() {
   }, []);
   return (
     <>
-      <Navbar />
+      <Navbar
+  setShowLoginModal={
+    setShowLoginModal
+  }
+/>
 
       {toast.show && (
         <Toast

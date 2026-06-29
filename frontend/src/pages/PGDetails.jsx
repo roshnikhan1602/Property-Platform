@@ -4,7 +4,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
-function PGDetails() {
+function PGDetails({
+  setShowLoginModal,
+}) {
   const { id } = useParams();
 
   const navigate = useNavigate();
@@ -44,7 +46,11 @@ function PGDetails() {
   if (loading) {
     return (
       <>
-        <Navbar />
+        <Navbar
+  setShowLoginModal={
+    setShowLoginModal
+  }
+/>
         <div className="text-center py-20">
           Loading PG Details...
         </div>
@@ -53,21 +59,29 @@ function PGDetails() {
     );
   }
 
-  if (!pg) {
-    return (
-      <>
-        <Navbar />
-        <div className="text-center py-20">
-          PG Not Found
-        </div>
-        <Footer />
-      </>
-    );
+    if (!pg) {
+      return (
+        <>
+          <Navbar
+  setShowLoginModal={
+    setShowLoginModal
+  }
+/>
+          <div className="text-center py-20">
+            PG Not Found
+          </div>
+          <Footer />
+        </>
+      );
   }
 
   return (
     <>
-      <Navbar />
+      <Navbar
+  setShowLoginModal={
+    setShowLoginModal
+  }
+/>
 
       <section className="max-w-7xl mx-auto px-6 pt-28 pb-10">
 

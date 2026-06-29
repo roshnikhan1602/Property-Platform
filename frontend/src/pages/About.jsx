@@ -1,10 +1,16 @@
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
-function About() {
+function About({
+  setShowLoginModal,
+}) {
   return (
     <>
-      <Navbar />
+      <Navbar
+  setShowLoginModal={
+    setShowLoginModal
+  }
+/>
 
       <div className="min-h-screen bg-gray-50 pt-28 pb-16 px-6">
 

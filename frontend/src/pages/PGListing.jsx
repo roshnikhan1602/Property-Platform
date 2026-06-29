@@ -5,7 +5,9 @@ import Footer from "../components/layout/Footer";
 
 import PGCard from "../components/pg/PGCard";
 
-function PGListing() {
+function PGListing({
+  setShowLoginModal,
+}) {
   const [pgs, setPgs] = useState([]);
   const [filteredPgs, setFilteredPgs] =
     useState([]);
@@ -91,7 +93,11 @@ function PGListing() {
 
   return (
     <>
-      <Navbar />
+      <Navbar
+  setShowLoginModal={
+    setShowLoginModal
+  }
+/>
 
       <section className="max-w-7xl mx-auto px-6 pt-28 pb-10">
 

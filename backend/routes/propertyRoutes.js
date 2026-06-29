@@ -1,7 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
-
+const upload = require("../middleware/upload");
 const {
   addProperty,
   getAllProperties,
@@ -13,7 +13,11 @@ const {
   filterProperties,
 } = require("../controllers/propertyController");
 
-router.post("/", addProperty);
+router.post(
+  "/",
+  upload.array("images", 10),
+  addProperty
+);
 
 router.get("/", getAllProperties);
 

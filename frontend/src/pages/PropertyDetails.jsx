@@ -1,30 +1,170 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
+import Toast from "../components/common/Toast";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import ReviewSection from "../components/reviews/ReviewSection";
+import {
+  addReview,
+  getPropertyReviews,
+  likeReview,
+  dislikeReview,
+  deleteReview,
+  updateReview,
+} from "../services/reviewService";
 
-function PropertyDetails() {
+
+function PropertyDetails({
+  setShowLoginModal,
+}) {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState([]);
+  const [loadingReviews, setLoadingReviews] =
+    useState(false);
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
+
   const handleShare = async () => {
-  try {
-    await navigator.clipboard.writeText(
-      window.location.href
-    );
+    try {
+      await navigator.clipboard.writeText(
+        window.location.href
+      );
 
-    alert(
-      "Property link copied successfully!"
-    );
-  } catch (error) {
-    console.error(error);
-    alert("Unable to copy link.");
-  }
-};
+      setToast({
+        show: true,
+        message: "Property link copied successfully!",
+        type: "success",
+      });
+    } catch (error) {
+      console.error(error);
 
+      setToast({
+        show: true,
+        message: "Unable to copy link.",
+        type: "error",
+      });
+    }
+  };
+  const loadReviews = async () => {
+    try {
+      setLoadingReviews(true);
+
+      const data = await getPropertyReviews(id);
+
+      if (data.success) {
+        setReviews(data.reviews);
+      }
+    } catch (error) {
+      console.error(error);
+
+      setToast({
+        show: true,
+        message: "Failed to load reviews.",
+        type: "error",
+      });
+    } finally {
+      setLoadingReviews(false);
+    }
+  };
+
+  const handleAddReview = async ({
+    rating,
+    comment,
+  }) => {
+    if (!user) {
+      setToast({
+        show: true,
+        message: "Please login first.",
+        type: "error",
+      });
+      return;
+    }
+
+    const data = await addReview({
+      propertyId: property._id,
+      userId: user._id,
+      userName:
+        user.name ||
+        `${user.firstName} ${user.lastName}`,
+      userProfileImage:
+        user.profileImage || "",
+      rating,
+      comment,
+    });
+
+    if (data.success) {
+      setToast({
+        show: true,
+        message: "Review added successfully!",
+        type: "success",
+      });
+
+      loadReviews();
+    } else {
+      setToast({
+        show: true,
+        message: data.message,
+        type: "error",
+      });
+    }
+  };
+  const handleDeleteReview = async (
+    reviewId
+  ) => {
+
+    const data = await deleteReview(reviewId);
+
+    if (data.success) {
+      setToast({
+        show: true,
+        message: "Review deleted successfully!",
+        type: "success",
+      });
+
+      loadReviews();
+    } else {
+      setToast({
+        show: true,
+        message: data.message,
+        type: "error",
+      });
+    }
+  };
+
+  const handleLike = async (reviewId) => {
+    if (!user) {
+      setToast({
+        show: true,
+        message: "Please login first.",
+        type: "error",
+      });
+      return;
+    }
+
+    await likeReview(reviewId, user._id);
+    loadReviews();
+  };
+
+  const handleDislike = async (reviewId) => {
+    if (!user) {
+      setToast({
+        show: true,
+        message: "Please login first.",
+        type: "error",
+      });
+      return;
+    }
+
+    await dislikeReview(reviewId, user._id);
+    loadReviews();
+  };
   const user = JSON.parse(
     localStorage.getItem("user")
   );
@@ -40,13 +180,13 @@ function PropertyDetails() {
 
         if (data.success) {
           setProperty(data.property);
-        
+
           await fetch(
-              `http://localhost:5000/api/properties/${id}/view`,
-              {
-                method: "PUT",
-              }
-            );
+            `http://localhost:5000/api/properties/${id}/view`,
+            {
+              method: "PUT",
+            }
+          );
 
           // Recently Viewed Properties
           const recentlyViewed =
@@ -81,12 +221,17 @@ function PropertyDetails() {
     };
 
     fetchProperty();
+    loadReviews();
   }, [id]);
 
   if (loading) {
     return (
       <>
-        <Navbar />
+        <Navbar
+  setShowLoginModal={
+    setShowLoginModal
+  }
+/>
         <div className="text-center py-20">
           <h2 className="text-xl text-gray-600">
             Loading property details...
@@ -100,7 +245,11 @@ function PropertyDetails() {
   if (!property) {
     return (
       <>
-        <Navbar />
+       <Navbar
+  setShowLoginModal={
+    setShowLoginModal
+  }
+/>
         <div className="text-center py-20">
           <h2 className="text-xl text-gray-600">
             Property not found.
@@ -113,7 +262,11 @@ function PropertyDetails() {
 
   return (
     <>
-      <Navbar />
+   <Navbar
+  setShowLoginModal={
+    setShowLoginModal
+  }
+/>
 
       <section className="max-w-7xl mx-auto px-6 py-10">
 
@@ -124,7 +277,7 @@ function PropertyDetails() {
             Property Image Coming Soon
           </p>
         </div>
-        
+
 
         <div className="mt-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
 
@@ -134,12 +287,12 @@ function PropertyDetails() {
             </h1>
 
             <p className="text-gray-600 mt-2">
-            📍 {property.locality}, {property.address}, {property.city}, {property.state}
-          </p>
+              📍 {property.locality}, {property.address}, {property.city}, {property.state}
+            </p>
           </div>
 
           <div>
-            <h2 className="text-4xl font-bold text-blue-600"> 
+            <h2 className="text-4xl font-bold text-blue-600">
               ₹{" "}
               {property.price.toLocaleString()}
             </h2>
@@ -344,14 +497,14 @@ function PropertyDetails() {
                 details
               </p>
 
-            <button
-              onClick={() => {
-                window.location.href = "/";
-              }}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
-            >
-              Login
-            </button>
+              <button
+                onClick={() => {
+                  window.location.href = "/";
+                }}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+              >
+                Login
+              </button>
             </div>
           )}
 
@@ -396,31 +549,53 @@ function PropertyDetails() {
 
         </div>
 
-       {/* Similar Properties + Share */}
-          <div className="mt-10 flex flex-col md:flex-row justify-center gap-4">
+        {/* Similar Properties + Share */}
+        <div className="mt-10 flex flex-col md:flex-row justify-center gap-4">
 
-            <button
-              onClick={() =>
-                navigate(
-                  `/properties?type=${property.propertyType}&listingType=${property.listingType}`
-                )
-              }
-              className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-indigo-700 transition"
-            >
-              View Similar Properties
-            </button>
+          <button
+            onClick={() =>
+              navigate(
+                `/properties?type=${property.propertyType}&listingType=${property.listingType}`
+              )
+            }
+            className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-indigo-700 transition"
+          >
+            View Similar Properties
+          </button>
 
-            <button
-              onClick={handleShare}
-              className="bg-green-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-green-700 transition"
-            >
-              🔗 Share Property
-            </button>
+          <button
+            onClick={handleShare}
+            className="bg-green-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-green-700 transition"
+          >
+            🔗 Share Property
+          </button>
 
-          </div>
-
+        </div>
+        <ReviewSection
+          property={property}
+          user={user}
+          reviews={reviews}
+          loadingReviews={loadingReviews}
+          handleAddReview={handleAddReview}
+          handleDeleteReview={handleDeleteReview}
+          handleLike={handleLike}
+          handleDislike={handleDislike}
+          loadReviews={loadReviews}
+        />
       </section>
-
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({
+              show: false,
+              message: "",
+              type: "success",
+            })
+          }
+        />
+      )}
       <Footer />
     </>
   );
