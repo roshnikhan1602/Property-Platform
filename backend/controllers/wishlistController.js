@@ -2,26 +2,29 @@ const Wishlist = require("../models/wishlistModel");
 
 const addToWishlist = async (req, res) => {
   try {
-    const { userId, propertyId } = req.body;
+    const { userId, itemId, itemType } =
+      req.body;
 
     const existingWishlist =
       await Wishlist.findOne({
         userId,
-        propertyId,
+        itemId,
+        itemType,
       });
 
     if (existingWishlist) {
       return res.status(400).json({
         success: false,
         message:
-          "Property already in wishlist",
+          "Item already in wishlist",
       });
     }
 
     const wishlist =
       await Wishlist.create({
         userId,
-        propertyId,
+        itemId,
+        itemType,
       });
 
     res.status(201).json({
@@ -45,7 +48,7 @@ const getWishlist = async (req, res) => {
     const wishlist =
       await Wishlist.find({
         userId,
-      }).populate("propertyId");
+      }).populate("itemId");
 
     res.status(200).json({
       success: true,
@@ -61,33 +64,35 @@ const getWishlist = async (req, res) => {
   }
 };
 
-const removeFromWishlist = async (
-  req,
-  res
-) => {
-  try {
-    const { userId, propertyId } =
-      req.body;
+const removeFromWishlist =
+  async (req, res) => {
+    try {
+      const {
+        userId,
+        itemId,
+        itemType,
+      } = req.body;
 
-    await Wishlist.findOneAndDelete({
-      userId,
-      propertyId,
-    });
+      await Wishlist.findOneAndDelete({
+        userId,
+        itemId,
+        itemType,
+      });
 
-    res.status(200).json({
-      success: true,
-      message:
-        "Removed from wishlist",
-    });
-  } catch (error) {
-    console.error(error);
+      res.status(200).json({
+        success: true,
+        message:
+          "Removed from wishlist",
+      });
+    } catch (error) {
+      console.error(error);
 
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
-};
+      res.status(500).json({
+        success: false,
+        message: "Server Error",
+      });
+    }
+  };
 
 module.exports = {
   addToWishlist,

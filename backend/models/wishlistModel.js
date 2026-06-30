@@ -7,10 +7,16 @@ const wishlistSchema = new mongoose.Schema(
       required: true,
     },
 
-    propertyId: {
+    itemId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Property",
       required: true,
+      refPath: "itemType",
+    },
+
+    itemType: {
+      type: String,
+      required: true,
+      enum: ["Property", "PG"],
     },
   },
   {
@@ -18,4 +24,7 @@ const wishlistSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Wishlist", wishlistSchema);
+module.exports = mongoose.model(
+  "Wishlist",
+  wishlistSchema
+);

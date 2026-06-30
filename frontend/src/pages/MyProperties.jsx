@@ -55,71 +55,87 @@ function MyProperties() {
     }
   }, []);
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this property?"
+const handleDelete = async (id) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this property?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/properties/${id}`,
+      {
+        method: "DELETE",
+      }
     );
 
-    if (!confirmDelete) return;
+    const data = await response.json();
 
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/properties/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.success) {
-        const updatedProperties =
-          properties.filter(
-            (property) => property._id !== id
-          );
-
-        setProperties(updatedProperties);
-
-        setSuccessMessage(
-          "Property deleted successfully"
+    if (data.success) {
+      const updatedProperties =
+        properties.filter(
+          (property) =>
+            property._id !== id
         );
 
-        setTimeout(() => {
-          setSuccessMessage("");
-        }, 3000);
+      setProperties(updatedProperties);
 
-        if (
-          updatedProperties.length === 0 &&
-          user.role === "owner"
-        ) {
-          const updatedUser = {
-            ...user,
-            role: "user",
-          };
-
-          localStorage.setItem(
-            "user",
-            JSON.stringify(updatedUser)
-          );
-
-          setTimeout(() => {
-            navigate("/user-dashboard");
-            window.location.reload();
-          }, 1000);
-        }
-      }
-    } catch (error) {
-      console.error(error);
-
-      setErrorMessage(
-        "Failed to delete property"
+      setSuccessMessage(
+        "Property deleted successfully"
       );
 
       setTimeout(() => {
-        setErrorMessage("");
+        setSuccessMessage("");
       }, 3000);
+
+      // Fetch remaining PGs
+      const pgResponse = await fetch(
+        `http://localhost:5000/api/pgs/my-pgs/${user._id}`
+      );
+
+      const pgData =
+        await pgResponse.json();
+
+      const totalPGs =
+        pgData.success
+          ? pgData.pgs.length
+          : 0;
+
+      // Downgrade owner only when BOTH properties and PGs are zero
+      if (
+        updatedProperties.length === 0 &&
+        totalPGs === 0 &&
+        user.role === "owner"
+      ) {
+        const updatedUser = {
+          ...user,
+          role: "user",
+        };
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify(updatedUser)
+        );
+
+        setTimeout(() => {
+          navigate("/user-dashboard");
+          window.location.reload();
+        }, 1000);
+      }
     }
-  };
+  } catch (error) {
+    console.error(error);
+
+    setErrorMessage(
+      "Failed to delete property"
+    );
+
+    setTimeout(() => {
+      setErrorMessage("");
+    }, 3000);
+  }
+};
 
   return (
     <>

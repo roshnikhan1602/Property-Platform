@@ -14,14 +14,11 @@ import {
 
 function Navbar({
   setShowLoginModal = () => {},
+  sidebarOpen = false,
 }) {
   const [user, setUser] = useState(null);
-
-  const [showDropdown, setShowDropdown] =
-    useState(false);
-
-  const [scrolled, setScrolled] =
-    useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const dropdownRef = useRef(null);
 
@@ -29,8 +26,7 @@ function Navbar({
   const location = useLocation();
 
   useEffect(() => {
-    const loggedInUser =
-      localStorage.getItem("user");
+    const loggedInUser = localStorage.getItem("user");
 
     if (loggedInUser) {
       setUser(JSON.parse(loggedInUser));
@@ -38,14 +34,10 @@ function Navbar({
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (
-      event
-    ) => {
+    const handleClickOutside = (event) => {
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(
-          event.target
-        )
+        !dropdownRef.current.contains(event.target)
       ) {
         setShowDropdown(false);
       }
@@ -92,16 +84,19 @@ function Navbar({
   };
 
   const isTransparent =
-    location.pathname === "/" &&
-    !scrolled;
+    location.pathname === "/" && !scrolled;
 
   return (
     <nav
       className={`${
         isTransparent
-          ? "fixed top-0 left-0 w-full bg-transparent"
+          ? "fixed top-0 bg-transparent"
           : "sticky top-0 bg-white/95 backdrop-blur-md shadow-md"
-      } z-50 transition-all duration-300`}
+      } z-50 transition-all duration-300 ${
+        sidebarOpen
+          ? "ml-64 w-[calc(100%-16rem)]"
+          : "ml-16 w-[calc(100%-4rem)]"
+      }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
@@ -158,11 +153,8 @@ function Navbar({
         </div>
 
         <div className="flex items-center gap-4">
-
-          <button
-            onClick={() =>
-              navigate("/wishlist")
-            }
+                    <button
+            onClick={() => navigate("/wishlist")}
             className={`text-2xl hover:text-red-500 hover:scale-110 transition-all duration-300 cursor-pointer ${
               isTransparent
                 ? "text-white drop-shadow-lg"
@@ -180,16 +172,12 @@ function Navbar({
             >
               <button
                 onClick={() =>
-                  setShowDropdown(
-                    !showDropdown
-                  )
+                  setShowDropdown(!showDropdown)
                 }
                 className="flex items-center gap-2 cursor-pointer"
               >
                 <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold shadow-md">
-                  {user.name
-                    ?.charAt(0)
-                    .toUpperCase()}
+                  {user.name?.charAt(0).toUpperCase()}
                 </div>
 
                 <span
@@ -209,9 +197,7 @@ function Navbar({
                   <Link
                     to="/owner-profile"
                     className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
-                    onClick={() =>
-                      setShowDropdown(false)
-                    }
+                    onClick={() => setShowDropdown(false)}
                   >
                     <div className="flex items-center gap-2">
                       <FaUserCircle />
@@ -219,32 +205,22 @@ function Navbar({
                     </div>
                   </Link>
 
-                  {user.role ===
-                  "admin" ? (
+                  {user.role === "admin" ? (
                     <Link
                       to="/admin-dashboard"
                       className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
-                      onClick={() =>
-                        setShowDropdown(
-                          false
-                        )
-                      }
+                      onClick={() => setShowDropdown(false)}
                     >
                       <div className="flex items-center gap-2">
                         <FaTachometerAlt />
                         Admin Dashboard
                       </div>
                     </Link>
-                  ) : user.role ===
-                    "owner" ? (
+                  ) : user.role === "owner" ? (
                     <Link
                       to="/owner-dashboard"
                       className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
-                      onClick={() =>
-                        setShowDropdown(
-                          false
-                        )
-                      }
+                      onClick={() => setShowDropdown(false)}
                     >
                       <div className="flex items-center gap-2">
                         <FaTachometerAlt />
@@ -255,11 +231,7 @@ function Navbar({
                     <Link
                       to="/user-dashboard"
                       className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
-                      onClick={() =>
-                        setShowDropdown(
-                          false
-                        )
-                      }
+                      onClick={() => setShowDropdown(false)}
                     >
                       <div className="flex items-center gap-2">
                         <FaTachometerAlt />
@@ -269,9 +241,7 @@ function Navbar({
                   )}
 
                   <button
-                    onClick={
-                      handleLogout
-                    }
+                    onClick={handleLogout}
                     className="w-full text-left px-4 py-3 text-red-500 hover:bg-gray-100 cursor-pointer"
                   >
                     <div className="flex items-center gap-2">

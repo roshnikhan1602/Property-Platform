@@ -1,90 +1,65 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+import {
+  FaBars,
+  FaHome,
+  FaBed,
+  FaPlusCircle,
+  FaHeart,
+} from "react-icons/fa";
+
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
 function OwnerDashboard() {
   const [user, setUser] = useState(null);
 
-  const [totalProperties, setTotalProperties] =
-    useState(0);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [totalPGs, setTotalPGs] =
-    useState(0);
-
-  const [totalViews, setTotalViews] =
-    useState(0);
+  const [totalProperties, setTotalProperties] = useState(0);
+  const [totalPGs, setTotalPGs] = useState(0);
+  const [totalViews, setTotalViews] = useState(0);
 
   useEffect(() => {
-    const loggedInUser = JSON.parse(
-      localStorage.getItem("user")
-    );
+    const loggedInUser = JSON.parse(localStorage.getItem("user"));
 
     if (!loggedInUser) return;
 
     setUser(loggedInUser);
-
     fetchDashboardData(loggedInUser._id);
   }, []);
 
-  const fetchDashboardData = async (
-    userId
-  ) => {
+  const fetchDashboardData = async (userId) => {
     try {
-      const [
-        propertyResponse,
-        pgResponse,
-      ] = await Promise.all([
-        fetch(
-          `http://localhost:5000/api/properties/my-properties/${userId}`
-        ),
-        fetch(
-          `http://localhost:5000/api/pgs/my-pgs/${userId}`
-        ),
+      const [propertyResponse, pgResponse] = await Promise.all([
+        fetch(`http://localhost:5000/api/properties/my-properties/${userId}`),
+        fetch(`http://localhost:5000/api/pgs/my-pgs/${userId}`),
       ]);
 
-      const propertyData =
-        await propertyResponse.json();
-
-      const pgData =
-        await pgResponse.json();
+      const propertyData = await propertyResponse.json();
+      const pgData = await pgResponse.json();
 
       let properties = [];
       let pgs = [];
 
-      if (propertyData.success) {
-        properties =
-          propertyData.properties || [];
-      }
+      if (propertyData.success) properties = propertyData.properties || [];
+      if (pgData.success) pgs = pgData.pgs || [];
 
-      if (pgData.success) {
-        pgs = pgData.pgs || [];
-      }
-
-      setTotalProperties(
-        properties.length
-      );
-
+      setTotalProperties(properties.length);
       setTotalPGs(pgs.length);
 
-      const propertyViews =
-        properties.reduce(
-          (total, property) =>
-            total +
-            (property.views || 0),
-          0
-        );
-
-      const pgViews = pgs.reduce(
-        (total, pg) =>
-          total + (pg.views || 0),
+      const propertyViews = properties.reduce(
+        (total, property) => total + (property.views || 0),
         0
       );
 
-      setTotalViews(
-        propertyViews + pgViews
+      const pgViews = pgs.reduce(
+        (total, pg) => total + (pg.views || 0),
+        0
       );
+
+      setTotalViews(propertyViews + pgViews);
     } catch (error) {
       console.error(error);
     }
@@ -92,85 +67,150 @@ function OwnerDashboard() {
 
   return (
     <>
-      <Navbar />
+      <Navbar sidebarOpen={sidebarOpen} />
 
-      <section className="max-w-7xl mx-auto px-6 py-10">
+      {/* Sidebar */}
+      <div
+        onMouseEnter={() => setSidebarOpen(true)}
+        onMouseLeave={() => setSidebarOpen(false)}
+        className={`fixed top-0 left-0 h-screen bg-white shadow-xl z-50 overflow-hidden transition-all duration-300 ${
+          sidebarOpen ? "w-64" : "w-16"
+        }`}
+      >
+        {/* Hamburger */}
+        <div className="h-16 flex items-center justify-center border-b">
+          <FaBars className="text-xl text-blue-600" />
+        </div>
 
-        <h1 className="text-4xl font-bold mb-2">
-          Owner Dashboard
+        {/* Menu */}
+        <div className="flex flex-col gap-3 pt-8 px-2">
+
+          <Link
+            to="/my-properties"
+            className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-all"
+          >
+            <FaHome className="min-w-[22px]" />
+
+            <span
+              className={`transition-all duration-300 whitespace-nowrap ${
+                sidebarOpen ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              My Properties
+            </span>
+          </Link>
+
+          <Link
+            to="/my-pgs"
+            className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-purple-100 hover:text-purple-600 transition-all"
+          >
+            <FaBed className="min-w-[22px]" />
+
+            <span
+              className={`transition-all duration-300 whitespace-nowrap ${
+                sidebarOpen ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              My PGs
+            </span>
+          </Link>
+
+          <Link
+            to="/add-property"
+            className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-green-100 hover:text-green-600 transition-all"
+          >
+            <FaPlusCircle className="min-w-[22px]" />
+
+            <span
+              className={`transition-all duration-300 whitespace-nowrap ${
+                sidebarOpen ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              Add Property
+            </span>
+          </Link>
+
+          <Link
+            to="/add-pg"
+            className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-indigo-100 hover:text-indigo-600 transition-all"
+          >
+            <FaPlusCircle className="min-w-[22px]" />
+
+            <span
+              className={`transition-all duration-300 whitespace-nowrap ${
+                sidebarOpen ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              Add PG
+            </span>
+          </Link>
+
+          <Link
+            to="/wishlist"
+            className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-red-100 hover:text-red-600 transition-all"
+          >
+            <FaHeart className="min-w-[22px]" />
+
+            <span
+              className={`transition-all duration-300 whitespace-nowrap ${
+                sidebarOpen ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              Wishlist
+            </span>
+          </Link>
+
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div
+        className={`px-8 py-10 transition-all duration-300 ${
+          sidebarOpen ? "ml-64" : "ml-16"
+        }`}
+      >
+        <h1 className="text-3xl font-bold mb-2">
+          Welcome, {user?.name || "Owner"}
         </h1>
 
-        <p className="text-gray-600 mb-10">
-          Welcome back, {user?.name} 👋
+        <p className="text-gray-500 mb-10">
+          Manage your properties and PG listings in one place.
         </p>
 
-        <div className="grid md:grid-cols-3 gap-6">
-
-          <div className="bg-white shadow-lg rounded-2xl p-8">
-            <h2 className="text-lg text-gray-500">
+        {/* Dashboard Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                    <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300">
+            <h2 className="text-gray-500 text-lg">
               Total Properties
             </h2>
 
-            <p className="text-5xl font-bold text-blue-600 mt-3">
+            <p className="text-5xl font-bold text-blue-600 mt-4">
               {totalProperties}
             </p>
           </div>
 
-          <div className="bg-white shadow-lg rounded-2xl p-8">
-            <h2 className="text-lg text-gray-500">
+          <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300">
+            <h2 className="text-gray-500 text-lg">
               Total PGs
             </h2>
 
-            <p className="text-5xl font-bold text-purple-600 mt-3">
+            <p className="text-5xl font-bold text-purple-600 mt-4">
               {totalPGs}
             </p>
           </div>
 
-          <div className="bg-white shadow-lg rounded-2xl p-8">
-            <h2 className="text-lg text-gray-500">
+          <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300">
+            <h2 className="text-gray-500 text-lg">
               Total Views
             </h2>
 
-            <p className="text-5xl font-bold text-green-600 mt-3">
+            <p className="text-5xl font-bold text-green-600 mt-4">
               {totalViews}
             </p>
           </div>
 
         </div>
-
-        <div className="flex flex-col md:flex-row gap-4 mt-10">
-
-          <Link
-            to="/my-properties"
-            className="bg-blue-600 text-white px-8 py-4 rounded-xl font-medium text-center hover:bg-blue-700 transition"
-          >
-            My Properties
-          </Link>
-
-          <Link
-            to="/my-pgs"
-            className="bg-purple-600 text-white px-8 py-4 rounded-xl font-medium text-center hover:bg-purple-700 transition"
-          >
-            My PGs
-          </Link>
-
-          <Link
-            to="/add-property"
-            className="bg-green-600 text-white px-8 py-4 rounded-xl font-medium text-center hover:bg-green-700 transition"
-          >
-            Add Property
-          </Link>
-
-          <Link
-            to="/add-pg"
-            className="bg-indigo-600 text-white px-8 py-4 rounded-xl font-medium text-center hover:bg-indigo-700 transition"
-          >
-            Add PG
-          </Link>
-
-        </div>
-
-      </section>
+      </div>
 
       <Footer />
     </>

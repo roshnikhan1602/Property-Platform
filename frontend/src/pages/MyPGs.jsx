@@ -55,48 +55,85 @@ function MyPGs() {
     }
   }, []);
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this PG?"
+const handleDelete = async (id) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this PG?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/pgs/${id}`,
+      {
+        method: "DELETE",
+      }
     );
 
-    if (!confirmDelete) return;
+    const data = await response.json();
 
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/pgs/${id}`,
-        {
-          method: "DELETE",
-        }
+    if (data.success) {
+      const updatedPGs = pgs.filter(
+        (pg) => pg._id !== id
       );
 
-      const data = await response.json();
+      setPgs(updatedPGs);
 
-      if (data.success) {
-        setPgs(
-          pgs.filter((pg) => pg._id !== id)
-        );
-
-        setSuccessMessage(
-          "PG deleted successfully"
-        );
-
-        setTimeout(() => {
-          setSuccessMessage("");
-        }, 3000);
-      }
-    } catch (error) {
-      console.error(error);
-
-      setErrorMessage(
-        "Failed to delete PG"
+      setSuccessMessage(
+        "PG deleted successfully"
       );
 
       setTimeout(() => {
-        setErrorMessage("");
+        setSuccessMessage("");
       }, 3000);
+
+      // Check remaining properties
+      const propertyResponse = await fetch(
+        `http://localhost:5000/api/properties/my-properties/${user._id}`
+      );
+
+      const propertyData =
+        await propertyResponse.json();
+
+      const totalProperties =
+        propertyData.success
+          ? propertyData.properties.length
+          : 0;
+
+      // Downgrade only if NO PGs and NO Properties
+      if (
+        updatedPGs.length === 0 &&
+        totalProperties === 0 &&
+        user.role === "owner"
+      ) {
+        const updatedUser = {
+          ...user,
+          role: "user",
+        };
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify(updatedUser)
+        );
+
+        setTimeout(() => {
+          window.location.href =
+            "/user-dashboard";
+        }, 1000);
+      }
     }
-  };
+  } catch (error) {
+    console.error(error);
+
+    setErrorMessage(
+      "Failed to delete PG"
+    );
+
+    setTimeout(() => {
+      setErrorMessage("");
+    }, 3000);
+  }
+};
 
   return (
     <>

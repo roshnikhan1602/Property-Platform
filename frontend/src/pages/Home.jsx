@@ -9,6 +9,7 @@ import Footer from "../components/layout/Footer";
 
 import LoginModal from "../components/auth/LoginModal";
 import OTPModal from "../components/auth/OTPModal";
+import Chatbot from "../components/chatbot/Chatbot";
 
 function Home() {
   const [showLoginModal, setShowLoginModal] =
@@ -42,6 +43,8 @@ function Home() {
       <RecentlyViewed />
 
       <FeaturedProperties />
+
+      <Chatbot />
 
       <Footer />
 

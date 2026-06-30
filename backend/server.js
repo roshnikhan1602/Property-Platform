@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const pgRoutes = require("./routes/pgRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 
 dotenv.config();
 
@@ -44,6 +45,8 @@ app.use(
   "/api/pgs",
   pgRoutes
 );
+
+app.use("/api/chatbot",chatRoutes);
 
 app.get("/", (req, res) => {
   res.send(

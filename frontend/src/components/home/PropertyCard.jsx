@@ -35,20 +35,17 @@ function PropertyCard({ property }) {
           `http://localhost:5000/api/wishlist/${userId}`
         );
 
-        const data =
-          await response.json();
+        const data = await response.json();
 
         if (data.success) {
           const exists =
             data.wishlist.some(
               (item) =>
-                item.propertyId?._id ===
-                property._id
+                item.itemType === "Property" &&
+                item.itemId?._id === property._id
             );
 
-          if (exists) {
-            setSaved(true);
-          }
+          setSaved(exists);
         }
       } catch (error) {
         console.error(error);
@@ -82,12 +79,12 @@ function PropertyCard({ property }) {
         },
         body: JSON.stringify({
           userId,
-          propertyId: property._id,
+          itemId: property._id,
+          itemType: "Property",
         }),
       });
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (data.success) {
         setSaved(!saved);
@@ -155,6 +152,7 @@ function PropertyCard({ property }) {
       )}
 
       <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300">
+
         <div className="relative h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
 
           <button
@@ -173,10 +171,13 @@ function PropertyCard({ property }) {
           <p className="mt-3 text-gray-600 font-medium">
             Property Image Coming Soon
           </p>
+
         </div>
 
         <div className="p-5">
+
           <div className="flex justify-between items-start gap-3">
+
             <h3 className="text-xl font-bold text-gray-800">
               {property.title}
             </h3>
@@ -184,6 +185,7 @@ function PropertyCard({ property }) {
             <span className="bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
               {property.listingType}
             </span>
+
           </div>
 
           <p className="text-gray-500 mt-2 flex items-center gap-2">
@@ -198,6 +200,7 @@ function PropertyCard({ property }) {
           </p>
 
           <div className="mt-4 flex justify-between text-sm text-gray-600">
+
             <span className="bg-gray-100 px-3 py-1 rounded-full">
               {property.propertyType}
             </span>
@@ -205,9 +208,11 @@ function PropertyCard({ property }) {
             <span className="bg-gray-100 px-3 py-1 rounded-full">
               {property.area} sq.ft
             </span>
+
           </div>
 
           <div className="mt-5">
+
             <p className="text-sm text-gray-500">
               Starting From
             </p>
@@ -216,9 +221,11 @@ function PropertyCard({ property }) {
               ₹{" "}
               {property.price.toLocaleString()}
             </h4>
+
           </div>
 
           <div className="flex items-center justify-between mt-6">
+
             <button
               onClick={() =>
                 navigate(
@@ -231,6 +238,7 @@ function PropertyCard({ property }) {
             </button>
 
             <div className="text-right">
+
               <div className="text-yellow-500 text-2xl">
                 {"★".repeat(
                   filledStars
@@ -243,9 +251,13 @@ function PropertyCard({ property }) {
               <span className="text-sm font-medium text-gray-600">
                 {rating} Rating
               </span>
+
             </div>
+
           </div>
+
         </div>
+
       </div>
     </>
   );

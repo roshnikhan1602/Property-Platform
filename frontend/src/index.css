@@ -14,3 +14,21 @@
 .animate-fade-in {
   animation: fade-in 0.25s ease;
 }
+
+@keyframes floatChatbot {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.chatbot-float {
+  animation: floatChatbot 2.8s ease-in-out infinite;
+}

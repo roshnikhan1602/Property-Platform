@@ -22,6 +22,7 @@ import PGDetails from "./pages/PGDetails";
 import AddPG from "./pages/AddPG";
 
 import MyPGs from "./pages/MyPGs";
+import Chatbot from "./components/chatbot/Chatbot";
 
 function App() {
   return (
@@ -150,9 +151,10 @@ function App() {
               <MyPGs />
             </ProtectedRoute>
           }
-/>
-
+        />
       </Routes>
+
+      <Chatbot />
     </BrowserRouter>
   );
 }
