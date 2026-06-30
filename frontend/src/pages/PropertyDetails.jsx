@@ -21,38 +21,68 @@ function PropertyDetails({
   const navigate = useNavigate();
 
   const [property, setProperty] = useState(null);
+  const [selectedImage, setSelectedImage] = useState("");
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
-  const [loadingReviews, setLoadingReviews] =
-    useState(false);
+  const [loadingReviews, setLoadingReviews] = useState(false);
   const [toast, setToast] = useState({
-    show: false,
-    message: "",
-    type: "success",
-  });
+  show: false,
+  message: "",
+  type: "success",
+});
 
-  const handleShare = async () => {
-    try {
-      await navigator.clipboard.writeText(
-        window.location.href
-      );
+const handleNextImage = () => {
+  const currentIndex =
+    property.images.indexOf(selectedImage);
 
-      setToast({
-        show: true,
-        message: "Property link copied successfully!",
-        type: "success",
-      });
-    } catch (error) {
-      console.error(error);
+  const nextIndex =
+    (currentIndex + 1) %
+    property.images.length;
 
-      setToast({
-        show: true,
-        message: "Unable to copy link.",
-        type: "error",
-      });
-    }
-  };
-  const loadReviews = async () => {
+  setSelectedImage(
+    property.images[nextIndex]
+  );
+};
+
+const handlePreviousImage = () => {
+  const currentIndex =
+    property.images.indexOf(selectedImage);
+
+  const previousIndex =
+    (currentIndex -
+      1 +
+      property.images.length) %
+    property.images.length;
+
+  setSelectedImage(
+    property.images[previousIndex]
+  );
+};
+
+const handleShare = async () => {
+  try {
+    await navigator.clipboard.writeText(
+      window.location.href
+    );
+
+    setToast({
+      show: true,
+      message:
+        "Property link copied successfully!",
+      type: "success",
+    });
+  } catch (error) {
+    console.error(error);
+
+    setToast({
+      show: true,
+      message: "Unable to copy link.",
+      type: "error",
+    });
+  }
+};
+
+const loadReviews = async () => {
     try {
       setLoadingReviews(true);
 
@@ -180,6 +210,14 @@ function PropertyDetails({
 
         if (data.success) {
           setProperty(data.property);
+          if (
+            data.property.images &&
+            data.property.images.length > 0
+          ) {
+            setSelectedImage(
+              data.property.images[0]
+            );
+          }
 
           await fetch(
             `http://localhost:5000/api/properties/${id}/view`,
@@ -228,10 +266,10 @@ function PropertyDetails({
     return (
       <>
         <Navbar
-  setShowLoginModal={
-    setShowLoginModal
-  }
-/>
+          setShowLoginModal={
+            setShowLoginModal
+          }
+        />
         <div className="text-center py-20">
           <h2 className="text-xl text-gray-600">
             Loading property details...
@@ -245,11 +283,11 @@ function PropertyDetails({
   if (!property) {
     return (
       <>
-       <Navbar
-  setShowLoginModal={
-    setShowLoginModal
-  }
-/>
+        <Navbar
+          setShowLoginModal={
+            setShowLoginModal
+          }
+        />
         <div className="text-center py-20">
           <h2 className="text-xl text-gray-600">
             Property not found.
@@ -262,22 +300,84 @@ function PropertyDetails({
 
   return (
     <>
-   <Navbar
-  setShowLoginModal={
-    setShowLoginModal
-  }
-/>
+      <Navbar
+        setShowLoginModal={
+          setShowLoginModal
+        }
+      />
 
       <section className="max-w-7xl mx-auto px-6 py-10">
 
-        <div className="h-96 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
-          <div className="text-7xl">🏠</div>
+        <div className="rounded-2xl overflow-hidden">
 
-          <p className="mt-4 text-gray-600 text-lg">
-            Property Image Coming Soon
-          </p>
-        </div>
+<div className="relative h-96 rounded-2xl overflow-hidden border">
+   {selectedImage ? (
+  <>
+    <img
+      src={selectedImage}
+      alt={property.title}
+      className="w-full h-full object-cover"
+    />
 
+    {property.images &&
+property.images.length > 1 && (
+  <>
+    <button
+      onClick={handlePreviousImage}
+      className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/80 hover:bg-white shadow-lg flex items-center justify-center text-2xl transition"
+    >
+      ‹
+    </button>
+
+    <button
+      onClick={handleNextImage}
+      className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/80 hover:bg-white shadow-lg flex items-center justify-center text-2xl transition"
+    >
+      ›
+    </button>
+  </>
+)}
+  </>
+      
+    ) : (
+      <div className="h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+        <p className="text-lg text-gray-600">
+          No Image Available
+        </p>
+      </div>
+    )}
+  </div>
+
+  {property.images &&
+    property.images.length > 1 && (
+
+    <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
+
+      {property.images.map(
+        (image, index) => (
+
+          <img
+            key={index}
+            src={image}
+            alt={`Property ${index + 1}`}
+            onClick={() =>
+              setSelectedImage(image)
+            }
+            className={`w-28 h-20 rounded-lg object-cover cursor-pointer border-2 transition ${
+              selectedImage === image
+                ? "border-blue-600"
+                : "border-transparent hover:border-gray-300"
+            }`}
+          />
+
+        )
+      )}
+
+    </div>
+
+  )}
+
+</div>
 
         <div className="mt-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
 

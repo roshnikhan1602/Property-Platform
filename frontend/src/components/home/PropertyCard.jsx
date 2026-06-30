@@ -155,27 +155,43 @@ function PropertyCard({ property }) {
 
       <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300">
 
-        <div className="relative h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
+        <div className="relative h-56 overflow-hidden">
 
-          <button
-            onClick={handleWishlist}
-            className="absolute top-4 right-4 bg-white/90 p-3 rounded-full shadow-md hover:scale-110 transition-all duration-300 cursor-pointer"
-          >
-            {saved ? (
-              <FaHeart className="text-red-500 text-xl" />
-            ) : (
-              <FaRegHeart className="text-gray-600 text-xl" />
-            )}
-          </button>
+  {property.images &&
+  property.images.length > 0 ? (
 
-          <FaHome className="text-5xl text-blue-600" />
+    <img
+      src={property.images[0]}
+      alt={property.title}
+      className="w-full h-full object-cover"
+    />
 
-          <p className="mt-3 text-gray-600 font-medium">
-            Property Image Coming Soon
-          </p>
+  ) : (
 
-        </div>
+    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
 
+      <FaHome className="text-5xl text-blue-600" />
+
+      <p className="mt-3 text-gray-600 font-medium">
+        Property Image Coming Soon
+      </p>
+
+    </div>
+
+  )}
+
+  <button
+    onClick={handleWishlist}
+    className="absolute top-4 right-4 bg-white/90 p-3 rounded-full shadow-md hover:scale-110 transition-all duration-300 cursor-pointer"
+  >
+    {saved ? (
+      <FaHeart className="text-red-500 text-xl" />
+    ) : (
+      <FaRegHeart className="text-gray-600 text-xl" />
+    )}
+  </button>
+
+</div>
         <div className="p-5">
 
           <div className="flex justify-between items-start gap-3">

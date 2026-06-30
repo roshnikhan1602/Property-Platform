@@ -25,6 +25,7 @@ import AdminRoute from "./components/AdminRoute";
 import PGListing from "./pages/PGListing";
 import PGDetails from "./pages/PGDetails";
 import AddPG from "./pages/AddPG";
+import EditPG from "./pages/EditPG";
 import MyPGs from "./pages/MyPGs";
 
 import LoginModal from "./components/auth/LoginModal";
@@ -234,6 +235,19 @@ function App() {
           element={
             <ProtectedRoute>
               <AddPG
+                setShowLoginModal={
+                  setShowLoginModal
+                }
+              />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/edit-pg/:id"
+          element={
+            <ProtectedRoute>
+              <EditPG
                 setShowLoginModal={
                   setShowLoginModal
                 }

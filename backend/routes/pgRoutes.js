@@ -2,6 +2,8 @@ const express = require("express");
 
 const router = express.Router();
 
+const upload = require("../middleware/upload");
+
 const {
   addPG,
   getAllPGs,
@@ -12,7 +14,11 @@ const {
   incrementPGViews,
 } = require("../controllers/pgController");
 
-router.post("/", addPG);
+router.post(
+  "/",
+  upload.array("images", 10),
+  addPG
+);
 
 router.get("/", getAllPGs);
 
@@ -28,7 +34,11 @@ router.put(
 
 router.get("/:id", getPGById);
 
-router.put("/:id", updatePG);
+router.put(
+  "/:id",
+  upload.array("images", 10),
+  updatePG
+);
 
 router.delete("/:id", deletePG);
 

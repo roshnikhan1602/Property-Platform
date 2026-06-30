@@ -1,9 +1,49 @@
 const Property = require("../models/Property");
 const User = require("../models/User");
+const cloudinary = require("../config/cloudinary");
+const streamifier = require("streamifier");
 
 const addProperty = async (req, res) => {
   try {
-    const property = await Property.create(req.body);
+      console.log(req.files);
+    const imageUrls = [];
+
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const uploadedImage =
+          await new Promise(
+            (resolve, reject) => {
+              const uploadStream =
+                cloudinary.uploader.upload_stream(
+                  {
+                    folder: "property-platform",
+                  },
+                  (error, result) => {
+                    if (error) {
+                      reject(error);
+                    } else {
+                      resolve(result);
+                    }
+                  }
+                );
+
+              streamifier
+                .createReadStream(file.buffer)
+                .pipe(uploadStream);
+            }
+          );
+
+        imageUrls.push(
+          uploadedImage.secure_url
+        );
+      }
+    }
+
+    const property =
+      await Property.create({
+        ...req.body,
+        images: imageUrls,
+      });
 
     const user = await User.findById(
       req.body.owner
@@ -16,11 +56,15 @@ const addProperty = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Property added successfully",
+      message:
+        "Property added successfully",
       property,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -85,32 +129,82 @@ const getPropertyById = async (req, res) => {
 
 const updateProperty = async (req, res) => {
   try {
-    const property = await Property.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-      }
+    const property = await Property.findById(
+      req.params.id
     );
 
     if (!property) {
       return res.status(404).json({
+        success: false,
         message: "Property not found",
       });
     }
 
+    let imageUrls = property.images;
+
+    if (req.files && req.files.length > 0) {
+      imageUrls = [];
+
+      for (const file of req.files) {
+        const uploadedImage =
+          await new Promise(
+            (resolve, reject) => {
+              const uploadStream =
+                cloudinary.uploader.upload_stream(
+                  {
+                    folder:
+                      "property-platform",
+                  },
+                  (error, result) => {
+                    if (error) {
+                      reject(error);
+                    } else {
+                      resolve(result);
+                    }
+                  }
+                );
+
+              streamifier
+                .createReadStream(
+                  file.buffer
+                )
+                .pipe(uploadStream);
+            }
+          );
+
+        imageUrls.push(
+          uploadedImage.secure_url
+        );
+      }
+    }
+
+    const updatedProperty =
+      await Property.findByIdAndUpdate(
+        req.params.id,
+        {
+          ...req.body,
+          images: imageUrls,
+        },
+        {
+          new: true,
+        }
+      );
+
     res.status(200).json({
       success: true,
-      message: "Property updated successfully",
-      property,
+      message:
+        "Property updated successfully",
+      property: updatedProperty,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
 };
-
 const deleteProperty = async (req, res) => {
   try {
     const property = await Property.findByIdAndDelete(

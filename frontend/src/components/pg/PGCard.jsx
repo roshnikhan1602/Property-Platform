@@ -26,15 +26,28 @@ function PGCard({ pg }) {
   return (
     <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300">
 
-      <div className="relative h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
+     <div className="relative h-56">
 
-        <FaBed className="text-5xl text-blue-600" />
+  {pg?.images &&
+  pg.images.length > 0 ? (
+    <img
+      src={pg.images[0]}
+      alt={pg.title}
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
 
-        <p className="mt-3 text-gray-600 font-medium">
-          PG Image Coming Soon
-        </p>
+      <FaBed className="text-5xl text-blue-600" />
 
-      </div>
+      <p className="mt-3 text-gray-600 font-medium">
+        PG Image Coming Soon
+      </p>
+
+    </div>
+  )}
+
+</div>
 
       <div className="p-5">
 

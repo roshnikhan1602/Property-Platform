@@ -1,13 +1,56 @@
 const PG = require("../models/PG");
 const User = require("../models/User");
+const cloudinary = require("../config/cloudinary");
+const streamifier = require("streamifier");
 
 const addPG = async (req, res) => {
   try {
-    const pg = await PG.create(req.body);
+    const imageUrls = [];
 
-    await User.findByIdAndUpdate(req.body.owner, {
-      role: "owner",
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const uploadedImage =
+          await new Promise(
+            (resolve, reject) => {
+              const uploadStream =
+                cloudinary.uploader.upload_stream(
+                  {
+                    folder: "property-platform/pgs",
+                  },
+                  (error, result) => {
+                    if (error) {
+                      reject(error);
+                    } else {
+                      resolve(result);
+                    }
+                  }
+                );
+
+              streamifier
+                .createReadStream(file.buffer)
+                .pipe(uploadStream);
+            }
+          );
+
+        imageUrls.push(
+          uploadedImage.secure_url
+        );
+      }
+    }
+
+    const pg = await PG.create({
+      ...req.body,
+      images: imageUrls,
     });
+
+    const user = await User.findById(
+      req.body.owner
+    );
+
+    if (user && user.role === "user") {
+      user.role = "owner";
+      await user.save();
+    }
 
     res.status(201).json({
       success: true,
@@ -15,7 +58,10 @@ const addPG = async (req, res) => {
       pg,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -33,6 +79,7 @@ const getAllPGs = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -50,6 +97,7 @@ const getMyPGs = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -57,10 +105,13 @@ const getMyPGs = async (req, res) => {
 
 const getPGById = async (req, res) => {
   try {
-    const pg = await PG.findById(req.params.id);
+    const pg = await PG.findById(
+      req.params.id
+    );
 
     if (!pg) {
       return res.status(404).json({
+        success: false,
         message: "PG not found",
       });
     }
@@ -71,6 +122,7 @@ const getPGById = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -78,18 +130,75 @@ const getPGById = async (req, res) => {
 
 const updatePG = async (req, res) => {
   try {
-    const pg = await PG.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
+    const pg = await PG.findById(
+      req.params.id
     );
+
+    if (!pg) {
+      return res.status(404).json({
+        success: false,
+        message: "PG not found",
+      });
+    }
+
+    let imageUrls = pg.images;
+
+    if (req.files && req.files.length > 0) {
+      imageUrls = [];
+
+      for (const file of req.files) {
+        const uploadedImage =
+          await new Promise(
+            (resolve, reject) => {
+              const uploadStream =
+                cloudinary.uploader.upload_stream(
+                  {
+                    folder: "property-platform/pgs",
+                  },
+                  (error, result) => {
+                    if (error) {
+                      reject(error);
+                    } else {
+                      resolve(result);
+                    }
+                  }
+                );
+
+              streamifier
+                .createReadStream(file.buffer)
+                .pipe(uploadStream);
+            }
+          );
+
+        imageUrls.push(
+          uploadedImage.secure_url
+        );
+      }
+    }
+
+    const updatedPG =
+      await PG.findByIdAndUpdate(
+        req.params.id,
+        {
+          ...req.body,
+          images: imageUrls,
+        },
+        {
+          new: true,
+        }
+      );
 
     res.status(200).json({
       success: true,
-      pg,
+      message:
+        "PG updated successfully",
+      pg: updatedPG,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -97,28 +206,70 @@ const updatePG = async (req, res) => {
 
 const deletePG = async (req, res) => {
   try {
-    await PG.findByIdAndDelete(req.params.id);
+    const pg = await PG.findByIdAndDelete(
+      req.params.id
+    );
+
+    if (!pg) {
+      return res.status(404).json({
+        success: false,
+        message: "PG not found",
+      });
+    }
+
+    const remainingPGs =
+      await PG.countDocuments({
+        owner: pg.owner,
+      });
+
+    if (remainingPGs === 0) {
+      const user = await User.findById(
+        pg.owner
+      );
+
+      if (
+        user &&
+        user.role === "owner"
+      ) {
+        user.role = "user";
+        await user.save();
+      }
+    }
 
     res.status(200).json({
       success: true,
-      message: "PG deleted successfully",
+      message:
+        "PG deleted successfully",
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
 };
 
-const incrementPGViews = async (req, res) => {
+const incrementPGViews = async (
+  req,
+  res
+) => {
   try {
     const pg = await PG.findByIdAndUpdate(
       req.params.id,
       {
         $inc: { views: 1 },
       },
-      { new: true }
+      {
+        new: true,
+      }
     );
+
+    if (!pg) {
+      return res.status(404).json({
+        success: false,
+        message: "PG not found",
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -126,6 +277,7 @@ const incrementPGViews = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }

@@ -4,6 +4,12 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
+import {
+  FaArrowLeft,
+  FaMapMarkerAlt,
+  FaHome,
+} from "react-icons/fa";
+
 function Wishlist() {
   const navigate = useNavigate();
 
@@ -42,7 +48,9 @@ function Wishlist() {
     }
   };
 
-  const removeFromWishlist = async (wishlistId) => {
+  const removeFromWishlist = async (
+    wishlistId
+  ) => {
     try {
       const response = await fetch(
         `http://localhost:5000/api/wishlist/${wishlistId}`,
@@ -56,7 +64,8 @@ function Wishlist() {
       if (data.success) {
         setWishlist(
           wishlist.filter(
-            (item) => item._id !== wishlistId
+            (item) =>
+              item._id !== wishlistId
           )
         );
       }
@@ -91,7 +100,8 @@ function Wishlist() {
           onClick={() => navigate(-1)}
           className="mb-6 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-100 transition cursor-pointer"
         >
-          ← Back
+          <FaArrowLeft className="inline mr-2" />
+          Back
         </button>
 
         <h1 className="text-4xl font-bold">
@@ -117,25 +127,57 @@ function Wishlist() {
                 className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition"
               >
 
-                <div className="h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
-                  <div className="text-5xl">
-                    🏠
-                  </div>
+                <div className="h-56">
+
+                  {item.propertyId?.images &&
+                  item.propertyId.images
+                    .length > 0 ? (
+                    <img
+                      src={
+                        item.propertyId
+                          .images[0]
+                      }
+                      alt={
+                        item.propertyId
+                          .title
+                      }
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                      <FaHome className="text-5xl text-blue-600" />
+                    </div>
+                  )}
+
                 </div>
 
                 <div className="p-5">
 
                   <h3 className="text-xl font-bold">
-                    {item.propertyId?.title}
+                    {
+                      item.propertyId
+                        ?.title
+                    }
                   </h3>
 
-                  <p className="text-gray-500 mt-2">
-                    📍 {item.propertyId?.city},{" "}
-                    {item.propertyId?.state}
-                  </p>
+                  <div className="flex items-center gap-2 text-gray-500 mt-2">
+                    <FaMapMarkerAlt className="text-red-500" />
+                    <span>
+                      {
+                        item.propertyId
+                          ?.city
+                      }
+                      ,{" "}
+                      {
+                        item.propertyId
+                          ?.state
+                      }
+                    </span>
+                  </div>
 
                   <h4 className="text-2xl font-bold text-blue-600 mt-4">
-                    ₹ {item.propertyId?.price?.toLocaleString()}
+                    ₹{" "}
+                    {item.propertyId?.price?.toLocaleString()}
                   </h4>
 
                   <div className="grid grid-cols-2 gap-3 mt-5">
@@ -153,7 +195,9 @@ function Wishlist() {
 
                     <button
                       onClick={() =>
-                        removeFromWishlist(item._id)
+                        removeFromWishlist(
+                          item._id
+                        )
                       }
                       className="border border-red-500 text-red-500 py-3 rounded-xl hover:bg-red-500 hover:text-white transition cursor-pointer"
                     >

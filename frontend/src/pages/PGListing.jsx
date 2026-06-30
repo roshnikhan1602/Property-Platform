@@ -4,6 +4,11 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
 import PGCard from "../components/pg/PGCard";
+import {
+  FaMapMarkerAlt,
+  FaBed,
+  FaUsers,
+} from "react-icons/fa";
 
 function PGListing({
   setShowLoginModal,
@@ -189,13 +194,14 @@ function PGListing({
 
             {city && (
               <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm">
-                📍 {city}
+                <FaMapMarkerAlt className="inline mr-2" />
+                {city}
               </span>
             )}
 
             {gender && (
               <span className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm">
-                🛏️{" "}
+                <FaBed className="inline mr-2" />
                 {gender === "Unisex"
                   ? "Co-live"
                   : gender}
@@ -204,7 +210,8 @@ function PGListing({
 
             {sharingType && (
               <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm">
-                👥 {sharingType}
+                <FaUsers className="inline mr-2" />
+                {sharingType}
               </span>
             )}
 
@@ -226,7 +233,7 @@ function PGListing({
           <div className="text-center mt-16">
 
             <div className="text-6xl">
-              🛏️
+              <FaBed className="inline mr-2" />
             </div>
 
             <h2 className="text-2xl font-bold mt-4">

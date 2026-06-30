@@ -157,15 +157,25 @@ function MyPGs() {
                 className="bg-white rounded-xl shadow-md border border-gray-100 p-5 hover:shadow-lg transition"
               >
 
-                <div className="flex items-center gap-3 mb-3">
+                <div className="h-52 rounded-xl overflow-hidden mb-4">
 
-                  <FaBed className="text-purple-600 text-xl" />
-
-                  <h2 className="text-xl font-bold text-gray-800">
-                    {pg.title}
-                  </h2>
+                  {pg.images && pg.images.length > 0 ? (
+                    <img
+                      src={pg.images[0]}
+                      alt={pg.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                      <FaBed className="text-5xl text-blue-600" />
+                    </div>
+                  )}
 
                 </div>
+
+                <h2 className="text-xl font-bold text-gray-800">
+                  {pg.title}
+                </h2>
 
                 <p className="text-gray-500 mt-2 flex items-center gap-2">
                   <FaMapMarkerAlt className="text-red-500" />
@@ -199,7 +209,13 @@ function MyPGs() {
                     <FaExternalLinkAlt />
                     View
                   </Link>
-
+                  <Link
+                    to={`/edit-pg/${pg._id}`}
+                    className="flex-1 bg-yellow-500 text-white py-2 rounded-lg text-sm hover:bg-yellow-600 transition flex items-center justify-center gap-2"
+                  >
+                    <FaEdit />
+                    Edit
+                  </Link>
                   <button
                     onClick={() =>
                       handleDelete(pg._id)
