@@ -41,8 +41,8 @@ function PropertyCard({ property }) {
           const exists =
             data.wishlist.some(
               (item) =>
-                item.itemType === "Property" &&
-                item.itemId?._id === property._id
+                item.propertyId?._id ===
+                property._id
             );
 
           setSaved(exists);
@@ -130,10 +130,13 @@ function PropertyCard({ property }) {
       : "N/A";
 
   const rating =
-    property.rating || 4.5;
+    property.averageRating || 0;
 
   const filledStars =
     Math.floor(rating);
+
+  const totalReviews =
+    property.totalReviews || 0;
 
   return (
     <>
@@ -238,7 +241,6 @@ function PropertyCard({ property }) {
             </button>
 
             <div className="text-right">
-
               <div className="text-yellow-500 text-2xl">
                 {"★".repeat(
                   filledStars
@@ -251,7 +253,6 @@ function PropertyCard({ property }) {
               <span className="text-sm font-medium text-gray-600">
                 {rating} Rating
               </span>
-
             </div>
 
           </div>
@@ -259,6 +260,7 @@ function PropertyCard({ property }) {
         </div>
 
       </div>
+
     </>
   );
 }

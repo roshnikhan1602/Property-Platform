@@ -42,6 +42,11 @@ app.use(
 );
 
 app.use(
+  "/api/reviews",
+  require("./routes/reviewRoutes")
+);
+
+app.use(
   "/api/pgs",
   pgRoutes
 );

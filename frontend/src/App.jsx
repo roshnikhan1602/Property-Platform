@@ -1,4 +1,9 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 
 import Home from "./pages/Home";
 import PropertyListing from "./pages/PropertyListing";
@@ -20,45 +25,90 @@ import AdminRoute from "./components/AdminRoute";
 import PGListing from "./pages/PGListing";
 import PGDetails from "./pages/PGDetails";
 import AddPG from "./pages/AddPG";
-
 import MyPGs from "./pages/MyPGs";
-import Chatbot from "./components/chatbot/Chatbot";
 
 function App() {
+  const [showLoginModal, setShowLoginModal] =
+    useState(false);
+
+  const [showOTPModal, setShowOTPModal] =
+    useState(false);
+
+  const [mobileNumber, setMobileNumber] =
+    useState("");
+
+  const [userName, setUserName] =
+    useState("");
+
   return (
     <BrowserRouter>
+
       <Routes>
 
         <Route
           path="/"
-          element={<Home />}
+          element={
+            <Home
+              setShowLoginModal={
+                setShowLoginModal
+              }
+            />
+          }
         />
 
         <Route
           path="/properties"
-          element={<PropertyListing />}
+          element={
+            <PropertyListing
+              setShowLoginModal={
+                setShowLoginModal
+              }
+            />
+          }
         />
 
         <Route
           path="/properties/:id"
-          element={<PropertyDetails />}
+          element={
+            <PropertyDetails
+              setShowLoginModal={
+                setShowLoginModal
+              }
+            />
+          }
         />
 
         <Route
           path="/contact-support"
-          element={<ContactSupport />}
+          element={
+            <ContactSupport
+              setShowLoginModal={
+                setShowLoginModal
+              }
+            />
+          }
         />
 
         <Route
           path="/about"
-          element={<About />}
+          element={
+            <About
+              setShowLoginModal={
+                setShowLoginModal
+              }
+            />
+          }
         />
 
         <Route
           path="/add-property"
           element={
             <ProtectedRoute>
-              <AddProperty />
+              <AddProperty
+                setShowLoginModal={
+                  setShowLoginModal
+                }
+              />
             </ProtectedRoute>
           }
         />
@@ -67,7 +117,11 @@ function App() {
           path="/edit-property/:id"
           element={
             <ProtectedRoute>
-              <EditProperty />
+              <EditProperty
+                setShowLoginModal={
+                  setShowLoginModal
+                }
+              />
             </ProtectedRoute>
           }
         />
@@ -76,7 +130,11 @@ function App() {
           path="/my-properties"
           element={
             <ProtectedRoute>
-              <MyProperties />
+              <MyProperties
+                setShowLoginModal={
+                  setShowLoginModal
+                }
+              />
             </ProtectedRoute>
           }
         />
@@ -85,7 +143,11 @@ function App() {
           path="/owner-dashboard"
           element={
             <ProtectedRoute>
-              <OwnerDashboard />
+              <OwnerDashboard
+                setShowLoginModal={
+                  setShowLoginModal
+                }
+              />
             </ProtectedRoute>
           }
         />
@@ -94,7 +156,11 @@ function App() {
           path="/user-dashboard"
           element={
             <ProtectedRoute>
-              <UserDashboard />
+              <UserDashboard
+                setShowLoginModal={
+                  setShowLoginModal
+                }
+              />
             </ProtectedRoute>
           }
         />
@@ -103,7 +169,11 @@ function App() {
           path="/owner-profile"
           element={
             <ProtectedRoute>
-              <OwnerProfile />
+              <OwnerProfile
+                setShowLoginModal={
+                  setShowLoginModal
+                }
+              />
             </ProtectedRoute>
           }
         />
@@ -112,7 +182,11 @@ function App() {
           path="/wishlist"
           element={
             <ProtectedRoute>
-              <Wishlist />
+              <Wishlist
+                setShowLoginModal={
+                  setShowLoginModal
+                }
+              />
             </ProtectedRoute>
           }
         />
@@ -121,25 +195,46 @@ function App() {
           path="/admin-dashboard"
           element={
             <AdminRoute>
-              <AdminDashboard />
+              <AdminDashboard
+                setShowLoginModal={
+                  setShowLoginModal
+                }
+              />
             </AdminRoute>
           }
         />
+
         <Route
           path="/pgs"
-          element={<PGListing />}
+          element={
+            <PGListing
+              setShowLoginModal={
+                setShowLoginModal
+              }
+            />
+          }
         />
 
         <Route
           path="/pgs/:id"
-          element={<PGDetails />}
+          element={
+            <PGDetails
+              setShowLoginModal={
+                setShowLoginModal
+              }
+            />
+          }
         />
 
         <Route
           path="/add-pg"
           element={
             <ProtectedRoute>
-              <AddPG />
+              <AddPG
+                setShowLoginModal={
+                  setShowLoginModal
+                }
+              />
             </ProtectedRoute>
           }
         />
@@ -148,13 +243,16 @@ function App() {
           path="/my-pgs"
           element={
             <ProtectedRoute>
-              <MyPGs />
+              <MyPGs
+                setShowLoginModal={
+                  setShowLoginModal
+                }
+              />
             </ProtectedRoute>
           }
-        />
-      </Routes>
+/>
 
-      <Chatbot />
+      </Routes>
     </BrowserRouter>
   );
 }
