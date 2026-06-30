@@ -43,6 +43,7 @@ function AddProperty() {
     ownerPhone: "",
     ownerEmail: "",
   });
+  const [images, setImages] = useState([]);
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -86,20 +87,25 @@ function AddProperty() {
     const user = JSON.parse(
       localStorage.getItem("user")
     );
+    const form = new FormData();
+
+Object.keys(formData).forEach((key) => {
+  form.append(key, formData[key]);
+});
+
+form.append("owner", user._id);
+
+images.forEach((image) => {
+  form.append("images", image);
+});
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/properties",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...formData,
-            owner: user._id,
-          }),
-        }
-      );
+     const response = await fetch(
+  "http://localhost:5000/api/properties",
+  {
+    method: "POST",
+    body: form,
+  }
+);
 
       const data = await response.json();
 
@@ -176,7 +182,7 @@ function AddProperty() {
           }
         />
       )}
-     <section className="max-w-5xl mx-auto px-6 pt-28 pb-10">
+      <section className="max-w-5xl mx-auto px-6 pt-28 pb-10">
         <div className="bg-white shadow-lg rounded-2xl p-8">
 
           <h1 className="text-4xl font-bold flex items-center gap-3">
@@ -242,7 +248,7 @@ function AddProperty() {
                   <option value="">Select Listing Type</option>
                   <option value="Rent">Rent</option>
                   <option value="Sale">Sale</option>
-                   <option value="Sale">Lease</option>
+                  <option value="Sale">Lease</option>
 
                 </select>
               </div>
@@ -420,7 +426,37 @@ function AddProperty() {
                   className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 />
               </div>
+              <div className="mt-8">
+                <label className="block mb-2 font-medium">
+                  Property Images
+                </label>
 
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) =>
+                    setImages([...e.target.files])
+                  }
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                />
+
+                <p className="text-sm text-gray-500 mt-2">
+                  You can select multiple images.
+                </p>
+                {images.length > 0 && (
+  <div className="mt-3 space-y-1">
+    {images.map((image, index) => (
+      <p
+        key={index}
+        className="text-sm text-gray-600"
+      >
+        {image.name}
+      </p>
+    ))}
+  </div>
+)}
+              </div>
             </div>
             <div className="mt-8">
               <h2 className="text-2xl font-semibold mb-4">

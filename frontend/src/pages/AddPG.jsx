@@ -5,7 +5,7 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
 import Toast from "../components/common/Toast";
-
+import { FaTimes } from "react-icons/fa";
 function AddPG() {
   const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ function AddPG() {
     ownerPhone: "",
     ownerEmail: "",
   });
-
+  const [images, setImages] = useState([]);
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -86,20 +86,23 @@ function AddPG() {
     const user = JSON.parse(
       localStorage.getItem("user")
     );
+    const form = new FormData();
 
+    Object.keys(formData).forEach((key) => {
+      form.append(key, formData[key]);
+    });
+
+    form.append("owner", user._id);
+
+    images.forEach((image) => {
+      form.append("images", image);
+    });
     try {
       const response = await fetch(
         "http://localhost:5000/api/pgs",
         {
           method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify({
-            ...formData,
-            owner: user._id,
-          }),
+          body: form,
         }
       );
 
@@ -348,7 +351,7 @@ function AddPG() {
                       handleChange
                     }
                   />
-                  Food Available
+                  Food 
                 </label>
 
                 <label className="flex items-center gap-2">
@@ -362,7 +365,7 @@ function AddPG() {
                       handleChange
                     }
                   />
-                  WiFi Available
+                  WiFi 
                 </label>
 
                 <label className="flex items-center gap-2">
@@ -376,9 +379,60 @@ function AddPG() {
                       handleChange
                     }
                   />
-                  AC Available
+                  AC 
                 </label>
-
+ <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="gymAvailable"
+                    checked={
+                      formData.gymAvailable
+                    }
+                    onChange={
+                      handleChange
+                    }
+                  />
+                  Gym 
+                </label>
+                 <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="swimmingPoolAvailable"
+                    checked={
+                      formData.swimmingPoolAvailable
+                    }
+                    onChange={
+                      handleChange
+                    }
+                  />
+                  Swimming Pool 
+                </label>
+                 <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="tvAvailable"
+                    checked={
+                      formData.tvAvailable
+                    }
+                    onChange={
+                      handleChange
+                    }
+                  />
+                  TV 
+                </label>
+                 <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="cctvAvailable"
+                    checked={
+                      formData.cctvAvailable
+                    }
+                    onChange={
+                      handleChange
+                    }
+                  />
+                  CCTV 
+                </label>
               </div>
 
             </div>
@@ -505,10 +559,62 @@ function AddPG() {
               </div>
 
             </div>
+            <div className="mt-8">
+              <label className="block mb-2 font-medium">
+                PG Images
+              </label>
 
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) =>
+                  setImages((prevImages) => [
+                    ...prevImages,
+                    ...Array.from(e.target.files),
+                  ])
+                }
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
+              />
+
+              <p className="text-sm text-gray-500 mt-2">
+                You can select multiple images.
+              </p>
+
+              {images.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-3">
+                  {images.map((image, index) => (
+                    <div
+                      key={index}
+                      className="relative"
+                    >
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt={`PG ${index + 1}`}
+                        className="w-28 h-20 rounded-lg object-cover border"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setImages((prevImages) =>
+                            prevImages.filter(
+                              (_, i) => i !== index
+                            )
+                          )
+                        }
+                        className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-red-600 text-white flex items-center justify-center transition-all duration-200"
+                      >
+                        <FaTimes size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <button
               type="submit"
-             className="w-full mt-8 bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"
+              className="w-full mt-8 bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"
             >
               Submit PG
             </button>

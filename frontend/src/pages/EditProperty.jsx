@@ -6,7 +6,7 @@ import {
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Toast from "../components/common/Toast";
-
+import { FaTimes } from "react-icons/fa";
 function EditProperty() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -41,7 +41,7 @@ function EditProperty() {
     ownerPhone: "",
     ownerEmail: "",
   });
-
+const [images, setImages] = useState([]);
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -57,9 +57,13 @@ function EditProperty() {
 
         const data = await response.json();
 
-        if (data.success) {
-          setFormData(data.property);
-        }
+       if (data.success) {
+  setFormData(data.property);
+
+  if (data.property.images) {
+    setImages(data.property.images);
+  }
+}
       } catch (error) {
         console.error(error);
       }
@@ -103,21 +107,42 @@ function EditProperty() {
     const user = JSON.parse(
       localStorage.getItem("user")
     );
+    const form = new FormData();
+
+Object.keys(formData).forEach((key) => {
+  if (
+    ![
+      "images",
+      "owner",
+      "_id",
+      "__v",
+      "reviews",
+      "averageRating",
+      "totalReviews",
+      "views",
+      "createdAt",
+      "updatedAt",
+    ].includes(key)
+  ) {
+    form.append(key, formData[key]);
+  }
+});
+
+form.append("owner", user._id);
+
+images.forEach((image) => {
+  if (typeof image !== "string") {
+    form.append("images", image);
+  }
+});
     try {
       const response = await fetch(
-        `http://localhost:5000/api/properties/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...formData,
-            owner: user._id,
-          }),
-        }
-      );
-
+  `http://localhost:5000/api/properties/${id}`,
+  {
+    method: "PUT",
+    body: form,
+  }
+);
       const data = await response.json();
 
       if (data.success) {
@@ -461,6 +486,66 @@ function EditProperty() {
 
               </div>
             </div>
+           <div className="mt-8">
+  <label className="block mb-2 font-medium">
+    Property Images
+  </label>
+
+  <input
+  type="file"
+  multiple
+  accept="image/*"
+  onChange={(e) =>
+    setImages((prevImages) => [
+      ...prevImages,
+      ...Array.from(e.target.files),
+    ])
+  }
+  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+/>
+
+  <p className="text-sm text-gray-500 mt-2">
+Upload new images or remove existing ones before updating.
+  </p>
+
+  {images.length > 0 && (
+    <div className="mt-4 flex flex-wrap gap-3">
+
+     {images.map((image, index) => (
+
+  <div
+    key={index}
+    className="relative"
+  >
+
+    <img
+      src={
+        typeof image === "string"
+          ? image
+          : URL.createObjectURL(image)
+      }
+      alt={`Property ${index + 1}`}
+      className="w-28 h-20 rounded-lg object-cover border"
+    />
+
+    <button
+      type="button"
+      onClick={() =>
+        setImages((prevImages) =>
+  prevImages.filter((_, i) => i !== index)
+)
+      }
+      className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-red-600 text-white flex items-center justify-center transition-all duration-200"
+    >
+      <FaTimes size={12} />
+    </button>
+
+  </div>
+
+))}
+    </div>
+  )}
+</div>
             <button
               type="submit"
               className="w-full mt-8 bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"

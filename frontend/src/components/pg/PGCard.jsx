@@ -148,26 +148,15 @@ function PGCard({ pg }) {
 
       <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300">
 
-        <div className="relative h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
+      <div className="relative h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
 
-          <button
-            onClick={handleWishlist}
-            className="absolute top-4 right-4 bg-white/90 p-3 rounded-full shadow-md hover:scale-110 transition-all duration-300 cursor-pointer"
-          >
-            {saved ? (
-              <FaHeart className="text-red-500 text-xl" />
-            ) : (
-              <FaRegHeart className="text-gray-600 text-xl" />
-            )}
-          </button>
+        <FaBed className="text-5xl text-blue-600" />
 
-          <FaBed className="text-5xl text-blue-600" />
+        <p className="mt-3 text-gray-600 font-medium">
+          PG Image Coming Soon
+        </p>
 
-          <p className="mt-3 text-gray-600 font-medium">
-            PG Image Coming Soon
-          </p>
-
-        </div>
+      </div>
 
         <div className="p-5">
 

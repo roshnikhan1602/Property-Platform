@@ -3,6 +3,12 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import {
+  FaBed,
+  FaMapMarkerAlt,
+  FaPhoneAlt,
+  FaEnvelope,
+} from "react-icons/fa";
 
 function PGDetails({
   setShowLoginModal,
@@ -12,6 +18,8 @@ function PGDetails({
   const navigate = useNavigate();
 
   const [pg, setPg] = useState(null);
+  const [selectedImage, setSelectedImage] =
+    useState("");
 
   const [loading, setLoading] =
     useState(true);
@@ -19,7 +27,33 @@ function PGDetails({
   const user = JSON.parse(
     localStorage.getItem("user")
   );
+  const handleNextImage = () => {
+    const currentIndex =
+      pg.images.indexOf(selectedImage);
 
+    const nextIndex =
+      (currentIndex + 1) %
+      pg.images.length;
+
+    setSelectedImage(
+      pg.images[nextIndex]
+    );
+  };
+
+  const handlePreviousImage = () => {
+    const currentIndex =
+      pg.images.indexOf(selectedImage);
+
+    const previousIndex =
+      (currentIndex -
+        1 +
+        pg.images.length) %
+      pg.images.length;
+
+    setSelectedImage(
+      pg.images[previousIndex]
+    );
+  };
   useEffect(() => {
     const fetchPG = async () => {
       try {
@@ -32,6 +66,15 @@ function PGDetails({
 
         if (data.success) {
           setPg(data.pg);
+
+          if (
+            data.pg.images &&
+            data.pg.images.length > 0
+          ) {
+            setSelectedImage(
+              data.pg.images[0]
+            );
+          }
         }
       } catch (error) {
         console.error(error);
@@ -47,10 +90,10 @@ function PGDetails({
     return (
       <>
         <Navbar
-  setShowLoginModal={
-    setShowLoginModal
-  }
-/>
+          setShowLoginModal={
+            setShowLoginModal
+          }
+        />
         <div className="text-center py-20">
           Loading PG Details...
         </div>
@@ -59,44 +102,97 @@ function PGDetails({
     );
   }
 
-    if (!pg) {
-      return (
-        <>
-          <Navbar
-  setShowLoginModal={
-    setShowLoginModal
-  }
-/>
-          <div className="text-center py-20">
-            PG Not Found
-          </div>
-          <Footer />
-        </>
-      );
+  if (!pg) {
+    return (
+      <>
+        <Navbar
+          setShowLoginModal={
+            setShowLoginModal
+          }
+        />
+        <div className="text-center py-20">
+          PG Not Found
+        </div>
+        <Footer />
+      </>
+    );
   }
 
   return (
     <>
       <Navbar
-  setShowLoginModal={
-    setShowLoginModal
-  }
-/>
+        setShowLoginModal={
+          setShowLoginModal
+        }
+      />
 
       <section className="max-w-7xl mx-auto px-6 pt-28 pb-10">
 
-        <div className="h-96 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
+        <div className="relative h-96 rounded-2xl overflow-hidden border">
 
-          <div className="text-7xl">
-            🛏️
-          </div>
+          {selectedImage ? (
+            <>
+              <img
+                src={selectedImage}
+                alt={pg.title}
+                className="w-full h-full object-cover"
+              />
 
-          <p className="mt-4 text-gray-600 text-lg">
-            PG Image Coming Soon
-          </p>
+              {pg.images &&
+                pg.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={handlePreviousImage}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/80 hover:bg-white shadow-lg flex items-center justify-center text-2xl transition"
+                    >
+                      ‹
+                    </button>
+
+                    <button
+                      onClick={handleNextImage}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/80 hover:bg-white shadow-lg flex items-center justify-center text-2xl transition"
+                    >
+                      ›
+                    </button>
+                  </>
+                )}
+            </>
+          ) : (
+            <div className="h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
+
+              <div className="text-7xl">
+                <FaBed />
+              </div>
+
+              <p className="mt-4 text-gray-600 text-lg">
+                PG Image Coming Soon
+              </p>
+
+            </div>
+          )}
 
         </div>
-
+        {pg.images &&
+          pg.images.length > 1 && (
+            <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
+              {pg.images.map(
+                (image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`PG ${index + 1}`}
+                    onClick={() =>
+                      setSelectedImage(image)
+                    }
+                    className={`w-28 h-20 rounded-lg object-cover cursor-pointer border-2 transition ${selectedImage === image
+                        ? "border-blue-600"
+                        : "border-transparent"
+                      }`}
+                  />
+                )
+              )}
+            </div>
+          )}
         <div className="mt-8 flex flex-col md:flex-row justify-between gap-4">
 
           <div>
@@ -105,7 +201,7 @@ function PGDetails({
             </h1>
 
             <p className="text-gray-600 mt-2">
-              📍 {pg.locality},{" "}
+              <FaMapMarkerAlt /> {pg.locality},{" "}
               {pg.city},{" "}
               {pg.state}
             </p>
@@ -132,7 +228,7 @@ function PGDetails({
 
             <h3 className="font-semibold">
               {pg.genderPreference ===
-              "Unisex"
+                "Unisex"
                 ? "Co-live"
                 : pg.genderPreference}
             </h3>
@@ -238,46 +334,90 @@ function PGDetails({
               </p>
             </div>
 
+ <div>
+              <p className="text-gray-500">
+                Gym
+              </p>
+
+              <p className="font-semibold">
+                {pg.gymAvailable
+                  ? "Available"
+                  : "Not Available"}
+              </p>
+            </div>
+             <div>
+              <p className="text-gray-500">
+              Swimming Pool
+              </p>
+
+              <p className="font-semibold">
+                {pg.swimmingPoolAvailable
+                  ? "Available"
+                  : "Not Available"}
+              </p>
+            </div>
+             <div>
+              <p className="text-gray-500">
+                TV
+              </p>
+
+              <p className="font-semibold">
+                {pg.tvAvailable
+                  ? "Available"
+                  : "Not Available"}
+              </p>
+            </div>
+             <div>
+              <p className="text-gray-500">
+                CCTV
+              </p>
+
+              <p className="font-semibold">
+                {pg.cctvAvailable
+                  ? "Available"
+                  : "Not Available"}
+              </p>
+            </div>
           </div>
 
         </div>
         <div className="bg-white shadow rounded-2xl p-6 mt-10">
 
-  <h2 className="text-2xl font-bold mb-6">
-    📍 PG Location
-  </h2>
+         <h2 className="text-2xl font-bold mb-6">
+  <FaMapMarkerAlt /> PG Location
+</h2>
 
-  <div className="overflow-hidden rounded-xl border">
+<div className="overflow-hidden rounded-xl border">
 
-    <iframe
-      title="PG Location"
-      width="100%"
-      height="400"
-      loading="lazy"
-      allowFullScreen
-      src={`https://maps.google.com/maps?q=${encodeURIComponent(
-        `${pg.locality}, ${pg.city}, ${pg.state}`
-      )}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
-    ></iframe>
-
-  </div>
-
-  <div className="mt-4 text-center">
-
-    <a
-      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-        `${pg.locality}, ${pg.city}, ${pg.state}`
-      )}`}
-      target="_blank"
-      rel="noreferrer"
-      className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
-    >
-      Open in Google Maps
-    </a>
-
-  </div>
+  <iframe
+    title="PG Location"
+    width="100%"
+    height="400"
+    loading="lazy"
+    allowFullScreen
+    src={`https://maps.google.com/maps?q=${encodeURIComponent(
+      `${pg.locality}, ${pg.city}, ${pg.state}`
+    )}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+  ></iframe>
 
 </div>
+
+          <div className="mt-4 text-center">
+
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                `${pg.locality}, ${pg.city}, ${pg.state}`
+              )}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+            >
+              Open in Google Maps
+            </a>
+
+          </div>
+
+        </div>
 
         <div className="bg-white shadow rounded-2xl p-6 mt-10">
 
@@ -327,14 +467,16 @@ function PGDetails({
                   href={`tel:${pg.ownerPhone}`}
                   className="bg-blue-600 text-white px-6 py-3 rounded-lg text-center hover:bg-blue-700 transition"
                 >
-                  📞 Call Owner
+                <FaPhoneAlt className="inline mr-2" />
+Call Owner  
                 </a>
 
                 <a
                   href={`mailto:${pg.ownerEmail}`}
                   className="bg-blue-600 text-white px-6 py-3 rounded-lg text-center hover:bg-blue-700 transition"
                 >
-                  ✉️ Email Owner
+                 <FaEnvelope className="inline mr-2" />
+Email Owner
                 </a>
 
               </div>

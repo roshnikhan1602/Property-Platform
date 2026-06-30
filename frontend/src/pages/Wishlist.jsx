@@ -4,6 +4,12 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
+import {
+  FaArrowLeft,
+  FaMapMarkerAlt,
+  FaHome,
+} from "react-icons/fa";
+
 function Wishlist() {
   const navigate = useNavigate();
 
@@ -46,44 +52,30 @@ function Wishlist() {
     }
   };
 
-  const removeFromWishlist =
-    async (item) => {
-      try {
-        const response =
-          await fetch(
-            "http://localhost:5000/api/wishlist/remove",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type":
-                  "application/json",
-              },
-              body: JSON.stringify({
-                userId,
-                itemId:
-                  item.itemId._id,
-                itemType:
-                  item.itemType,
-              }),
-            }
-          );
-
-        const data =
-          await response.json();
-
-        if (data.success) {
-          setWishlist((prev) =>
-            prev.filter(
-              (w) =>
-                w._id !== item._id
-            )
-          );
+  const removeFromWishlist = async (wishlistId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/wishlist/${wishlistId}`,
+        {
+          method: "DELETE",
         }
-      } catch (error) {
-        console.error(error);
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setWishlist(
+          wishlist.filter(
+            (item) => item._id !== wishlistId
+          )
+        );
       }
-    };
-      if (loading) {
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (loading) {
     return (
       <>
         <Navbar />
@@ -105,7 +97,8 @@ function Wishlist() {
           onClick={() => navigate(-1)}
           className="mb-6 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-100 transition cursor-pointer"
         >
-          ← Back
+          <FaArrowLeft className="inline mr-2" />
+          Back
         </button>
 
         <h1 className="text-4xl font-bold">
@@ -137,45 +130,28 @@ function Wishlist() {
                   className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition"
                 >
 
-                  <div className="h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
-
-                    <div className="text-5xl">
-                      {item.itemType === "Property"
-                        ? "🏠"
-                        : "🛏️"}
-                    </div>
-
+                <div className="h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                  <div className="text-5xl">
+                    🏠
                   </div>
+                </div>
 
                   <div className="p-5">
 
                     <div className="flex justify-between">
 
-                      <h3 className="text-xl font-bold">
-                        {listing.title}
-                      </h3>
+                  <h3 className="text-xl font-bold">
+                    {item.propertyId?.title}
+                  </h3>
 
-                      <span className="text-xs bg-blue-100 text-blue-600 px-3 py-1 rounded-full">
-                        {item.itemType}
-                      </span>
+                  <p className="text-gray-500 mt-2">
+                    📍 {item.propertyId?.city},{" "}
+                    {item.propertyId?.state}
+                  </p>
 
-                    </div>
-
-                    <p className="text-gray-500 mt-2">
-                      📍 {listing.city},{" "}
-                      {listing.state}
-                    </p>
-
-                    <h4 className="text-2xl font-bold text-blue-600 mt-4">
-
-                      ₹{" "}
-
-                      {(
-                        listing.price ??
-                        listing.rent
-                      )?.toLocaleString()}
-
-                    </h4>
+                  <h4 className="text-2xl font-bold text-blue-600 mt-4">
+                    ₹ {item.propertyId?.price?.toLocaleString()}
+                  </h4>
 
                     <div className="grid grid-cols-2 gap-3 mt-5">
 
@@ -193,16 +169,14 @@ function Wishlist() {
                         View
                       </button>
 
-                      <button
-                        onClick={() =>
-                          removeFromWishlist(
-                            item
-                          )
-                        }
-                        className="border border-red-500 text-red-500 py-3 rounded-xl hover:bg-red-500 hover:text-white transition cursor-pointer"
-                      >
-                        Remove
-                      </button>
+                    <button
+                      onClick={() =>
+                        removeFromWishlist(item._id)
+                      }
+                      className="border border-red-500 text-red-500 py-3 rounded-xl hover:bg-red-500 hover:text-white transition cursor-pointer"
+                    >
+                      Remove
+                    </button>
 
                     </div>
 

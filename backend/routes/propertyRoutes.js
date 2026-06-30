@@ -2,6 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 const upload = require("../middleware/upload");
+
 const {
   addProperty,
   getAllProperties,
@@ -38,7 +39,11 @@ router.get(
 
 router.get("/:id", getPropertyById);
 
-router.put("/:id", updateProperty);
+router.put(
+  "/:id",
+  upload.array("images", 10),
+  updateProperty
+);
 
 router.delete("/:id", deleteProperty);
 
