@@ -1,5 +1,7 @@
 const User = require("../models/User");
 const otpStore = require("../utils/otpStore");
+const cloudinary = require("../config/cloudinary");
+const streamifier = require("streamifier");
 
 const registerUser = async (req, res) => {
   try {
@@ -25,8 +27,7 @@ const registerUser = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message:
-        "User registered successfully",
+      message: "User registered successfully",
       user,
     });
   } catch (error) {
@@ -126,12 +127,21 @@ const updateProfile = async (req, res) => {
   try {
     const { name, email } = req.body;
 
+    const updateData = {
+      name,
+    };
+
+    if (email && email.trim() !== "") {
+      updateData.email = email.trim();
+    } else {
+      updateData.$unset = {
+        email: "",
+      };
+    }
+
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      {
-        name,
-        email,
-      },
+      updateData,
       {
         new: true,
       }
@@ -149,7 +159,82 @@ const updateProfile = async (req, res) => {
       user,
     });
   } catch (error) {
+    console.error("UPDATE PROFILE ERROR:");
+    console.error(error);
+
     res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const uploadProfileImage = async (
+  req,
+  res
+) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Please select an image",
+      });
+    }
+
+    const uploadedImage =
+      await new Promise(
+        (resolve, reject) => {
+          const uploadStream =
+            cloudinary.uploader.upload_stream(
+              {
+                folder:
+                  "property-platform/profile-images",
+              },
+              (error, result) => {
+                if (error) {
+                  reject(error);
+                } else {
+                  resolve(result);
+                }
+              }
+            );
+
+          streamifier
+            .createReadStream(req.file.buffer)
+            .pipe(uploadStream);
+        }
+      );
+
+    const user =
+      await User.findByIdAndUpdate(
+        req.params.id,
+        {
+          profileImage:
+            uploadedImage.secure_url,
+        },
+        {
+          new: true,
+        }
+      );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Profile image updated successfully",
+      user,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -161,4 +246,5 @@ module.exports = {
   verifyOTP,
   getProfile,
   updateProfile,
+  uploadProfileImage,
 };

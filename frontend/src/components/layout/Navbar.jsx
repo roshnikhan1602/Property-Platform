@@ -24,13 +24,44 @@ function Navbar({
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const loggedInUser = localStorage.getItem("user");
+ useEffect(() => {
+  const loadUser = () => {
+    const loggedInUser =
+      localStorage.getItem("user");
 
     if (loggedInUser) {
-      setUser(JSON.parse(loggedInUser));
+      setUser(
+        JSON.parse(loggedInUser)
+      );
+    } else {
+      setUser(null);
     }
-  }, []);
+  };
+
+  loadUser();
+
+  window.addEventListener(
+    "storage",
+    loadUser
+  );
+
+  window.addEventListener(
+    "focus",
+    loadUser
+  );
+
+  return () => {
+    window.removeEventListener(
+      "storage",
+      loadUser
+    );
+
+    window.removeEventListener(
+      "focus",
+      loadUser
+    );
+  };
+}, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -72,6 +103,26 @@ function Navbar({
       );
     };
   }, []);
+
+  useEffect(() => {
+  const interval = setInterval(() => {
+    const latestUser =
+      JSON.parse(
+        localStorage.getItem("user")
+      );
+
+    if (
+      latestUser &&
+      JSON.stringify(latestUser) !==
+        JSON.stringify(user)
+    ) {
+      setUser(latestUser);
+    }
+  }, 500);
+
+  return () =>
+    clearInterval(interval);
+}, [user]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -170,9 +221,21 @@ function Navbar({
                 }
                 className="flex items-center gap-2 cursor-pointer"
               >
-                <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold shadow-md">
-                  {user.name?.charAt(0).toUpperCase()}
-                </div>
+               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-500 shadow-md">
+  {user.profileImage ? (
+    <img
+      src={user.profileImage}
+      alt={user.name}
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    <div className="w-full h-full bg-blue-600 text-white flex items-center justify-center font-semibold">
+      {user.name
+        ?.charAt(0)
+        .toUpperCase()}
+    </div>
+  )}
+</div>
 
                 <span
                   className={`font-medium ${isTransparent

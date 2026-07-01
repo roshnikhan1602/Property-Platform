@@ -14,6 +14,7 @@ function AddProperty() {
     const user = localStorage.getItem("user");
 
     if (!user) {
+      
       setToast({
         show: true,
         message: "Please login to post a property",
@@ -44,6 +45,7 @@ function AddProperty() {
     ownerEmail: "",
   });
   const [images, setImages] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -57,27 +59,33 @@ function AddProperty() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
+  if (submitting) return;
+
+  setSubmitting(true);
     if (
-      !formData.title ||
-      !formData.price ||
-      !formData.listingType ||
-      !formData.propertyType ||
-      !formData.area ||
-      !formData.address ||
-      !formData.city ||
-      !formData.locality ||
-      !formData.state ||
-      !formData.pincode ||
-      !formData.ownerName ||
-      !formData.ownerPhone ||
-      !formData.ownerEmail
-    ) {
+  !formData.title ||
+  !formData.price ||
+  !formData.listingType ||
+  !formData.propertyType ||
+  !formData.area ||
+  !formData.address ||
+  !formData.city ||
+  !formData.locality ||
+  !formData.state ||
+  !formData.pincode ||
+  !formData.ownerName ||
+  !formData.ownerPhone ||
+  !formData.ownerEmail ||
+  images.length === 0
+){
+  setSubmitting(false);
       setToast({
         show: true,
-        message: "Please fill all required fields",
+        message:
+  "Please fill all required fields and upload at least one image",
         type: "error",
       });
 
@@ -150,6 +158,7 @@ images.forEach((image) => {
           navigate("/owner-dashboard");
         }, 1200);
       } else {
+        setSubmitting(false);
         setToast({
           show: true,
           message: "Failed to add property",
@@ -157,6 +166,7 @@ images.forEach((image) => {
         });
       }
     } catch (error) {
+      setSubmitting(false);
       console.error(error);
       setToast({
         show: true,
@@ -248,7 +258,7 @@ images.forEach((image) => {
                   <option value="">Select Listing Type</option>
                   <option value="Rent">Rent</option>
                   <option value="Sale">Sale</option>
-                  <option value="Sale">Lease</option>
+                  <option value="Lease">Lease</option>
 
                 </select>
               </div>
@@ -427,10 +437,9 @@ images.forEach((image) => {
                 />
               </div>
               <div className="mt-8">
-                <label className="block mb-2 font-medium">
-                  Property Images
-                </label>
-
+               <label className="block mb-2 font-medium">
+  Property Images <span className="text-red-500">*</span>
+</label>
                 <input
                   type="file"
                   multiple
@@ -512,12 +521,17 @@ images.forEach((image) => {
 
               </div>
             </div>
-            <button
-              type="submit"
-              className="w-full mt-8 bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"
-            >
-              Submit Property
-            </button>
+           <button
+  type="submit"
+  disabled={submitting}
+  className={`w-full mt-8 py-4 rounded-xl font-medium transition ${
+    submitting
+      ? "bg-blue-400 cursor-not-allowed"
+      : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+  } text-white`}
+>
+  {submitting ? "Submitting..." : "Submit Property"}
+</button>
 
           </form>
 

@@ -19,14 +19,17 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ContactSupport from "./pages/ContactSupport";
 import About from "./pages/About";
 
-import ProtectedRoute from "./components/ProtectedRoute";
-import AdminRoute from "./components/AdminRoute";
-
 import PGListing from "./pages/PGListing";
 import PGDetails from "./pages/PGDetails";
 import AddPG from "./pages/AddPG";
 import EditPG from "./pages/EditPG";
 import MyPGs from "./pages/MyPGs";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
+
+import LoginModal from "./components/auth/LoginModal";
+import OTPModal from "./components/auth/OTPModal";
 
 function App() {
   const [showLoginModal, setShowLoginModal] =
@@ -43,9 +46,7 @@ function App() {
 
   return (
     <BrowserRouter>
-
       <Routes>
-
         <Route
           path="/"
           element={
@@ -264,9 +265,33 @@ function App() {
               />
             </ProtectedRoute>
           }
-/>
-
+        />
       </Routes>
+
+      {showLoginModal && (
+        <LoginModal
+          setShowLoginModal={
+            setShowLoginModal
+          }
+          setShowOTPModal={
+            setShowOTPModal
+          }
+          setMobileNumber={
+            setMobileNumber
+          }
+          setUserName={setUserName}
+        />
+      )}
+
+      {showOTPModal && (
+        <OTPModal
+          mobileNumber={mobileNumber}
+          userName={userName}
+          setShowOTPModal={
+            setShowOTPModal
+          }
+        />
+      )}
     </BrowserRouter>
   );
 }

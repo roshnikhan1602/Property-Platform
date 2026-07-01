@@ -1,20 +1,50 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  FaMapMarkerAlt,
+  FaHome,
+} from "react-icons/fa";
 
 function RecentlyViewed() {
   const navigate = useNavigate();
 
-  const [properties, setProperties] = useState([]);
+  const [properties, setProperties] =
+    useState([]);
 
   useEffect(() => {
-    const recentlyViewed =
-      JSON.parse(
-        localStorage.getItem(
-          "recentlyViewed"
-        )
-      ) || [];
+    const loadRecentlyViewed = async () => {
+      const recentlyViewed =
+        JSON.parse(
+          localStorage.getItem(
+            "recentlyViewed"
+          )
+        ) || [];
 
-    setProperties(recentlyViewed);
+      const validProperties = [];
+
+      for (const property of recentlyViewed) {
+        try {
+          const response = await fetch(
+            `http://localhost:5000/api/properties/${property._id}`
+          );
+
+          if (response.ok) {
+            validProperties.push(property);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      localStorage.setItem(
+        "recentlyViewed",
+        JSON.stringify(validProperties)
+      );
+
+      setProperties(validProperties);
+    };
+
+    loadRecentlyViewed();
   }, []);
 
   if (properties.length === 0) {
@@ -36,48 +66,67 @@ function RecentlyViewed() {
 
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
 
         {properties.map((property) => (
           <div
             key={property._id}
-            className="bg-white rounded-xl shadow p-4 hover:shadow-lg transition"
+            className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
           >
+            <div className="h-32">
 
-            <div className="flex items-center gap-3">
-
-              <div className="text-3xl">
-                🏠
-              </div>
-
-              <div>
-
-                <h3 className="font-semibold text-lg line-clamp-1">
-                  {property.title}
-                </h3>
-
-                <p className="text-sm text-gray-500">
-                  📍 {property.city}
-                </p>
-
-              </div>
+              {property.images &&
+              property.images.length > 0 ? (
+                <img
+                  src={property.images[0]}
+                  alt={property.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                  <FaHome className="text-5xl text-blue-600" />
+                </div>
+              )}
 
             </div>
 
-            <p className="text-blue-600 font-bold text-lg mt-4">
-              ₹ {property.price.toLocaleString()}
-            </p>
+            <div className="p-3">
 
-            <button
-              onClick={() =>
-                navigate(
-                  `/properties/${property._id}`
-                )
-              }
-              className="mt-3 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer"
-            >
-              View
-            </button>
+              <div className="flex justify-between items-start">
+
+                <h3 className="font-semibold text-base line-clamp-1">
+                  {property.title}
+                </h3>
+
+                <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+                  {property.propertyType}
+                </span>
+
+              </div>
+
+              <p className="text-sm text-gray-500 mt-2 flex items-center gap-2">
+                <FaMapMarkerAlt className="text-red-500" />
+                {property.locality},{" "}
+                {property.city}
+              </p>
+
+              <p className="text-blue-600 font-bold text-xl mt-3">
+                ₹{" "}
+                {property.price.toLocaleString()}
+              </p>
+
+              <button
+                onClick={() =>
+                  navigate(
+                    `/properties/${property._id}`
+                  )
+                }
+               className="mt-3 w-full py-2 text-sm-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer"
+              >
+                View
+              </button>
+
+            </div>
 
           </div>
         ))}

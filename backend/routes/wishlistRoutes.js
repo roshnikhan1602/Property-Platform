@@ -10,10 +10,10 @@ const {
 
 router.post("/add", addToWishlist);
 
-router.post(
-  "/remove",
-  removeFromWishlist
-);
+router.post("/remove", removeFromWishlist);
+
+// New DELETE route
+router.delete("/:wishlistId", removeFromWishlist);
 
 router.get("/:userId", getWishlist);
 

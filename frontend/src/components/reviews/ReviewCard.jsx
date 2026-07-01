@@ -22,8 +22,7 @@ function ReviewCard({
   const isOwner =
     currentUser &&
     review.user &&
-    (review.user._id || review.user) ===
-      currentUser._id;
+   (review.user?._id || review.user) === currentUser._id;
 
   const [editing, setEditing] =
     useState(false);
@@ -56,25 +55,25 @@ function ReviewCard({
 
         <div className="flex items-start gap-3">
 
-          {review.userProfileImage ? (
-            <img
-              src={review.userProfileImage}
-              alt={review.userName}
-              className="w-11 h-11 rounded-full object-cover border"
-            />
-          ) : (
-            <FaUserCircle
-              size={42}
-              className="text-gray-400"
-            />
-          )}
+         {review.user?.profileImage ? (
+  <img
+    src={review.user.profileImage}
+    alt={review.user?.name || review.userName}
+    className="w-11 h-11 rounded-full object-cover border"
+  />
+) : (
+  <FaUserCircle
+    size={42}
+    className="text-gray-400"
+  />
+)}
 
           <div>
 
             <div className="flex items-center gap-2 flex-wrap">
 
               <h3 className="font-semibold text-gray-900">
-                {review.userName}
+              {review.user?.name || review.userName}
               </h3>
 
               {review.isEdited && (

@@ -37,6 +37,7 @@ function AddPG() {
     ownerEmail: "",
   });
   const [images, setImages] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -58,7 +59,9 @@ function AddPG() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
 
+    setSubmitting(true);
     if (
       !formData.title ||
       !formData.rent ||
@@ -71,12 +74,15 @@ function AddPG() {
       !formData.pincode ||
       !formData.ownerName ||
       !formData.ownerPhone ||
-      !formData.ownerEmail
+      !formData.ownerEmail ||
+      images.length === 0
     ) {
+      setSubmitting(false);
+
       setToast({
         show: true,
         message:
-          "Please fill all required fields",
+          "Please fill all required fields and upload at least one image",
         type: "error",
       });
 
@@ -143,16 +149,18 @@ function AddPG() {
           );
         }, 1500);
       } else {
+        setSubmitting(false);
+
         setToast({
           show: true,
-          message:
-            "Failed to add PG",
+          message: "Failed to add PG",
           type: "error",
         });
+
       }
     } catch (error) {
       console.error(error);
-
+      setSubmitting(false);
       setToast({
         show: true,
         message:
@@ -351,7 +359,7 @@ function AddPG() {
                       handleChange
                     }
                   />
-                  Food 
+                  Food
                 </label>
 
                 <label className="flex items-center gap-2">
@@ -365,7 +373,7 @@ function AddPG() {
                       handleChange
                     }
                   />
-                  WiFi 
+                  WiFi
                 </label>
 
                 <label className="flex items-center gap-2">
@@ -379,9 +387,9 @@ function AddPG() {
                       handleChange
                     }
                   />
-                  AC 
+                  AC
                 </label>
- <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     name="gymAvailable"
@@ -392,9 +400,9 @@ function AddPG() {
                       handleChange
                     }
                   />
-                  Gym 
+                  Gym
                 </label>
-                 <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     name="swimmingPoolAvailable"
@@ -405,9 +413,9 @@ function AddPG() {
                       handleChange
                     }
                   />
-                  Swimming Pool 
+                  Swimming Pool
                 </label>
-                 <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     name="tvAvailable"
@@ -418,9 +426,9 @@ function AddPG() {
                       handleChange
                     }
                   />
-                  TV 
+                  TV
                 </label>
-                 <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     name="cctvAvailable"
@@ -431,7 +439,7 @@ function AddPG() {
                       handleChange
                     }
                   />
-                  CCTV 
+                  CCTV
                 </label>
               </div>
 
@@ -561,7 +569,7 @@ function AddPG() {
             </div>
             <div className="mt-8">
               <label className="block mb-2 font-medium">
-                PG Images
+                PG Images <span className="text-red-500">*</span>
               </label>
 
               <input
@@ -614,11 +622,14 @@ function AddPG() {
             </div>
             <button
               type="submit"
-              className="w-full mt-8 bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"
+              disabled={submitting}
+              className={`w-full mt-8 py-4 rounded-xl font-medium transition ${submitting
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                } text-white`}
             >
-              Submit PG
+              {submitting ? "Submitting..." : "Submit PG"}
             </button>
-
           </form>
 
         </div>

@@ -12,11 +12,8 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-<<<<<<< HEAD
     "@google/genai": "^2.10.0",
-=======
     "cloudinary": "^2.10.0",
->>>>>>> 05592e6c48784d194b9e25e0cda967ac8f87ca97
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

@@ -1,14 +1,13 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors");
 
+// Load .env FIRST
 dotenv.config();
 
-const cors = require("cors");
 const connectDB = require("./config/db");
 const pgRoutes = require("./routes/pgRoutes");
-
-dotenv.config();
-
+const chatRoutes = require("./routes/chatRoutes");
 connectDB();
 
 const app = express();
@@ -53,19 +52,17 @@ app.use(
   pgRoutes
 );
 
-app.use("/api/chatbot",chatRoutes);
+app.use(
+  "/api/chatbot",
+  chatRoutes
+);
 
 app.get("/", (req, res) => {
-  res.send(
-    "Property Platform Backend 🚀"
-  );
+  res.send("Property Platform Backend 🚀");
 });
 
-const PORT =
-  process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(
-    `Server running on port ${PORT}`
-  );
+  console.log(`Server running on port ${PORT}`);
 });

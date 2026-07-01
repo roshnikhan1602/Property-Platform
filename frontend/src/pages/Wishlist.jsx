@@ -8,16 +8,14 @@ import {
   FaArrowLeft,
   FaMapMarkerAlt,
   FaHome,
+  FaBed,
 } from "react-icons/fa";
 
 function Wishlist() {
   const navigate = useNavigate();
 
-  const [wishlist, setWishlist] =
-    useState([]);
-
-  const [loading, setLoading] =
-    useState(true);
+  const [wishlist, setWishlist] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const loggedInUser = JSON.parse(
     localStorage.getItem("user")
@@ -39,8 +37,7 @@ function Wishlist() {
         `http://localhost:5000/api/wishlist/${userId}`
       );
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (data.success) {
         setWishlist(data.wishlist);
@@ -92,7 +89,6 @@ function Wishlist() {
       <Navbar />
 
       <section className="max-w-7xl mx-auto px-6 py-10">
-
         <button
           onClick={() => navigate(-1)}
           className="mb-6 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-100 transition cursor-pointer"
@@ -117,44 +113,75 @@ function Wishlist() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
-
             {wishlist.map((item) => {
-
               const listing = item.itemId;
 
               if (!listing) return null;
+
+              const image =
+                listing.images &&
+                listing.images.length > 0
+                  ? listing.images[0]
+                  : null;
 
               return (
                 <div
                   key={item._id}
                   className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition"
                 >
+                  <div className="h-56 overflow-hidden bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                    {image ? (
+                      <img
+                        src={image}
+                        alt={
+                          listing.title ||
+                          listing.pgName
+                        }
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center">
+                        {item.itemType ===
+                        "Property" ? (
+                          <FaHome className="text-5xl text-blue-600" />
+                        ) : (
+                          <FaBed className="text-5xl text-blue-600" />
+                        )}
 
-                <div className="h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
-                  <div className="text-5xl">
-                    🏠
+                        <p className="mt-3 text-gray-600 font-medium">
+                          Image Coming Soon
+                        </p>
+                      </div>
+                    )}
                   </div>
-                </div>
 
                   <div className="p-5">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-xl font-bold">
+                          {listing.title ||
+                            listing.pgName}
+                        </h3>
 
-                    <div className="flex justify-between">
+                        <p className="text-gray-500 mt-2 flex items-center gap-1">
+                          <FaMapMarkerAlt />
+                          {listing.city},{" "}
+                          {listing.state}
+                        </p>
+                      </div>
 
-                  <h3 className="text-xl font-bold">
-                    {item.propertyId?.title}
-                  </h3>
+                      <FaHome className="text-blue-500 text-2xl" />
+                    </div>
 
-                  <p className="text-gray-500 mt-2">
-                    📍 {item.propertyId?.city},{" "}
-                    {item.propertyId?.state}
-                  </p>
-
-                  <h4 className="text-2xl font-bold text-blue-600 mt-4">
-                    ₹ {item.propertyId?.price?.toLocaleString()}
-                  </h4>
+                    <h4 className="text-2xl font-bold text-blue-600 mt-4">
+                      ₹{" "}
+                      {(
+                        listing.price ||
+                        listing.rent
+                      )?.toLocaleString()}
+                    </h4>
 
                     <div className="grid grid-cols-2 gap-3 mt-5">
-
                       <button
                         onClick={() =>
                           navigate(
@@ -169,26 +196,23 @@ function Wishlist() {
                         View
                       </button>
 
-                    <button
-                      onClick={() =>
-                        removeFromWishlist(item._id)
-                      }
-                      className="border border-red-500 text-red-500 py-3 rounded-xl hover:bg-red-500 hover:text-white transition cursor-pointer"
-                    >
-                      Remove
-                    </button>
-
+                      <button
+                        onClick={() =>
+                          removeFromWishlist(
+                            item._id
+                          )
+                        }
+                        className="border border-red-500 text-red-500 py-3 rounded-xl hover:bg-red-500 hover:text-white transition cursor-pointer"
+                      >
+                        Remove
+                      </button>
                     </div>
-
                   </div>
-
                 </div>
               );
             })}
-
           </div>
         )}
-
       </section>
 
       <Footer />
