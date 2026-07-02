@@ -8,16 +8,14 @@ import {
   FaArrowLeft,
   FaMapMarkerAlt,
   FaHome,
+  FaBed,
 } from "react-icons/fa";
 
 function Wishlist() {
   const navigate = useNavigate();
 
-  const [wishlist, setWishlist] =
-    useState([]);
-
-  const [loading, setLoading] =
-    useState(true);
+  const [wishlist, setWishlist] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const loggedInUser = JSON.parse(
     localStorage.getItem("user")
@@ -39,8 +37,7 @@ function Wishlist() {
         `http://localhost:5000/api/wishlist/${userId}`
       );
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (data.success) {
         setWishlist(data.wishlist);
@@ -119,7 +116,6 @@ function Wishlist() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
 
             {wishlist.map((item) => {
-
               const listing = item.itemId;
 
               if (!listing) return null;
@@ -127,39 +123,53 @@ function Wishlist() {
               return (
                 <div
                   key={item._id}
-                  className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition"
+                  className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300"
                 >
 
-                <div className="h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
-                  <div className="text-5xl">
-                    🏠
+                  <div className="h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+
+                    {item.itemType === "Property" ? (
+                      <FaHome className="text-5xl text-blue-600" />
+                    ) : (
+                      <FaBed className="text-5xl text-blue-600" />
+                    )}
+
                   </div>
-                </div>
 
                   <div className="p-5">
 
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-start">
 
-                  <h3 className="text-xl font-bold">
-                    {item.propertyId?.title}
-                  </h3>
+                      <h3 className="text-xl font-bold">
+                        {listing.title}
+                      </h3>
 
-                  <p className="text-gray-500 mt-2">
-                    📍 {item.propertyId?.city},{" "}
-                    {item.propertyId?.state}
-                  </p>
+                      <span className="bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full">
+                        {item.itemType}
+                      </span>
 
-                  <h4 className="text-2xl font-bold text-blue-600 mt-4">
-                    ₹ {item.propertyId?.price?.toLocaleString()}
-                  </h4>
+                    </div>
 
-                    <div className="grid grid-cols-2 gap-3 mt-5">
+                    <p className="text-gray-500 mt-3 flex items-center gap-2">
+                      <FaMapMarkerAlt className="text-red-500" />
+                      {listing.city}, {listing.state}
+                    </p>
+                                        {item.itemType === "Property" ? (
+                      <h4 className="text-2xl font-bold text-blue-600 mt-5">
+                        ₹ {listing.price?.toLocaleString()}
+                      </h4>
+                    ) : (
+                      <h4 className="text-2xl font-bold text-blue-600 mt-5">
+                        ₹ {listing.rent?.toLocaleString()} / month
+                      </h4>
+                    )}
+
+                    <div className="grid grid-cols-2 gap-3 mt-6">
 
                       <button
                         onClick={() =>
                           navigate(
-                            item.itemType ===
-                              "Property"
+                            item.itemType === "Property"
                               ? `/properties/${listing._id}`
                               : `/pgs/${listing._id}`
                           )
@@ -169,14 +179,14 @@ function Wishlist() {
                         View
                       </button>
 
-                    <button
-                      onClick={() =>
-                        removeFromWishlist(item._id)
-                      }
-                      className="border border-red-500 text-red-500 py-3 rounded-xl hover:bg-red-500 hover:text-white transition cursor-pointer"
-                    >
-                      Remove
-                    </button>
+                      <button
+                        onClick={() =>
+                          removeFromWishlist(item._id)
+                        }
+                        className="border border-red-500 text-red-500 py-3 rounded-xl hover:bg-red-500 hover:text-white transition cursor-pointer"
+                      >
+                        Remove
+                      </button>
 
                     </div>
 
