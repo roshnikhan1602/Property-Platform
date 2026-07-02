@@ -141,12 +141,14 @@ const updatePG = async (req, res) => {
       });
     }
 
-    let imageUrls = pg.images;
+   let imageUrls = [];
 
-    if (req.files && req.files.length > 0) {
-      imageUrls = [];
+if (req.body.existingImages) {
+  imageUrls = JSON.parse(req.body.existingImages);
+}
 
-      for (const file of req.files) {
+if (req.files && req.files.length > 0) {
+  for (const file of req.files) {
         const uploadedImage =
           await new Promise(
             (resolve, reject) => {

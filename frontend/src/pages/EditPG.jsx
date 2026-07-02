@@ -50,6 +50,7 @@ function EditPG() {
   ownerEmail: "",
 });
 const [images, setImages] = useState([]);
+const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -92,10 +93,14 @@ const [images, setImages] = useState([]);
   });
 };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-   if (
+  if (submitting) return;
+
+  setSubmitting(true);
+
+  if (
   !formData.title ||
   !formData.rent ||
   !formData.sharingType ||
@@ -107,11 +112,13 @@ const [images, setImages] = useState([]);
   !formData.pincode ||
   !formData.ownerName ||
   !formData.ownerPhone ||
-  !formData.ownerEmail
+  !formData.ownerEmail ||
+  images.length === 0
 ){
+  setSubmitting(false);
       setToast({
         show: true,
-        message: "Please fill all required fields",
+        message: "Please fill all required fields and keep at least one image",
         type: "error",
       });
       return;
@@ -143,6 +150,17 @@ Object.keys(formData).forEach((key) => {
 
 form.append("owner", user._id);
 
+// Send existing Cloudinary image URLs
+const existingImages = images.filter(
+  (image) => typeof image === "string"
+);
+
+form.append(
+  "existingImages",
+  JSON.stringify(existingImages)
+);
+
+// Upload only newly selected images
 images.forEach((image) => {
   if (typeof image !== "string") {
     form.append("images", image);
@@ -170,6 +188,7 @@ images.forEach((image) => {
           navigate("/my-pgs");
         }, 1200);
       } else {
+        setSubmitting(false);
         setToast({
           show: true,
           message: "Failed to update PG",
@@ -178,6 +197,7 @@ images.forEach((image) => {
       }
     } catch (error) {
       console.error(error);
+      setSubmitting(false);
       setToast({
         show: true,
         message: "Something went wrong",
@@ -534,7 +554,7 @@ images.forEach((image) => {
             </div>
            <div className="mt-8">
   <label className="block mb-2 font-medium">
-    PG Images
+    PG Images <span className="text-red-500">*</span>
   </label>
 
   <input
@@ -593,12 +613,16 @@ Upload new images or remove existing ones before updating.
   )}
 </div>
             <button
-              type="submit"
-              className="w-full mt-8 bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"
-            >
-              Update PG
-            </button>
-
+  type="submit"
+  disabled={submitting}
+  className={`w-full mt-8 py-4 rounded-xl font-medium transition ${
+    submitting
+      ? "bg-blue-400 cursor-not-allowed"
+      : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+  } text-white`}
+>
+  {submitting ? "Updating..." : "Update PG"}
+</button>
           </form>
 
         </div>

@@ -41,7 +41,8 @@ function EditProperty() {
     ownerPhone: "",
     ownerEmail: "",
   });
-const [images, setImages] = useState([]);
+  const [images, setImages] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -57,13 +58,13 @@ const [images, setImages] = useState([]);
 
         const data = await response.json();
 
-       if (data.success) {
-  setFormData(data.property);
+        if (data.success) {
+          setFormData(data.property);
 
-  if (data.property.images) {
-    setImages(data.property.images);
-  }
-}
+          if (data.property.images) {
+            setImages(data.property.images);
+          }
+        }
       } catch (error) {
         console.error(error);
       }
@@ -82,6 +83,10 @@ const [images, setImages] = useState([]);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (submitting) return;
+
+    setSubmitting(true);
+
     if (
       !formData.title ||
       !formData.price ||
@@ -94,13 +99,18 @@ const [images, setImages] = useState([]);
       !formData.pincode ||
       !formData.ownerName ||
       !formData.ownerPhone ||
-      !formData.ownerEmail
+      !formData.ownerEmail ||
+      images.length === 0
     ) {
+      setSubmitting(false);
+
       setToast({
         show: true,
-        message: "Please fill all required fields",
+        message:
+          "Please fill all required fields and keep at least one image",
         type: "error",
       });
+
       return;
     }
 
@@ -109,40 +119,40 @@ const [images, setImages] = useState([]);
     );
     const form = new FormData();
 
-Object.keys(formData).forEach((key) => {
-  if (
-    ![
-      "images",
-      "owner",
-      "_id",
-      "__v",
-      "reviews",
-      "averageRating",
-      "totalReviews",
-      "views",
-      "createdAt",
-      "updatedAt",
-    ].includes(key)
-  ) {
-    form.append(key, formData[key]);
-  }
-});
+    Object.keys(formData).forEach((key) => {
+      if (
+        ![
+          "images",
+          "owner",
+          "_id",
+          "__v",
+          "reviews",
+          "averageRating",
+          "totalReviews",
+          "views",
+          "createdAt",
+          "updatedAt",
+        ].includes(key)
+      ) {
+        form.append(key, formData[key]);
+      }
+    });
 
-form.append("owner", user._id);
+    form.append("owner", user._id);
 
-images.forEach((image) => {
-  if (typeof image !== "string") {
-    form.append("images", image);
-  }
-});
+    images.forEach((image) => {
+      if (typeof image !== "string") {
+        form.append("images", image);
+      }
+    });
     try {
       const response = await fetch(
-  `http://localhost:5000/api/properties/${id}`,
-  {
-    method: "PUT",
-    body: form,
-  }
-);
+        `http://localhost:5000/api/properties/${id}`,
+        {
+          method: "PUT",
+          body: form,
+        }
+      );
       const data = await response.json();
 
       if (data.success) {
@@ -175,6 +185,7 @@ images.forEach((image) => {
           navigate("/my-properties");
         }, 1200);
       } else {
+        setSubmitting(false);
         setToast({
           show: true,
           message: "Failed to update property",
@@ -182,6 +193,7 @@ images.forEach((image) => {
         });
       }
     } catch (error) {
+      setSubmitting(false);
       console.error(error);
       setToast({
         show: true,
@@ -268,6 +280,7 @@ images.forEach((image) => {
                   <option value="">Select Listing Type</option>
                   <option value="Rent">Rent</option>
                   <option value="Sale">Sale</option>
+                  <option value="Lease">Lease</option>
                 </select>
               </div>
 
@@ -486,71 +499,75 @@ images.forEach((image) => {
 
               </div>
             </div>
-           <div className="mt-8">
-  <label className="block mb-2 font-medium">
-    Property Images
-  </label>
+            <div className="mt-8">
+              <label className="block mb-2 font-medium">
+                Property Images <span className="text-red-500">*</span>
+              </label>
 
-  <input
-  type="file"
-  multiple
-  accept="image/*"
-  onChange={(e) =>
-    setImages((prevImages) => [
-      ...prevImages,
-      ...Array.from(e.target.files),
-    ])
-  }
-  className="w-full border border-gray-300 rounded-lg px-4 py-3"
-/>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) =>
+                  setImages((prevImages) => [
+                    ...prevImages,
+                    ...Array.from(e.target.files),
+                  ])
+                }
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
+              />
 
-  <p className="text-sm text-gray-500 mt-2">
-Upload new images or remove existing ones before updating.
-  </p>
+              <p className="text-sm text-gray-500 mt-2">
+                Upload new images or remove existing ones before updating.
+              </p>
 
-  {images.length > 0 && (
-    <div className="mt-4 flex flex-wrap gap-3">
+              {images.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-3">
 
-     {images.map((image, index) => (
+                  {images.map((image, index) => (
 
-  <div
-    key={index}
-    className="relative"
-  >
+                    <div
+                      key={index}
+                      className="relative"
+                    >
 
-    <img
-      src={
-        typeof image === "string"
-          ? image
-          : URL.createObjectURL(image)
-      }
-      alt={`Property ${index + 1}`}
-      className="w-28 h-20 rounded-lg object-cover border"
-    />
+                      <img
+                        src={
+                          typeof image === "string"
+                            ? image
+                            : URL.createObjectURL(image)
+                        }
+                        alt={`Property ${index + 1}`}
+                        className="w-28 h-20 rounded-lg object-cover border"
+                      />
 
-    <button
-      type="button"
-      onClick={() =>
-        setImages((prevImages) =>
-  prevImages.filter((_, i) => i !== index)
-)
-      }
-      className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-red-600 text-white flex items-center justify-center transition-all duration-200"
-    >
-      <FaTimes size={12} />
-    </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setImages((prevImages) =>
+                            prevImages.filter((_, i) => i !== index)
+                          )
+                        }
+                        className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-red-600 text-white flex items-center justify-center transition-all duration-200"
+                      >
+                        <FaTimes size={12} />
+                      </button>
 
-  </div>
+                    </div>
 
-))}
-    </div>
-  )}
-</div>
+                  ))}
+                </div>
+              )}
+            </div>
             <button
               type="submit"
-              className="w-full mt-8 bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"
+              disabled={submitting}
+              className={`w-full mt-8 py-4 rounded-xl font-medium transition ${submitting
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                } text-white`}
             >
-              Update Property
+              {submitting ? "Updating..." : "Update Property"}
             </button>
 
           </form>

@@ -8,6 +8,9 @@ import {
   FaBed,
   FaHeart,
   FaRegHeart,
+  FaDumbbell,
+  FaTv,
+  FaVideo,
 } from "react-icons/fa";
 
 import Toast from "../common/Toast";
@@ -150,13 +153,24 @@ function PGCard({ pg }) {
 
       <div className="relative h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
 
-        <FaBed className="text-5xl text-blue-600" />
+  <button
+    onClick={handleWishlist}
+    className="absolute top-4 right-4 w-11 h-11 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition cursor-pointer"
+  >
+    {saved ? (
+      <FaHeart className="text-red-500 text-lg" />
+    ) : (
+      <FaRegHeart className="text-gray-500 text-lg" />
+    )}
+  </button>
 
-        <p className="mt-3 text-gray-600 font-medium">
-          PG Image Coming Soon
-        </p>
+  <FaBed className="text-5xl text-blue-600" />
 
-      </div>
+  <p className="mt-3 text-gray-600 font-medium">
+    PG Image Coming Soon
+  </p>
+
+</div>
 
         <div className="p-5">
 
@@ -183,48 +197,74 @@ function PGCard({ pg }) {
 
           <div className="flex flex-wrap gap-2 mt-4">
 
-            <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">
-              {pg.genderPreference === "Unisex"
-                ? "Co-live"
-                : pg.genderPreference}
-            </span>
+  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">
+    {pg.genderPreference === "Unisex"
+      ? "Co-live"
+      : pg.genderPreference}
+  </span>
 
-            {pg.wifiAvailable && (
-              <span className="bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1">
-                <FaWifi />
-                WiFi
-              </span>
-            )}
+  {pg.wifiAvailable && (
+    <span className="bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1">
+      <FaWifi />
+      WiFi
+    </span>
+  )}
 
-            {pg.acAvailable && (
-              <span className="bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1">
-                <FaSnowflake />
-                AC
-              </span>
-            )}
+  {pg.acAvailable && (
+    <span className="bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1">
+      <FaSnowflake />
+      AC
+    </span>
+  )}
 
-            {pg.foodAvailable && (
-              <span className="bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1">
-                <FaUtensils />
-                Food
-              </span>
-            )}
+  {pg.foodAvailable && (
+    <span className="bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1">
+      <FaUtensils />
+      Food
+    </span>
+  )}
 
-          </div>
+  {pg.gymAvailable && (
+  <span className="bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1">
+    <FaDumbbell />
+    Gym
+  </span>
+)}
 
-          <div className="mt-5">
+{pg.swimmingPoolAvailable && (
+  <span className="bg-gray-100 px-3 py-1 rounded-full text-xs">
+    Pool
+  </span>
+)}
 
-            <p className="text-sm text-gray-500">
-              Monthly Rent
-            </p>
+{pg.tvAvailable && (
+  <span className="bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1">
+    <FaTv />
+    TV
+  </span>
+)}
 
-            <h4 className="text-3xl font-bold text-blue-600">
-              ₹ {pg.rent?.toLocaleString() || 0}
-            </h4>
+{pg.cctvAvailable && (
+  <span className="bg-gray-100 px-3 py-1 rounded-full text-xs flex items-center gap-1">
+    <FaVideo />
+    CCTV
+  </span>
+)}
+</div>
 
-          </div>
+         <div className="mt-5">
 
-          {pg.depositAmount && (
+  <p className="text-sm text-gray-500">
+    Monthly Rent
+  </p>
+
+  <h4 className="text-3xl font-bold text-blue-600">
+    ₹ {pg.rent?.toLocaleString() || 0}
+  </h4>
+
+</div>
+
+          {Number(pg.depositAmount) > 0 && (
             <div className="mt-3">
 
               <p className="text-sm text-gray-500">

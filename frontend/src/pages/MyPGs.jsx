@@ -22,7 +22,11 @@ function MyPGs() {
 
   const [errorMessage, setErrorMessage] =
     useState("");
+  const [showDeleteModal, setShowDeleteModal] =
+    useState(false);
 
+  const [selectedPGId, setSelectedPGId] =
+    useState(null);
   const user = JSON.parse(
     localStorage.getItem("user")
   );
@@ -40,7 +44,7 @@ function MyPGs() {
       }
     } catch (error) {
       console.error(error);
-
+      setSelectedPGId(null);
       setErrorMessage(
         "Failed to load PGs"
       );
@@ -55,85 +59,81 @@ function MyPGs() {
     }
   }, []);
 
-const handleDelete = async (id) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this PG?"
-  );
-
-  if (!confirmDelete) return;
-
-  try {
-    const response = await fetch(
-      `http://localhost:5000/api/pgs/${id}`,
-      {
-        method: "DELETE",
-      }
-    );
-
-    const data = await response.json();
-
-    if (data.success) {
-      const updatedPGs = pgs.filter(
-        (pg) => pg._id !== id
+  const handleDelete = async (id) => {
+    setShowDeleteModal(false);
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/pgs/${id}`,
+        {
+          method: "DELETE",
+        }
       );
 
-      setPgs(updatedPGs);
+      const data = await response.json();
 
-      setSuccessMessage(
-        "PG deleted successfully"
-      );
+      if (data.success) {
+        const updatedPGs = pgs.filter(
+          (pg) => pg._id !== id
+        );
 
-      setTimeout(() => {
-        setSuccessMessage("");
-      }, 3000);
-
-      // Check remaining properties
-      const propertyResponse = await fetch(
-        `http://localhost:5000/api/properties/my-properties/${user._id}`
-      );
-
-      const propertyData =
-        await propertyResponse.json();
-
-      const totalProperties =
-        propertyData.success
-          ? propertyData.properties.length
-          : 0;
-
-      // Downgrade only if NO PGs and NO Properties
-      if (
-        updatedPGs.length === 0 &&
-        totalProperties === 0 &&
-        user.role === "owner"
-      ) {
-        const updatedUser = {
-          ...user,
-          role: "user",
-        };
-
-        localStorage.setItem(
-          "user",
-          JSON.stringify(updatedUser)
+        setPgs(updatedPGs);
+        setSelectedPGId(null);
+        setShowDeleteModal(false);
+        setSuccessMessage(
+          "PG deleted successfully"
         );
 
         setTimeout(() => {
-          window.location.href =
-            "/user-dashboard";
-        }, 1000);
+          setSuccessMessage("");
+        }, 3000);
+
+        // Check remaining properties
+        const propertyResponse = await fetch(
+          `http://localhost:5000/api/properties/my-properties/${user._id}`
+        );
+
+        const propertyData =
+          await propertyResponse.json();
+
+        const totalProperties =
+          propertyData.success
+            ? propertyData.properties.length
+            : 0;
+
+        // Downgrade only if NO PGs and NO Properties
+        if (
+          updatedPGs.length === 0 &&
+          totalProperties === 0 &&
+          user.role === "owner"
+        ) {
+          const updatedUser = {
+            ...user,
+            role: "user",
+          };
+
+          localStorage.setItem(
+            "user",
+            JSON.stringify(updatedUser)
+          );
+
+          setTimeout(() => {
+            window.location.href =
+              "/user-dashboard";
+          }, 1000);
+        }
       }
+    } catch (error) {
+      console.error(error);
+
+      setErrorMessage(
+        "Failed to delete PG"
+      );
+
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
     }
-  } catch (error) {
-    console.error(error);
-
-    setErrorMessage(
-      "Failed to delete PG"
-    );
-
-    setTimeout(() => {
-      setErrorMessage("");
-    }, 3000);
-  }
-};
+  };
 
   return (
     <>
@@ -254,9 +254,10 @@ const handleDelete = async (id) => {
                     Edit
                   </Link>
                   <button
-                    onClick={() =>
-                      handleDelete(pg._id)
-                    }
+                    onClick={() => {
+                      setSelectedPGId(pg._id);
+                      setShowDeleteModal(true);
+                    }}
                     className="flex-1 bg-red-100 text-red-600 py-2 rounded-lg text-sm hover:bg-red-200 transition flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <FaTrash />
@@ -274,6 +275,46 @@ const handleDelete = async (id) => {
       </section>
 
       <Footer />
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md">
+
+            <h2 className="text-2xl font-bold text-gray-800">
+              Delete PG
+            </h2>
+
+            <p className="text-gray-600 mt-3">
+              Are you sure you want to delete this PG?
+              This action cannot be undone.
+            </p>
+
+            <div className="flex justify-end gap-3 mt-6">
+
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setSelectedPGId(null);
+                }}
+                className="px-5 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition cursor-pointer"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() =>
+                  handleDelete(selectedPGId)
+                }
+                className="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition cursor-pointer"
+              >
+                Delete
+              </button>
+
+            </div>
+
+          </div>
+        </div>
+      )}
     </>
   );
 }

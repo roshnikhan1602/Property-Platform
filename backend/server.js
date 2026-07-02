@@ -2,12 +2,13 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 
+// Load .env FIRST
+dotenv.config();
+
 const connectDB = require("./config/db");
 
 const pgRoutes = require("./routes/pgRoutes");
 const chatRoutes = require("./routes/chatRoutes");
-
-dotenv.config();
 
 connectDB();
 

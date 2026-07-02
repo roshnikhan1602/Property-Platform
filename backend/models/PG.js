@@ -17,7 +17,7 @@ const pgSchema = new mongoose.Schema(
       required: true,
     },
 
-      depositAmount: {
+    depositAmount: {
       type: Number,
       default: 0,
     },
@@ -45,6 +45,26 @@ const pgSchema = new mongoose.Schema(
     },
 
     acAvailable: {
+      type: Boolean,
+      default: false,
+    },
+
+    gymAvailable: {
+      type: Boolean,
+      default: false,
+    },
+
+    swimmingPoolAvailable: {
+      type: Boolean,
+      default: false,
+    },
+
+    tvAvailable: {
+      type: Boolean,
+      default: false,
+    },
+
+    cctvAvailable: {
       type: Boolean,
       default: false,
     },

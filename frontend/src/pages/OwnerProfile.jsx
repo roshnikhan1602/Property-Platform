@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import { FaCamera } from "react-icons/fa";
 
 function OwnerProfile() {
   const [user, setUser] = useState(null);
@@ -19,6 +20,10 @@ function OwnerProfile() {
 
   const [errorMessage, setErrorMessage] =
     useState("");
+  const [profileImage, setProfileImage] =
+    useState("");
+
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const loggedInUser = JSON.parse(
@@ -29,6 +34,9 @@ function OwnerProfile() {
       setUser(loggedInUser);
       setName(loggedInUser.name || "");
       setEmail(loggedInUser.email || "");
+      setProfileImage(
+        loggedInUser.profileImage || ""
+      );
 
       fetch(
         `http://localhost:5000/api/properties/my-properties/${loggedInUser._id}`
@@ -90,11 +98,20 @@ function OwnerProfile() {
           JSON.stringify(data.user)
         );
 
-        setUser(data.user);
 
-        setSuccessMessage(
-          "Profile updated successfully."
-        );
+       setUser(data.user);
+
+setProfileImage(
+  data.user.profileImage || ""
+);
+
+if (fileInputRef.current) {
+  fileInputRef.current.value = "";
+}
+
+setSuccessMessage(
+  "Profile updated successfully."
+);
         setTimeout(() => {
           setSuccessMessage("");
         }, 3000);
@@ -102,6 +119,7 @@ function OwnerProfile() {
         setErrorMessage(
           "Failed to update profile."
         );
+
         setTimeout(() => {
           setErrorMessage("");
         }, 3000);
@@ -112,6 +130,10 @@ function OwnerProfile() {
       setErrorMessage(
         "Failed to update profile."
       );
+
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
     }
   };
 
@@ -125,10 +147,112 @@ function OwnerProfile() {
 
           <div className="flex flex-col items-center text-center border-b pb-8">
 
-            <div className="w-24 h-24 rounded-full bg-blue-600 text-white flex items-center justify-center text-4xl font-bold">
-              {name?.charAt(0).toUpperCase()}
-            </div>
+            <div className="relative">
 
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+
+                  if (!file) return;
+
+                  const formData = new FormData();
+
+                  formData.append(
+                    "profileImage",
+                    file
+                  );
+
+                  try {
+                    const response = await fetch(
+                      `http://localhost:5000/api/auth/profile-image/${user._id}`,
+                      {
+                        method: "PUT",
+                        body: formData,
+                      }
+                    );
+
+                    const data =
+                      await response.json();
+
+                    if (data.success) {
+                      setProfileImage(
+                        data.user.profileImage
+                      );
+
+                      setUser(data.user);
+
+                      localStorage.setItem(
+                        "user",
+                        JSON.stringify(data.user)
+                      );
+                    
+                      if (fileInputRef.current) {
+  fileInputRef.current.value = "";
+}
+                      setSuccessMessage(
+                        "Profile image updated successfully."
+                      );
+
+                      setTimeout(() => {
+                        setSuccessMessage("");
+                      }, 3000);
+                    } else {
+                      setErrorMessage(
+                        "Failed to upload image."
+                      );
+
+                      setTimeout(() => {
+                        setErrorMessage("");
+                      }, 3000);
+
+                    }
+                  } catch (error) {
+                    console.error(error);
+
+                    setErrorMessage(
+                      "Failed to upload image."
+                    );
+
+                    setTimeout(() => {
+                      setErrorMessage("");
+                    }, 3000);
+
+                  }
+                }}
+              />
+
+              <div
+                onClick={() => {
+                  if (user) {
+                    fileInputRef.current.click();
+                  }
+                }}
+                className="relative w-24 h-24 rounded-full overflow-hidden cursor-pointer border-4 border-blue-500 group"
+              >
+
+                {profileImage ? (
+                  <img
+                    src={profileImage}
+                    alt="Profile"
+                    className="w-full h-full object-cover object-center"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-blue-600 text-white flex items-center justify-center text-4xl font-bold">
+                    {name?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                  <FaCamera className="text-white text-2xl" />
+                </div>
+
+              </div>
+
+            </div>
             <h1 className="text-3xl font-bold mt-4">
               {name}
             </h1>
