@@ -5,7 +5,6 @@ const streamifier = require("streamifier");
 
 const addProperty = async (req, res) => {
   try {
-      console.log(req.files);
     const imageUrls = [];
 
     if (req.files && req.files.length > 0) {
@@ -72,21 +71,78 @@ const addProperty = async (req, res) => {
 
 const getAllProperties = async (req, res) => {
   try {
-    const properties = await Property.find().sort({
-      views: -1,
-    });
+    const {
+      city,
+      locality,
+      propertyType,
+      listingType,
+      minPrice,
+      maxPrice,
+    } = req.query;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 9;
+    const skip = (page - 1) * limit;
+
+    const filters = {
+      isApproved: true,
+    };
+
+    if (city) {
+      filters.city = {
+        $regex: city,
+        $options: "i",
+      };
+    }
+
+    if (locality) {
+      filters.locality = {
+        $regex: locality,
+        $options: "i",
+      };
+    }
+
+    if (propertyType) {
+      filters.propertyType = propertyType;
+    }
+
+    if (listingType) {
+      filters.listingType = listingType;
+    }
+
+    if (minPrice || maxPrice) {
+      filters.price = {};
+
+      if (minPrice) {
+        filters.price.$gte = Number(minPrice);
+      }
+
+      if (maxPrice) {
+        filters.price.$lte = Number(maxPrice);
+      }
+    }
+
+    const totalProperties = await Property.countDocuments(filters);
+
+    const properties = await Property.find(filters)
+      .sort({ views: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       success: true,
       properties,
+      currentPage: page,
+      totalPages: Math.ceil(totalProperties / limit),
+      totalProperties,
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
 };
-
 const getMyProperties = async (req, res) => {
   try {
     const properties = await Property.find({

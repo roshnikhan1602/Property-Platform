@@ -69,13 +69,51 @@ const addPG = async (req, res) => {
 
 const getAllPGs = async (req, res) => {
   try {
-    const pgs = await PG.find().sort({
-      views: -1,
-    });
+    const {
+      city,
+      gender,
+      sharingType,
+    } = req.query;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 9;
+    const skip = (page - 1) * limit;
+
+    const filters = {
+      isApproved: true,
+    };
+
+    if (city) {
+      filters.city = {
+        $regex: city,
+        $options: "i",
+      };
+    }
+
+    if (gender) {
+      filters.genderPreference = gender;
+    }
+
+    if (sharingType) {
+      filters.sharingType = sharingType;
+    }
+
+    const totalPGs =
+      await PG.countDocuments(filters);
+
+    const pgs = await PG.find(filters)
+      .sort({ views: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       success: true,
       pgs,
+      currentPage: page,
+      totalPages: Math.ceil(
+        totalPGs / limit
+      ),
+      totalPGs,
     });
   } catch (error) {
     res.status(500).json({
@@ -84,7 +122,6 @@ const getAllPGs = async (req, res) => {
     });
   }
 };
-
 const getMyPGs = async (req, res) => {
   try {
     const pgs = await PG.find({

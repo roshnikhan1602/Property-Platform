@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {
+  useParams,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
@@ -16,7 +20,7 @@ function PGDetails({
   const { id } = useParams();
 
   const navigate = useNavigate();
-
+const location = useLocation();
   const [pg, setPg] = useState(null);
   const [selectedImage, setSelectedImage] =
     useState("");
@@ -127,7 +131,20 @@ function PGDetails({
       />
 
       <section className="max-w-7xl mx-auto px-6 pt-28 pb-10">
-
+<div className="mb-6">
+  <button
+    onClick={() => {
+      if (location.state?.fromAdmin) {
+        navigate("/admin-dashboard");
+      } else {
+        navigate(-1);
+      }
+    }}
+    className="bg-gray-200 hover:bg-gray-300 px-5 py-2 rounded-lg font-medium transition"
+  >
+    ← Back
+  </button>
+</div>
         <div className="relative h-96 rounded-2xl overflow-hidden border">
 
           {selectedImage ? (

@@ -11,37 +11,27 @@ const {
   deleteProperty,
   deleteUser,
   getUserById,
+
+  getAllPGs,
+  approvePG,
+  disapprovePG,
+  deletePG,
 } = require("../controllers/adminController");
 
-router.get(
-  "/users",
-  getAllUsers
-);
+router.get("/users", getAllUsers);
 
-router.get(
-  "/user/:id",
-  getUserById
-);
+router.get("/user/:id", getUserById);
 
-router.delete(
-  "/user/:id",
-  deleteUser
-);
+router.delete("/user/:id", deleteUser);
 
-router.get(
-  "/properties",
-  getAllProperties
-);
+router.get("/properties", getAllProperties);
 
 router.get(
   "/approved-properties",
   getApprovedProperties
 );
 
-router.put(
-  "/approve/:id",
-  approveProperty
-);
+router.put("/approve/:id", approveProperty);
 
 router.put(
   "/disapprove/:id",
@@ -51,6 +41,24 @@ router.put(
 router.delete(
   "/property/:id",
   deleteProperty
+);
+
+// PG Routes
+router.get("/pgs", getAllPGs);
+
+router.put(
+  "/pg/approve/:id",
+  approvePG
+);
+
+router.put(
+  "/pg/disapprove/:id",
+  disapprovePG
+);
+
+router.delete(
+  "/pg/:id",
+  deletePG
 );
 
 module.exports = router;

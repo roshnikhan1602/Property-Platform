@@ -10,15 +10,19 @@ function PropertyListing({
   setShowLoginModal,
 }) {
   const [properties, setProperties] = useState([]);
+  const [totalProperties, setTotalProperties] =
+  useState(0);
+  const [totalPages, setTotalPages] =
+  useState(1);
   const [loading, setLoading] = useState(true);
 
-  const [searchParams] = useSearchParams();
+const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const city = searchParams.get("city");
 
   const locality =
-    searchParams.get("locality");
+   searchParams.get("locality");
 
   const propertyType =
     searchParams.get("propertyType") ||
@@ -33,85 +37,41 @@ function PropertyListing({
   const maxPrice =
     searchParams.get("maxPrice");
 
+  const page =
+  Number(searchParams.get("page")) || 1;
+
   useEffect(() => {
     const fetchProperties = async () => {
       try {
         setLoading(true);
 
-        const response = await fetch(
-          "http://localhost:5000/api/properties"
-        );
+      const params = new URLSearchParams();
 
-        const data = await response.json();
+params.append("page", page);
+params.append("limit", 9);
 
-        if (data.success) {
-          let filteredProperties =
-            data.properties.filter(
-              (property) =>
-                property.isApproved
-            );
+if (city) params.append("city", city);
+if (locality)
+  params.append("locality", locality);
+if (propertyType)
+  params.append("propertyType", propertyType);
+if (listingType)
+  params.append("listingType", listingType);
+if (minPrice)
+  params.append("minPrice", minPrice);
+if (maxPrice)
+  params.append("maxPrice", maxPrice);
 
-          if (city) {
-            filteredProperties =
-              filteredProperties.filter(
-                (property) =>
-                  property.city
-                    ?.toLowerCase()
-                    .includes(
-                      city.toLowerCase()
-                    )
-              );
-          }
+const response = await fetch(
+  `http://localhost:5000/api/properties?${params.toString()}`
+);
 
-          if (locality) {
-            filteredProperties =
-              filteredProperties.filter(
-                (property) =>
-                  property.locality
-                    ?.toLowerCase()
-                    .includes(
-                      locality.toLowerCase()
-                    )
-              );
-          }
+const data = await response.json();
 
-          if (propertyType) {
-            filteredProperties =
-              filteredProperties.filter(
-                (property) =>
-                  property.propertyType ===
-                  propertyType
-              );
-          }
-
-          if (listingType) {
-            filteredProperties =
-              filteredProperties.filter(
-                (property) =>
-                  property.listingType ===
-                  listingType
-              );
-          }
-
-          if (minPrice) {
-            filteredProperties =
-              filteredProperties.filter(
-                (property) =>
-                  property.price >=
-                  Number(minPrice)
-              );
-          }
-
-          if (maxPrice) {
-            filteredProperties =
-              filteredProperties.filter(
-                (property) =>
-                  property.price <=
-                  Number(maxPrice)
-              );
-          }
-
-          setProperties(filteredProperties);
+if (data.success) {
+  setProperties(data.properties);
+   setTotalProperties(data.totalProperties);
+  setTotalPages(data.totalPages);
         }
       } catch (error) {
         console.error(
@@ -124,14 +84,15 @@ function PropertyListing({
     };
 
     fetchProperties();
-  }, [
-    city,
-    locality,
-    propertyType,
-    listingType,
-    minPrice,
-    maxPrice,
-  ]);
+  },[
+  city,
+  locality,
+  propertyType,
+  listingType,
+  minPrice,
+  maxPrice,
+  page,
+]);
 
   return (
     <>
@@ -233,22 +194,53 @@ function PropertyListing({
         ) : (
           <>
             <p className="mt-6 text-gray-600 font-medium">
-              {properties.length} Properties Found
-            </p>
+  Showing {properties.length} of {totalProperties} Properties
+</p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
 
-              {properties.map(
-                (property) => (
-                  <PropertyCard
-                    key={property._id}
-                    property={property}
-                  />
-                )
-              )}
+  {properties.map((property) => (
+    <PropertyCard
+      key={property._id}
+      property={property}
+    />
+  ))}
 
-            </div>
-          </>
+</div>
+
+<div className="flex justify-center items-center gap-3 mt-10">
+
+  <button
+    disabled={page === 1}
+    onClick={() => {
+      const params = new URLSearchParams(searchParams);
+      params.set("page", page - 1);
+      setSearchParams(params);
+    }}
+    className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 cursor-pointer"
+  >
+    Previous
+  </button>
+
+  <span className="font-medium">
+    Page {page} of {totalPages}
+  </span>
+
+  <button
+    disabled={page === totalPages}
+    onClick={() => {
+      const params = new URLSearchParams(searchParams);
+      params.set("page", page + 1);
+      setSearchParams(params);
+    }}
+    className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
+  >
+    Next
+  </button>
+
+</div>
+
+</>
         )}
 
       </section>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
@@ -14,87 +15,90 @@ function PGListing({
   setShowLoginModal,
 }) {
   const [pgs, setPgs] = useState([]);
-  const [filteredPgs, setFilteredPgs] =
-    useState([]);
 
-  const [loading, setLoading] =
-    useState(true);
+ const [loading, setLoading] =
+  useState(true);
 
+const [totalPGs, setTotalPGs] =
+  useState(0);
+
+const [totalPages, setTotalPages] =
+  useState(1);
+
+const [searchParams, setSearchParams] =
+  useSearchParams();
   const [city, setCity] = useState("");
   const [gender, setGender] =
     useState("");
   const [sharingType, setSharingType] =
     useState("");
+    const page =
+  Number(searchParams.get("page")) || 1;
 
   useEffect(() => {
-    fetchPGs();
-  }, []);
+  fetchPGs();
+}, [page, city, gender, sharingType]);
 
   const fetchPGs = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/pgs"
+  try {
+    setLoading(true);
+
+    const params = new URLSearchParams();
+
+    params.append("page", page);
+    params.append("limit", 9);
+
+    if (city) params.append("city", city);
+    if (gender)
+      params.append("gender", gender);
+    if (sharingType)
+      params.append(
+        "sharingType",
+        sharingType
       );
 
-      const data = await response.json();
+    const response = await fetch(
+      `http://localhost:5000/api/pgs?${params.toString()}`
+    );
 
-      if (data.success) {
-        setPgs(data.pgs);
-        setFilteredPgs(data.pgs);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
+    const data = await response.json();
+
+    if (data.success) {
+      setPgs(data.pgs);
+      setTotalPGs(data.totalPGs);
+      setTotalPages(data.totalPages);
     }
-  };
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
-  const handleSearch = () => {
-    let result = [...pgs];
+ const handleSearch = () => {
+  const params = new URLSearchParams();
 
-    if (city.trim()) {
-      result = result.filter((pg) =>
-        pg.city
-          ?.trim()
-          .toLowerCase()
-          .includes(
-            city.trim().toLowerCase()
-          )
-      );
-    }
+  if (city) params.set("city", city);
+  if (gender)
+    params.set("gender", gender);
+  if (sharingType)
+    params.set(
+      "sharingType",
+      sharingType
+    );
 
-    if (gender) {
-      result = result.filter(
-        (pg) =>
-          pg.genderPreference
-            ?.trim()
-            .toLowerCase() ===
-          gender.trim().toLowerCase()
-      );
-    }
+  params.set("page", 1);
 
-    if (sharingType) {
-      result = result.filter(
-        (pg) =>
-          pg.sharingType
-            ?.trim()
-            .toLowerCase() ===
-          sharingType
-            .trim()
-            .toLowerCase()
-      );
-    }
-
-    setFilteredPgs(result);
-  };
+  setSearchParams(params);
+};
 
   const handleClearFilters = () => {
-    setCity("");
-    setGender("");
-    setSharingType("");
+  setCity("");
+  setGender("");
+  setSharingType("");
 
-    setFilteredPgs(pgs);
-  };
+  setSearchParams({});
+};
 
   return (
     <>
@@ -229,7 +233,7 @@ function PGListing({
           <p className="text-center mt-10">
             Loading PGs...
           </p>
-        ) : filteredPgs.length === 0 ? (
+       ) : pgs.length === 0 ? (
           <div className="text-center mt-16">
 
             <div className="text-6xl">
@@ -247,13 +251,13 @@ function PGListing({
           </div>
         ) : (
           <>
-            <p className="mt-8 text-gray-600 font-medium">
-              {filteredPgs.length} PGs Found
-            </p>
+           <p className="mt-8 text-gray-600 font-medium">
+  Showing {pgs.length} of {totalPGs} PGs
+</p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
 
-              {filteredPgs.map((pg) => (
+             {pgs.map((pg) => (
                 <PGCard
                   key={pg._id}
                   pg={pg}
@@ -261,6 +265,35 @@ function PGListing({
               ))}
 
             </div>
+            <div className="flex justify-center items-center gap-3 mt-10">
+  <button
+    disabled={page === 1}
+    onClick={() => {
+      const params = new URLSearchParams(searchParams);
+      params.set("page", page - 1);
+      setSearchParams(params);
+    }}
+    className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 cursor-pointer"
+  >
+    Previous
+  </button>
+
+  <span className="font-medium">
+    Page {page} of {totalPages}
+  </span>
+
+  <button
+    disabled={page === totalPages}
+    onClick={() => {
+      const params = new URLSearchParams(searchParams);
+      params.set("page", page + 1);
+      setSearchParams(params);
+    }}
+    className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
+  >
+    Next
+  </button>
+</div>
           </>
         )}
 

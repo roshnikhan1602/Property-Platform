@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Toast from "../components/common/Toast";
-
+import ConfirmModal from "../components/common/ConfirmModal";
 
 function AdminDashboard() {
   const [users, setUsers] = useState([]);
@@ -11,11 +14,22 @@ function AdminDashboard() {
   const [properties, setProperties] =
     useState([]);
 
+  const [pgs, setPgs] =
+    useState([]);
+
   const [supportMessages, setSupportMessages] =
     useState([]);
 
   const [activeTab, setActiveTab] =
     useState("");
+  const [propertyView, setPropertyView] =
+    useState("properties");
+
+  const [pendingView, setPendingView] =
+    useState("properties");
+
+  const [approvedView, setApprovedView] =
+    useState("properties");
 
   const [selectedUser, setSelectedUser] =
     useState(null);
@@ -25,7 +39,14 @@ function AdminDashboard() {
     message: "",
     type: "success",
   });
-
+ 
+  const [confirmModal, setConfirmModal] =
+  useState({
+    show: false,
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
   const [replyText, setReplyText] =
     useState("");
 
@@ -36,6 +57,7 @@ function AdminDashboard() {
     useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const fetchData = () => {
     fetch(
@@ -57,7 +79,15 @@ function AdminDashboard() {
           setProperties(data.properties);
         }
       });
-
+    fetch(
+      "http://localhost:5000/api/admin/pgs"
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setPgs(data.pgs);
+        }
+      });
     fetch(
       "http://localhost:5000/api/support"
     )
@@ -72,8 +102,32 @@ function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+  fetchData();
+
+  if (location.state?.fromAdmin) {
+    setActiveTab(
+      location.state.activeTab || ""
+    );
+
+    if (location.state.propertyView) {
+      setPropertyView(
+        location.state.propertyView
+      );
+    }
+
+    if (location.state.pendingView) {
+      setPendingView(
+        location.state.pendingView
+      );
+    }
+
+    if (location.state.approvedView) {
+      setApprovedView(
+        location.state.approvedView
+      );
+    }
+  }
+}, []);
 
   const pendingProperties =
     properties.filter(
@@ -85,6 +139,132 @@ function AdminDashboard() {
       (property) => property.isApproved
     );
 
+  const pendingPGs =
+    pgs.filter((pg) => !pg.isApproved);
+
+  const approvedPGs =
+    pgs.filter((pg) => pg.isApproved);
+  const ROWS_PER_PAGE = 10;
+
+  const [propertyPage, setPropertyPage] =
+    useState(1);
+
+    const [pendingPage, setPendingPage] =
+  useState(1);
+  const [approvedPage, setApprovedPage] =
+  useState(1);
+  const [supportPage, setSupportPage] =
+  useState(1);
+  const [userPage, setUserPage] =
+  useState(1);
+  const propertyData =
+    propertyView === "properties"
+      ? properties
+      : pgs;
+
+  const propertyTotalPages =
+    Math.ceil(
+      propertyData.length /
+      ROWS_PER_PAGE
+    ) || 1;
+
+  const paginatedProperties =
+  propertyData.slice(
+    (propertyPage - 1) *
+      ROWS_PER_PAGE,
+    propertyPage *
+      ROWS_PER_PAGE
+  );
+const pendingData =
+  pendingView === "properties"
+    ? pendingProperties
+    : pendingPGs;
+
+const pendingTotalPages =
+  Math.ceil(
+    pendingData.length /
+      ROWS_PER_PAGE
+  ) || 1;
+
+const paginatedPending =
+  pendingData.slice(
+    (pendingPage - 1) *
+      ROWS_PER_PAGE,
+    pendingPage *
+      ROWS_PER_PAGE
+  );
+  const approvedData =
+  approvedView === "properties"
+    ? approvedProperties
+    : approvedPGs;
+
+const approvedTotalPages =
+  Math.ceil(
+    approvedData.length /
+      ROWS_PER_PAGE
+  ) || 1;
+
+const paginatedApproved =
+  approvedData.slice(
+    (approvedPage - 1) *
+      ROWS_PER_PAGE,
+    approvedPage *
+      ROWS_PER_PAGE
+  );
+
+  const supportTotalPages =
+  Math.ceil(
+    supportMessages.length /
+      ROWS_PER_PAGE
+  ) || 1;
+
+const paginatedSupport =
+  supportMessages.slice(
+    (supportPage - 1) *
+      ROWS_PER_PAGE,
+    supportPage *
+      ROWS_PER_PAGE
+  );
+
+  const userTotalPages =
+  Math.ceil(
+    users.length /
+      ROWS_PER_PAGE
+  ) || 1;
+
+const paginatedUsers =
+  users.slice(
+    (userPage - 1) *
+      ROWS_PER_PAGE,
+    userPage *
+      ROWS_PER_PAGE
+  );
+useEffect(() => {
+  setPropertyPage(1);
+}, [propertyView]);
+
+useEffect(() => {
+  setPendingPage(1);
+}, [pendingView]);
+
+useEffect(() => {
+  setApprovedPage(1);
+}, [approvedView]);
+
+useEffect(() => {
+  setSupportPage(1);
+}, []);
+
+useEffect(() => {
+  setUserPage(1);
+}, []);
+useEffect(() => {
+  setUserPage(1);
+  setPropertyPage(1);
+  setPendingPage(1);
+  setApprovedPage(1);
+  setSupportPage(1);
+}, [activeTab]);
   const handleApprove = async (id) => {
     try {
       const response = await fetch(
@@ -147,42 +327,145 @@ function AdminDashboard() {
     };
 
   const handleDelete = async (id) => {
-    const confirmDelete =
-      window.confirm(
-        "Delete this property?"
-      );
+  setConfirmModal({
+    show: true,
+    title: "Delete Property",
+    message:
+      "Are you sure you want to delete this property? This action cannot be undone.",
+    onConfirm: async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/admin/property/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
 
-    if (!confirmDelete) return;
+        const data = await response.json();
 
+        if (data.success) {
+          setToast({
+            show: true,
+            message:
+              "Property deleted successfully",
+            type: "success",
+          });
+
+          fetchData();
+        }
+      } catch (error) {
+        console.error(error);
+
+        setToast({
+          show: true,
+          message:
+            "Failed to delete property",
+          type: "error",
+        });
+      } finally {
+        setConfirmModal({
+          show: false,
+          title: "",
+          message: "",
+          onConfirm: null,
+        });
+      }
+    },
+  });
+};
+  const handleApprovePG = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/admin/property/${id}`,
+        `http://localhost:5000/api/admin/pg/approve/${id}`,
         {
-          method: "DELETE",
+          method: "PUT",
         }
       );
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (data.success) {
         setToast({
           show: true,
-          message: "Property deleted successfully",
+          message: "PG approved successfully",
           type: "success",
         });
         fetchData();
       }
     } catch (error) {
       console.error(error);
-      setToast({
-        show: true,
-        message: "Failed to delete property",
-        type: "error",
-      });
     }
   };
 
+  const handleDisapprovePG = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/admin/pg/disapprove/${id}`,
+        {
+          method: "PUT",
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setToast({
+          show: true,
+          message: "PG disapproved successfully",
+          type: "success",
+        });
+        fetchData();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeletePG = async (id) => {
+  setConfirmModal({
+    show: true,
+    title: "Delete PG",
+    message:
+      "Are you sure you want to delete this PG? This action cannot be undone.",
+    onConfirm: async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/admin/pg/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+          setToast({
+            show: true,
+            message: "PG deleted successfully",
+            type: "success",
+          });
+
+          fetchData();
+        }
+      } catch (error) {
+        console.error(error);
+
+        setToast({
+          show: true,
+          message: "Failed to delete PG",
+          type: "error",
+        });
+      } finally {
+        setConfirmModal({
+          show: false,
+          title: "",
+          message: "",
+          onConfirm: null,
+        });
+      }
+    },
+  });
+};
   const handleResolve = async (id) => {
     try {
       const response = await fetch(
@@ -270,45 +553,56 @@ function AdminDashboard() {
   };
 
   const handleDeleteUser = async (id) => {
-    const confirmDelete = window.confirm(
-      "Delete this user?"
-    );
+  setConfirmModal({
+    show: true,
+    title: "Delete User",
+    message:
+      "Are you sure you want to delete this user? This action cannot be undone.",
+    onConfirm: async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/admin/user/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
 
-    if (!confirmDelete) return;
+        const data = await response.json();
 
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/admin/user/${id}`,
-        {
-          method: "DELETE",
+        if (data.success) {
+          setToast({
+            show: true,
+            message: "User deleted successfully",
+            type: "success",
+          });
+
+          fetchData();
+        } else {
+          setToast({
+            show: true,
+            message: data.message,
+            type: "error",
+          });
         }
-      );
+      } catch (error) {
+        console.error(error);
 
-      const data = await response.json();
-
-      if (data.success) {
         setToast({
           show: true,
-          message: "User deleted successfully",
-          type: "success",
-        });
-        fetchData();
-      } else {
-        setToast({
-          show: true,
-          message: data.message,
+          message: "Failed to delete user",
           type: "error",
         });
+      } finally {
+        setConfirmModal({
+          show: false,
+          title: "",
+          message: "",
+          onConfirm: null,
+        });
       }
-    } catch (error) {
-      console.error(error);
-      setToast({
-        show: true,
-        message: "Failed to delete user",
-        type: "error",
-      });
-    }
-  };
+    },
+  });
+};
 
   return (
     <>
@@ -365,16 +659,30 @@ function AdminDashboard() {
 
           <div
             onClick={() =>
-              navigate("/properties")
+              setActiveTab("properties")
             }
-            className="bg-white shadow-lg rounded-2xl p-8 cursor-pointer hover:shadow-xl"
+            className={`shadow-lg rounded-2xl p-8 cursor-pointer hover:shadow-xl ${activeTab === "properties"
+                ? "bg-green-600 text-white"
+                : "bg-white"
+              }`}
           >
-            <h2 className="text-gray-500">
+            <h2
+              className={
+                activeTab === "properties"
+                  ? "text-white font-medium"
+                  : "text-gray-500"
+              }
+            >
               Properties
             </h2>
 
-            <p className="text-5xl font-bold text-green-600 mt-3">
-              {properties.length}
+            <p
+              className={`text-5xl font-bold mt-3 ${activeTab === "properties"
+                  ? "text-white"
+                  : "text-green-600"
+                }`}
+            >
+             {properties.length + pgs.length}
             </p>
           </div>
 
@@ -403,7 +711,7 @@ function AdminDashboard() {
                 : "text-orange-500"
                 }`}
             >
-              {pendingProperties.length}
+              {pendingProperties.length + pendingPGs.length}
             </p>
           </div>
 
@@ -432,7 +740,7 @@ function AdminDashboard() {
                 : "text-purple-600"
                 }`}
             >
-              {approvedProperties.length}
+              {approvedProperties.length + approvedPGs.length}
             </p>
           </div>
 
@@ -489,12 +797,20 @@ function AdminDashboard() {
                     </th>
 
                     <th className="text-left px-6 py-4">
-                      Role
-                    </th>
+  Role
+</th>
 
-                    <th className="text-left px-6 py-4">
-                      Joined
-                    </th>
+<th className="text-center px-6 py-4">
+  Properties
+</th>
+
+<th className="text-center px-6 py-4">
+  PGs
+</th>
+
+<th className="text-left px-6 py-4">
+  Joined
+</th>
 
                     <th className="text-center px-6 py-4">
                       Actions
@@ -504,7 +820,7 @@ function AdminDashboard() {
 
                 <tbody>
 
-                  {users.map((user) => (
+                  {paginatedUsers.map((user) => (
                     <tr
                       key={user._id}
                       className="border-t hover:bg-gray-50"
@@ -537,16 +853,28 @@ function AdminDashboard() {
                       </td>
 
                       <td className="px-6 py-4">
-                        <span className="capitalize px-3 py-1 rounded-full bg-gray-100 text-sm">
-                          {user.role}
-                        </span>
-                      </td>
+  <span className="capitalize px-3 py-1 rounded-full bg-gray-100 text-sm">
+    {user.role}
+  </span>
+</td>
 
-                      <td className="px-6 py-4">
-                        {new Date(
-                          user.createdAt
-                        ).toLocaleDateString()}
-                      </td>
+<td className="px-6 py-4 text-center">
+  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+    {user.propertyCount}
+  </span>
+</td>
+
+<td className="px-6 py-4 text-center">
+  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+    {user.pgCount}
+  </span>
+</td>
+
+<td className="px-6 py-4">
+  {new Date(
+    user.createdAt
+  ).toLocaleDateString()}
+</td>
 
                       <td className="px-6 py-4">
                         <div className="flex justify-center gap-2">
@@ -581,21 +909,258 @@ function AdminDashboard() {
                     </tr>
                   ))}
 
-                </tbody>
+               </tbody>
 
               </table>
+            </div>
+
+            <div className="flex justify-center items-center gap-3 mt-6 mb-6">
+
+              <button
+                disabled={userPage === 1}
+                onClick={() =>
+                  setUserPage(userPage - 1)
+                }
+                className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
+              >
+                Previous
+              </button>
+
+              <span className="font-medium">
+                Page {userPage} of {userTotalPages}
+              </span>
+
+              <button
+                disabled={
+                  userPage === userTotalPages
+                }
+                onClick={() =>
+                  setUserPage(userPage + 1)
+                }
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+              >
+                Next
+              </button>
+
             </div>
 
           </div>
         )}
 
+
+
+
+        {activeTab === "properties" && (
+          <>
+            <div className="flex gap-3 mb-5">
+              <button
+                onClick={() =>
+                  setPropertyView("properties")
+                }
+                className={`px-5 py-2 rounded-lg font-medium ${propertyView === "properties"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200"
+                  }`}
+              >
+                Properties
+              </button>
+
+              <button
+                onClick={() =>
+                  setPropertyView("pgs")
+                }
+                className={`px-5 py-2 rounded-lg font-medium ${propertyView === "pgs"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200"
+                  }`}
+              >
+                PGs
+              </button>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+
+              <div className="p-6 border-b">
+                <h2 className="text-2xl font-bold">
+                  {propertyView === "properties"
+                    ? "All Properties"
+                    : "All PGs"}
+                </h2>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full">
+
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="text-left px-6 py-4">
+                        {propertyView === "properties"
+                          ? "Property"
+                          : "PG"}
+                      </th>
+
+                      <th className="text-left px-6 py-4">
+                        City
+                      </th>
+
+                      <th className="text-left px-6 py-4">
+                        {propertyView === "properties"
+                          ? "Price"
+                          : "Rent"}
+                      </th>
+
+                      <th className="text-center px-6 py-4">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+
+                    {
+                      paginatedProperties.map((item) => (
+                        <tr
+                          key={item._id}
+                          className="border-t hover:bg-gray-50"
+                        >
+                          <td className="px-6 py-4 font-semibold">
+                            {item.title}
+                          </td>
+
+                          <td className="px-6 py-4">
+                            {item.city}
+                          </td>
+
+                          <td className="px-6 py-4">
+                            ₹
+                            {propertyView ===
+                              "properties"
+                              ? item.price
+                              : item.rent}
+                          </td>
+
+                          <td className="px-6 py-4">
+                            <div className="flex justify-center gap-2">
+
+                              <button
+                                onClick={() =>
+                                navigate(
+  propertyView === "properties"
+    ? `/properties/${item._id}`
+    : `/pgs/${item._id}`,
+  {
+    state: {
+      fromAdmin: true,
+      activeTab,
+      propertyView,
+      page: propertyPage,
+    },
+  }
+)
+                                }
+                                className="bg-blue-600 text-white px-3 py-2 rounded-lg"
+                              >
+                                View
+                              </button>
+
+                              <button
+                                onClick={() =>
+                                  propertyView === "properties"
+                                    ? handleDelete(item._id)
+                                    : handleDeletePG(item._id)
+                                }
+                                className="bg-red-600 text-white px-3 py-2 rounded-lg"
+                              >
+                                Delete
+                              </button>
+
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+
+                  </tbody>
+
+                </table>
+              </div>
+              <div className="flex justify-center items-center gap-3 mt-6">
+
+                <button
+                  disabled={propertyPage === 1}
+                  onClick={() =>
+                    setPropertyPage(
+                      propertyPage - 1
+                    )
+                  }
+                  className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
+                >
+                  Previous
+                </button>
+
+                <span className="font-medium">
+  Page {propertyPage} of {propertyTotalPages}
+</span>
+
+                <button
+                 disabled={
+  propertyPage === propertyTotalPages
+}
+                  onClick={() =>
+                    setPropertyPage(
+                      propertyPage + 1
+                    )
+                  }
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                >
+                  Next
+                </button>
+
+              </div>
+            </div>
+
+
+          </>
+        )}
         {activeTab === "pending" && (
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+         <>
+  <div className="flex gap-3 mb-5">
+
+    <button
+      onClick={() =>
+        setPendingView("properties")
+      }
+      className={`px-5 py-2 rounded-lg font-medium ${
+        pendingView === "properties"
+          ? "bg-orange-500 text-white"
+          : "bg-gray-200"
+      }`}
+    >
+      Properties
+    </button>
+
+    <button
+      onClick={() =>
+        setPendingView("pgs")
+      }
+      className={`px-5 py-2 rounded-lg font-medium ${
+        pendingView === "pgs"
+          ? "bg-orange-500 text-white"
+          : "bg-gray-200"
+      }`}
+    >
+      PGs
+    </button>
+
+  </div>
+
+  <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
 
             <div className="p-6 border-b">
               <h2 className="text-2xl font-bold">
-                Pending Properties
-              </h2>
+  {pendingView === "properties"
+    ? "Pending Properties"
+    : "Pending PGs"}
+</h2>
             </div>
 
             <div className="overflow-x-auto">
@@ -604,16 +1169,20 @@ function AdminDashboard() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="text-left px-6 py-4">
-                      Property
-                    </th>
+  {pendingView === "properties"
+    ? "Property"
+    : "PG"}
+</th>
 
                     <th className="text-left px-6 py-4">
                       City
                     </th>
 
-                    <th className="text-left px-6 py-4">
-                      Price
-                    </th>
+                   <th className="text-left px-6 py-4">
+  {pendingView === "properties"
+    ? "Price"
+    : "Rent"}
+</th>
 
                     <th className="text-center px-6 py-4">
                       Actions
@@ -623,163 +1192,286 @@ function AdminDashboard() {
 
                 <tbody>
 
-                  {pendingProperties.map(
-                    (property) => (
-                      <tr
-                        key={property._id}
-                        className="border-t hover:bg-gray-50"
-                      >
-                        <td className="px-6 py-4 font-semibold">
-                          {property.title}
-                        </td>
+                 {paginatedPending.map((item) => (
+  <tr
+    key={item._id}
+    className="border-t hover:bg-gray-50"
+  >
+    <td className="px-6 py-4 font-semibold">
+      {item.title}
+    </td>
 
-                        <td className="px-6 py-4">
-                          {property.city}
-                        </td>
+    <td className="px-6 py-4">
+      {item.city}
+    </td>
 
-                        <td className="px-6 py-4">
-                          ₹{property.price}
-                        </td>
+    <td className="px-6 py-4">
+      ₹
+      {pendingView === "properties"
+        ? item.price
+        : item.rent}
+    </td>
 
-                        <td className="px-6 py-4">
-                          <div className="flex justify-center gap-2">
+    <td className="px-6 py-4">
+      <div className="flex justify-center gap-2">
 
-                            <button
-                              onClick={() =>
-                                navigate(
-                                  `/properties/${property._id}`
-                                )
-                              }
-                              className="bg-blue-600 text-white px-3 py-2 rounded-lg"
-                            >
-                              View
-                            </button>
+        <button
+          onClick={() =>
+            navigate(
+  pendingView === "properties"
+    ? `/properties/${item._id}`
+    : `/pgs/${item._id}`,
+  {
+    state: {
+      fromAdmin: true,
+      activeTab,
+      pendingView,
+      page: pendingPage,
+    },
+  }
+)
+          }
+          className="bg-blue-600 text-white px-3 py-2 rounded-lg"
+        >
+          View
+        </button>
 
-                            <button
-                              onClick={() =>
-                                handleApprove(
-                                  property._id
-                                )
-                              }
-                              className="bg-green-600 text-white px-3 py-2 rounded-lg"
-                            >
-                              Approve
-                            </button>
+        <button
+          onClick={() =>
+            pendingView === "properties"
+              ? handleApprove(item._id)
+              : handleApprovePG(item._id)
+          }
+          className="bg-green-600 text-white px-3 py-2 rounded-lg"
+        >
+          Approve
+        </button>
 
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  )}
-
+      </div>
+    </td>
+  </tr>
+))}
+                      
                 </tbody>
 
               </table>
             </div>
 
-          </div>
-        )}
-        {activeTab === "approved" && (
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="flex justify-center items-center gap-3 mt-6 mb-6">
 
-            <div className="p-6 border-b">
-              <h2 className="text-2xl font-bold">
-                Approved Properties
-              </h2>
+              <button
+                disabled={pendingPage === 1}
+                onClick={() =>
+                  setPendingPage(pendingPage - 1)
+                }
+                className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
+              >
+                Previous
+              </button>
+
+              <span className="font-medium">
+                Page {pendingPage} of {pendingTotalPages}
+              </span>
+
+              <button
+                disabled={
+                  pendingPage === pendingTotalPages
+                }
+                onClick={() =>
+                  setPendingPage(
+                    pendingPage + 1
+                  )
+                }
+                className="px-4 py-2 bg-orange-500 text-white rounded-lg disabled:opacity-50"
+              >
+                Next
+              </button>
+
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full">
+        </div>
+</>
+)}
 
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="text-left px-6 py-4">
-                      Property
-                    </th>
+   {activeTab === "approved" && (
+  <>
+    <div className="flex gap-3 mb-5">
+      <button
+        onClick={() =>
+          setApprovedView("properties")
+        }
+        className={`px-5 py-2 rounded-lg font-medium ${
+          approvedView === "properties"
+            ? "bg-purple-600 text-white"
+            : "bg-gray-200"
+        }`}
+      >
+        Properties
+      </button>
 
-                    <th className="text-left px-6 py-4">
-                      City
-                    </th>
+      <button
+        onClick={() =>
+          setApprovedView("pgs")
+        }
+        className={`px-5 py-2 rounded-lg font-medium ${
+          approvedView === "pgs"
+            ? "bg-purple-600 text-white"
+            : "bg-gray-200"
+        }`}
+      >
+        PGs
+      </button>
+    </div>
 
-                    <th className="text-left px-6 py-4">
-                      Views
-                    </th>
+    <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div className="p-6 border-b">
+        <h2 className="text-2xl font-bold">
+          {approvedView === "properties"
+            ? "Approved Properties"
+            : "Approved PGs"}
+        </h2>
+      </div>
 
-                    <th className="text-center px-6 py-4">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="text-left px-6 py-4">
+                {approvedView === "properties"
+                  ? "Property"
+                  : "PG"}
+              </th>
 
-                <tbody>
+              <th className="text-left px-6 py-4">
+                City
+              </th>
 
-                  {approvedProperties.map(
-                    (property) => (
-                      <tr
-                        key={property._id}
-                        className="border-t hover:bg-gray-50"
-                      >
-                        <td className="px-6 py-4 font-semibold">
-                          {property.title}
-                        </td>
+              <th className="text-left px-6 py-4">
+                Views
+              </th>
 
-                        <td className="px-6 py-4">
-                          {property.city}
-                        </td>
+              <th className="text-center px-6 py-4">
+                Actions
+              </th>
+            </tr>
+          </thead>
 
-                        <td className="px-6 py-4">
-                          {property.views || 0}
-                        </td>
+          <tbody>
+            {paginatedApproved.map((item) => (
+              <tr
+                key={item._id}
+                className="border-t hover:bg-gray-50"
+              >
+                <td className="px-6 py-4 font-semibold">
+                  {item.title}
+                </td>
 
-                        <td className="px-6 py-4">
-                          <div className="flex justify-center gap-2">
+                <td className="px-6 py-4">
+                  {item.city}
+                </td>
 
-                            <button
-                              onClick={() =>
-                                navigate(
-                                  `/properties/${property._id}`
-                                )
-                              }
-                              className="bg-blue-600 text-white px-3 py-2 rounded-lg"
-                            >
-                              View
-                            </button>
+                <td className="px-6 py-4">
+                  {item.views || 0}
+                </td>
 
-                            <button
-                              onClick={() =>
-                                handleDisapprove(
-                                  property._id
-                                )
-                              }
-                              className="bg-yellow-500 text-white px-3 py-2 rounded-lg"
-                            >
-                              Disapprove
-                            </button>
+                <td className="px-6 py-4">
+                  <div className="flex justify-center gap-2">
+                    <button
+                      onClick={() =>
+                        navigate(
+  approvedView === "properties"
+    ? `/properties/${item._id}`
+    : `/pgs/${item._id}`,
+  {
+    state: {
+      fromAdmin: true,
+      activeTab,
+      approvedView,
+      page: approvedPage,
+    },
+  }
+)
+                      }
+                      className="bg-blue-600 text-white px-3 py-2 rounded-lg"
+                    >
+                      View
+                    </button>
 
-                            <button
-                              onClick={() =>
-                                handleDelete(
-                                  property._id
-                                )
-                              }
-                              className="bg-red-600 text-white px-3 py-2 rounded-lg"
-                            >
-                              Delete
-                            </button>
+                    <button
+                      onClick={() =>
+                        approvedView ===
+                        "properties"
+                          ? handleDisapprove(
+                              item._id
+                            )
+                          : handleDisapprovePG(
+                              item._id
+                            )
+                      }
+                      className="bg-yellow-500 text-white px-3 py-2 rounded-lg"
+                    >
+                      Disapprove
+                    </button>
 
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  )}
+                    <button
+                      onClick={() =>
+                        approvedView ===
+                        "properties"
+                          ? handleDelete(
+                              item._id
+                            )
+                          : handleDeletePG(
+                              item._id
+                            )
+                      }
+                      className="bg-red-600 text-white px-3 py-2 rounded-lg"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-                </tbody>
+      <div className="flex justify-center items-center gap-3 mt-6 mb-6">
+        <button
+          disabled={approvedPage === 1}
+          onClick={() =>
+            setApprovedPage(
+              approvedPage - 1
+            )
+          }
+          className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
+        >
+          Previous
+        </button>
 
-              </table>
-            </div>
+        <span className="font-medium">
+          Page {approvedPage} of{" "}
+          {approvedTotalPages}
+        </span>
 
-          </div>
-        )}
+        <button
+          disabled={
+            approvedPage ===
+            approvedTotalPages
+          }
+          onClick={() =>
+            setApprovedPage(
+              approvedPage + 1
+            )
+          }
+          className="px-4 py-2 bg-purple-600 text-white rounded-lg disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </>
+)}
 
         {activeTab === "support" && (
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
@@ -824,7 +1516,7 @@ function AdminDashboard() {
 
                 <tbody>
 
-                  {supportMessages.map(
+                  {paginatedSupport.map(
                     (item) => (
                       <tr
                         key={item._id}
@@ -888,7 +1580,7 @@ function AdminDashboard() {
                               onClick={() =>
                                 handleResolve(item._id)
                               }
-                             className="bg-green-600 text-white px-3 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="bg-green-600 text-white px-3 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               Resolve
                             </button>
@@ -901,11 +1593,45 @@ function AdminDashboard() {
 
                 </tbody>
 
-              </table>
-            </div>
+            </table>
+</div>
 
-          </div>
-        )}
+<div className="flex justify-center items-center gap-3 mt-6 mb-6">
+
+  <button
+    disabled={supportPage === 1}
+    onClick={() =>
+      setSupportPage(
+        supportPage - 1
+      )
+    }
+    className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
+  >
+    Previous
+  </button>
+
+  <span className="font-medium">
+    Page {supportPage} of {supportTotalPages}
+  </span>
+
+  <button
+    disabled={
+      supportPage === supportTotalPages
+    }
+    onClick={() =>
+      setSupportPage(
+        supportPage + 1
+      )
+    }
+    className="px-4 py-2 bg-red-600 text-white rounded-lg disabled:opacity-50"
+  >
+    Next
+  </button>
+
+</div>
+
+</div>
+)}
       </section>
 
       {selectedUser && (
@@ -1007,6 +1733,21 @@ function AdminDashboard() {
 
         </div>
       )}
+      {confirmModal.show && (
+  <ConfirmModal
+    title={confirmModal.title}
+    message={confirmModal.message}
+    onConfirm={confirmModal.onConfirm}
+    onCancel={() =>
+      setConfirmModal({
+        show: false,
+        title: "",
+        message: "",
+        onConfirm: null,
+      })
+    }
+  />
+)}
       <Footer />
     </>
   );
