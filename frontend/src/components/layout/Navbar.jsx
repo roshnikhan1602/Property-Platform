@@ -12,9 +12,7 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
-function Navbar({
-  setShowLoginModal = () => {},
-}) {
+function Navbar() {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -26,16 +24,18 @@ function Navbar({
 
  useEffect(() => {
   const loadUser = () => {
-    const loggedInUser =
-      localStorage.getItem("user");
+   try {
+  const loggedInUser =
+    localStorage.getItem("user");
 
-    if (loggedInUser) {
-      setUser(
-        JSON.parse(loggedInUser)
-      );
-    } else {
-      setUser(null);
-    }
+  setUser(
+    loggedInUser
+      ? JSON.parse(loggedInUser)
+      : null
+  );
+} catch {
+  setUser(null);
+}
   };
 
   loadUser();
@@ -104,34 +104,14 @@ function Navbar({
     };
   }, []);
 
-  useEffect(() => {
-  const interval = setInterval(() => {
-    const latestUser =
-      JSON.parse(
-        localStorage.getItem("user")
-      );
+ const handleLogout = () => {
+  localStorage.removeItem("user");
 
-    if (
-      latestUser &&
-      JSON.stringify(latestUser) !==
-        JSON.stringify(user)
-    ) {
-      setUser(latestUser);
-    }
-  }, 500);
+  setUser(null);
+  setShowDropdown(false);
 
-  return () =>
-    clearInterval(interval);
-}, [user]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-
-    setShowDropdown(false);
-
-    navigate("/");
-    window.location.reload();
-  };
+  navigate("/");
+};
 
   const isTransparent =
     location.pathname === "/" && !scrolled;
@@ -311,17 +291,16 @@ function Navbar({
               )}
             </div>
           ) : (
-            <button
-              onClick={() =>
-                setShowLoginModal(true)
-              }
-              className={`px-4 py-2 rounded-lg font-medium transition duration-300 cursor-pointer ${isTransparent
-                  ? "bg-white text-blue-600 hover:bg-gray-100"
-                  : "border border-blue-600 text-blue-600 hover:bg-blue-700 hover:text-white"
-                }`}
-            >
-              Login
-            </button>
+           <Link
+  to="/login"
+  className={`px-4 py-2 rounded-lg font-medium transition duration-300 ${
+    isTransparent
+      ? "bg-white text-blue-600 hover:bg-gray-100"
+      : "border border-blue-600 text-blue-600 hover:bg-blue-700 hover:text-white"
+  }`}
+>
+  Login
+</Link>
           )}
 
         </div>

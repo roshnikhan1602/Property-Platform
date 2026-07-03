@@ -1,45 +1,65 @@
 const User = require("../models/User");
-const otpStore = require("../utils/otpStore");
+const bcrypt = require("bcrypt");
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
 
-const registerUser = async (req, res) => {
+const signup = async (req, res) => {
   try {
-    const { name, mobileNumber, email } = req.body;
+    const { name, mobileNumber, password } = req.body;
+
+    if (!name || !mobileNumber || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
 
     const existingUser = await User.findOne({
       mobileNumber,
     });
 
     if (existingUser) {
-      return res.status(200).json({
-        success: true,
-        message: "User already exists",
-        user: existingUser,
+      return res.status(400).json({
+        success: false,
+        message: "Mobile number already registered",
       });
     }
+
+    const hashedPassword = await bcrypt.hash(
+      password,
+      10
+    );
 
     const user = await User.create({
       name,
       mobileNumber,
-      email,
+      password: hashedPassword,
+      isVerified: true,
     });
 
     res.status(201).json({
       success: true,
-      message: "User registered successfully",
+      message: "Account created successfully",
       user,
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
 };
 
-const sendOTP = async (req, res) => {
+const login = async (req, res) => {
   try {
-    const { mobileNumber } = req.body;
+    const { mobileNumber, password } = req.body;
+
+    if (!mobileNumber || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile number and password are required",
+      });
+    }
 
     const user = await User.findOne({
       mobileNumber,
@@ -47,46 +67,22 @@ const sendOTP = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
+        success: false,
         message: "User not found",
       });
     }
 
-    const otp = Math.floor(
-      100000 + Math.random() * 900000
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user.password
     );
 
-    otpStore[mobileNumber] = otp;
-
-    res.status(200).json({
-      success: true,
-      message: "OTP generated",
-      otp,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-};
-
-const verifyOTP = async (req, res) => {
-  try {
-    const { mobileNumber, otp } = req.body;
-
-    if (otpStore[mobileNumber] != otp) {
+    if (!isPasswordValid) {
       return res.status(400).json({
-        message: "Invalid OTP",
+        success: false,
+        message: "Invalid password",
       });
     }
-
-    const user =
-      await User.findOneAndUpdate(
-        { mobileNumber },
-        { isVerified: true },
-        { returnDocument: "after" }
-      );
-
-    delete otpStore[mobileNumber];
 
     res.status(200).json({
       success: true,
@@ -95,6 +91,7 @@ const verifyOTP = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -108,6 +105,7 @@ const getProfile = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
+        success: false,
         message: "User not found",
       });
     }
@@ -118,6 +116,7 @@ const getProfile = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -143,12 +142,13 @@ const updateProfile = async (req, res) => {
       req.params.id,
       updateData,
       {
-        new: true,
+        returnDocument: "after",
       }
     );
 
     if (!user) {
       return res.status(404).json({
+        success: false,
         message: "User not found",
       });
     }
@@ -159,9 +159,6 @@ const updateProfile = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.error("UPDATE PROFILE ERROR:");
-    console.error(error);
-
     res.status(500).json({
       success: false,
       message: error.message,
@@ -213,7 +210,7 @@ const uploadProfileImage = async (
             uploadedImage.secure_url,
         },
         {
-          new: true,
+          returnDocument: "after",
         }
       );
 
@@ -231,8 +228,6 @@ const uploadProfileImage = async (
       user,
     });
   } catch (error) {
-    console.error(error);
-
     res.status(500).json({
       success: false,
       message: error.message,
@@ -241,9 +236,8 @@ const uploadProfileImage = async (
 };
 
 module.exports = {
-  registerUser,
-  sendOTP,
-  verifyOTP,
+  signup,
+  login,
   getProfile,
   updateProfile,
   uploadProfileImage,

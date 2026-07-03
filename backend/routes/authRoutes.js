@@ -5,26 +5,21 @@ const router = express.Router();
 const upload = require("../middleware/upload");
 
 const {
-  registerUser,
-  sendOTP,
-  verifyOTP,
+  signup,
+  login,
   getProfile,
   updateProfile,
   uploadProfileImage,
 } = require("../controllers/authController");
 
-router.post("/register", registerUser);
+// Authentication
+router.post("/signup", signup);
+router.post("/login", login);
 
-router.post("/send-otp", sendOTP);
-
-router.post("/verify-otp", verifyOTP);
-
+// Profile
 router.get("/profile/:id", getProfile);
 
-router.put(
-  "/profile/:id",
-  updateProfile
-);
+router.put("/profile/:id", updateProfile);
 
 router.put(
   "/profile-image/:id",

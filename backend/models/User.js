@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
 
+    password: {
+      type: String,
+      required: true,
+    },
+
     email: {
       type: String,
       unique: true,
@@ -24,12 +29,22 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-  
-   role: {
-  type: String,
-  enum: ["user", "owner", "admin"],
-  default: "user",
-},
+
+    otp: {
+      type: String,
+      default: null,
+    },
+
+    otpExpiresAt: {
+      type: Date,
+      default: null,
+    },
+
+    role: {
+      type: String,
+      enum: ["user", "owner", "admin"],
+      default: "user",
+    },
 
     profileImage: {
       type: String,
