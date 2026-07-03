@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -25,92 +24,69 @@ import AddPG from "./pages/AddPG";
 import EditPG from "./pages/EditPG";
 import MyPGs from "./pages/MyPGs";
 
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 
-import LoginModal from "./components/auth/LoginModal";
-import OTPModal from "./components/auth/OTPModal";
-
 function App() {
-  const [showLoginModal, setShowLoginModal] =
-    useState(false);
-
-  const [showOTPModal, setShowOTPModal] =
-    useState(false);
-
-  const [mobileNumber, setMobileNumber] =
-    useState("");
-
-  const [userName, setUserName] =
-    useState("");
-
   return (
     <BrowserRouter>
       <Routes>
+        {/* Authentication */}
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+
+        <Route
+          path="/signup"
+          element={<Signup />}
+        />
+
+        {/* Public Routes */}
         <Route
           path="/"
-          element={
-            <Home
-              setShowLoginModal={
-                setShowLoginModal
-              }
-            />
-          }
+          element={<Home />}
         />
 
         <Route
           path="/properties"
-          element={
-            <PropertyListing
-              setShowLoginModal={
-                setShowLoginModal
-              }
-            />
-          }
+          element={<PropertyListing />}
         />
 
         <Route
           path="/properties/:id"
-          element={
-            <PropertyDetails
-              setShowLoginModal={
-                setShowLoginModal
-              }
-            />
-          }
+          element={<PropertyDetails />}
+        />
+
+        <Route
+          path="/pgs"
+          element={<PGListing />}
+        />
+
+        <Route
+          path="/pgs/:id"
+          element={<PGDetails />}
         />
 
         <Route
           path="/contact-support"
-          element={
-            <ContactSupport
-              setShowLoginModal={
-                setShowLoginModal
-              }
-            />
-          }
+          element={<ContactSupport />}
         />
 
         <Route
           path="/about"
-          element={
-            <About
-              setShowLoginModal={
-                setShowLoginModal
-              }
-            />
-          }
+          element={<About />}
         />
 
+        {/* Protected Routes */}
         <Route
           path="/add-property"
           element={
             <ProtectedRoute>
-              <AddProperty
-                setShowLoginModal={
-                  setShowLoginModal
-                }
-              />
+              <AddProperty />
             </ProtectedRoute>
           }
         />
@@ -119,11 +95,7 @@ function App() {
           path="/edit-property/:id"
           element={
             <ProtectedRoute>
-              <EditProperty
-                setShowLoginModal={
-                  setShowLoginModal
-                }
-              />
+              <EditProperty />
             </ProtectedRoute>
           }
         />
@@ -132,11 +104,7 @@ function App() {
           path="/my-properties"
           element={
             <ProtectedRoute>
-              <MyProperties
-                setShowLoginModal={
-                  setShowLoginModal
-                }
-              />
+              <MyProperties />
             </ProtectedRoute>
           }
         />
@@ -145,11 +113,7 @@ function App() {
           path="/owner-dashboard"
           element={
             <ProtectedRoute>
-              <OwnerDashboard
-                setShowLoginModal={
-                  setShowLoginModal
-                }
-              />
+              <OwnerDashboard />
             </ProtectedRoute>
           }
         />
@@ -158,11 +122,7 @@ function App() {
           path="/user-dashboard"
           element={
             <ProtectedRoute>
-              <UserDashboard
-                setShowLoginModal={
-                  setShowLoginModal
-                }
-              />
+              <UserDashboard />
             </ProtectedRoute>
           }
         />
@@ -171,11 +131,7 @@ function App() {
           path="/owner-profile"
           element={
             <ProtectedRoute>
-              <OwnerProfile
-                setShowLoginModal={
-                  setShowLoginModal
-                }
-              />
+              <OwnerProfile />
             </ProtectedRoute>
           }
         />
@@ -184,47 +140,8 @@ function App() {
           path="/wishlist"
           element={
             <ProtectedRoute>
-              <Wishlist
-                setShowLoginModal={
-                  setShowLoginModal
-                }
-              />
+              <Wishlist />
             </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin-dashboard"
-          element={
-            <AdminRoute>
-              <AdminDashboard
-                setShowLoginModal={
-                  setShowLoginModal
-                }
-              />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/pgs"
-          element={
-            <PGListing
-              setShowLoginModal={
-                setShowLoginModal
-              }
-            />
-          }
-        />
-
-        <Route
-          path="/pgs/:id"
-          element={
-            <PGDetails
-              setShowLoginModal={
-                setShowLoginModal
-              }
-            />
           }
         />
 
@@ -232,11 +149,7 @@ function App() {
           path="/add-pg"
           element={
             <ProtectedRoute>
-              <AddPG
-                setShowLoginModal={
-                  setShowLoginModal
-                }
-              />
+              <AddPG />
             </ProtectedRoute>
           }
         />
@@ -245,11 +158,7 @@ function App() {
           path="/edit-pg/:id"
           element={
             <ProtectedRoute>
-              <EditPG
-                setShowLoginModal={
-                  setShowLoginModal
-                }
-              />
+              <EditPG />
             </ProtectedRoute>
           }
         />
@@ -258,40 +167,21 @@ function App() {
           path="/my-pgs"
           element={
             <ProtectedRoute>
-              <MyPGs
-                setShowLoginModal={
-                  setShowLoginModal
-                }
-              />
+              <MyPGs />
             </ProtectedRoute>
           }
         />
+
+        {/* Admin */}
+        <Route
+          path="/admin-dashboard"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
       </Routes>
-
-      {showLoginModal && (
-        <LoginModal
-          setShowLoginModal={
-            setShowLoginModal
-          }
-          setShowOTPModal={
-            setShowOTPModal
-          }
-          setMobileNumber={
-            setMobileNumber
-          }
-          setUserName={setUserName}
-        />
-      )}
-
-      {showOTPModal && (
-        <OTPModal
-          mobileNumber={mobileNumber}
-          userName={userName}
-          setShowOTPModal={
-            setShowOTPModal
-          }
-        />
-      )}
     </BrowserRouter>
   );
 }
