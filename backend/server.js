@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 // Load .env FIRST
 dotenv.config();
@@ -15,8 +16,15 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
 app.use(

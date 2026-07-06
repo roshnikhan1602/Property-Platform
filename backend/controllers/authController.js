@@ -1,7 +1,117 @@
 const User = require("../models/User");
+const OTP = require("../models/OTP");
 const bcrypt = require("bcrypt");
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
+const jwt = require("jsonwebtoken");
+
+const sendOTPController = async (req, res) => {
+  try {
+    const { mobileNumber } = req.body;
+
+    if (!mobileNumber) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile number is required",
+      });
+    }
+
+    const existingUser = await User.findOne({
+      mobileNumber,
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile number already registered",
+      });
+    }
+
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    await OTP.findOneAndUpdate(
+      { mobileNumber },
+      {
+        otp,
+        verified: false,
+        verifiedAt: null,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      },
+      {
+        upsert: true,
+        returnDocument: "after",
+      }
+    );
+
+    console.log(`OTP for ${mobileNumber}: ${otp}`);
+
+
+    res.status(200).json({
+      success: true,
+      message: "OTP generated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const verifyOTPController = async (req, res) => {
+  try {
+    const { mobileNumber, otp } = req.body;
+
+    if (!mobileNumber || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile number and OTP are required",
+      });
+    }
+
+    const otpData = await OTP.findOne({
+      mobileNumber,
+    });
+
+    if (!otpData) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP not found",
+      });
+    }
+
+    if (otpData.expiresAt < new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP expired",
+      });
+    }
+
+    if (otpData.otp !== otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP",
+      });
+    }
+
+    otpData.verified = true;
+    otpData.verifiedAt = new Date();
+
+    await otpData.save();
+
+    res.status(200).json({
+      success: true,
+      message: "OTP verified successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 const signup = async (req, res) => {
   try {
@@ -25,6 +135,17 @@ const signup = async (req, res) => {
       });
     }
 
+    const otpData = await OTP.findOne({
+      mobileNumber,
+    });
+
+    if (!otpData || !otpData.verified) {
+      return res.status(400).json({
+        success: false,
+        message: "Please verify your mobile number first",
+      });
+    }
+
     const hashedPassword = await bcrypt.hash(
       password,
       10
@@ -35,6 +156,10 @@ const signup = async (req, res) => {
       mobileNumber,
       password: hashedPassword,
       isVerified: true,
+    });
+
+    await OTP.deleteOne({
+      mobileNumber,
     });
 
     res.status(201).json({
@@ -84,10 +209,31 @@ const login = async (req, res) => {
       });
     }
 
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    const userData = user.toObject();
+    delete userData.password;
+
     res.status(200).json({
       success: true,
       message: "Login successful",
-      user,
+      user: userData,
     });
   } catch (error) {
     res.status(500).json({
@@ -236,6 +382,8 @@ const uploadProfileImage = async (
 };
 
 module.exports = {
+  sendOTPController,
+  verifyOTPController,
   signup,
   login,
   getProfile,

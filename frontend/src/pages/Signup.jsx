@@ -5,8 +5,11 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Toast from "../components/common/Toast";
 
-import { sendOTP, verifyOTP } from "../services/firebaseAuth";
-import { signup } from "../services/authService";
+import {
+  signup,
+  sendOTP,
+  verifyOTP,
+} from "../services/authService";
 
 function Signup() {
   const navigate = useNavigate();
@@ -32,15 +35,6 @@ function Signup() {
     type: "success",
   });
 
-  useEffect(() => {
-    if (!window.recaptchaContainer) {
-      const div = document.createElement("div");
-      div.id = "recaptcha-container";
-      div.style.display = "none";
-      document.body.appendChild(div);
-      window.recaptchaContainer = true;
-    }
-  }, []);
 
   const showToast = (message, type = "success") => {
     setToast({
@@ -71,10 +65,14 @@ function Signup() {
     try {
       setSendingOTP(true);
 
-     await sendOTP(mobileNumber);
-      setOtpSent(true);
+     const response = await sendOTP(mobileNumber);
 
-      showToast("OTP sent successfully.");
+if (response.success) {
+  setOtpSent(true);
+  showToast(response.message);
+} else {
+  showToast(response.message, "error");
+}
     } catch (error) {
       console.error(error);
       showToast(error.message || "Failed to send OTP.", "error");
@@ -83,27 +81,32 @@ function Signup() {
     }
   };
 
-  const handleVerifyOTP = async () => {
-    if (!otp.trim()) {
-      return showToast("Enter OTP.", "error");
-    }
+ const handleVerifyOTP = async () => {
+  if (!otp.trim()) {
+    return showToast("Enter OTP.", "error");
+  }
 
-    try {
-      setVerifyingOTP(true);
+  try {
+    setVerifyingOTP(true);
 
-      await verifyOTP(otp);
+    const response = await verifyOTP(
+      formData.mobileNumber,
+      otp
+    );
 
+    if (response.success) {
       setOtpVerified(true);
-
       showToast("Mobile number verified successfully.");
-    } catch (error) {
-      console.error(error);
-      showToast("Invalid OTP.", "error");
-    } finally {
-      setVerifyingOTP(false);
+    } else {
+      showToast(response.message, "error");
     }
-  };
-
+  } catch (error) {
+    console.error(error);
+    showToast("Invalid OTP.", "error");
+  } finally {
+    setVerifyingOTP(false);
+  }
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -275,7 +278,6 @@ function Signup() {
             </p>
           </form>
 
-          <div id="recaptcha-container"></div>
         </div>
       </div>
 

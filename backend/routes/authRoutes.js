@@ -5,6 +5,8 @@ const router = express.Router();
 const upload = require("../middleware/upload");
 
 const {
+  sendOTPController,
+  verifyOTPController,
   signup,
   login,
   getProfile,
@@ -13,6 +15,8 @@ const {
 } = require("../controllers/authController");
 
 // Authentication
+router.post("/send-otp", sendOTPController);
+router.post("/verify-otp", verifyOTPController);
 router.post("/signup", signup);
 router.post("/login", login);
 

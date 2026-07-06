@@ -2,6 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 const upload = require("../middleware/upload");
+const authMiddleware = require("../middleware/authMiddleware");
 
 const {
   addProperty,
@@ -16,6 +17,7 @@ const {
 
 router.post(
   "/",
+  authMiddleware,
   upload.array("images", 10),
   addProperty
 );
