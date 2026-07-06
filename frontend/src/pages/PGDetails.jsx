@@ -13,7 +13,15 @@ import {
   FaPhoneAlt,
   FaEnvelope,
 } from "react-icons/fa";
+import PGReviewSection from "../components/reviews/PGReviewSection";
 
+import {
+  getPGReviews,
+  addReview,
+  deleteReview,
+  toggleLike,
+  toggleDislike,
+} from "../services/pgReviewService";
 function PGDetails({
   setShowLoginModal,
 }) {
@@ -27,6 +35,12 @@ const location = useLocation();
 
   const [loading, setLoading] =
     useState(true);
+
+    const [reviews, setReviews] =
+  useState([]);
+
+const [loadingReviews, setLoadingReviews] =
+  useState(false);
 
   const user = JSON.parse(
     localStorage.getItem("user")
@@ -58,6 +72,107 @@ const location = useLocation();
       pg.images[previousIndex]
     );
   };
+  
+  const loadReviews = async () => {
+  try {
+    setLoadingReviews(true);
+
+    const data =
+      await getPGReviews(id);
+
+    if (data.success) {
+      setReviews(data.reviews);
+    }
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoadingReviews(false);
+  }
+};
+
+const handleAddReview =
+  async (reviewData) => {
+    try {
+      const data =
+        await addReview({
+          pgId: id,
+          ...reviewData,
+        });
+
+      if (data.success) {
+        loadReviews();
+
+        const response =
+          await fetch(
+            `http://localhost:5000/api/pgs/${id}`
+          );
+
+        const result =
+          await response.json();
+
+        if (result.success) {
+          setPg(result.pg);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+const handleDeleteReview =
+  async (reviewId) => {
+    try {
+      const data =
+        await deleteReview(
+          reviewId
+        );
+
+      if (data.success) {
+        loadReviews();
+
+        const response =
+          await fetch(
+            `http://localhost:5000/api/pgs/${id}`
+          );
+
+        const result =
+          await response.json();
+
+        if (result.success) {
+          setPg(result.pg);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+const handleLike = async (
+  reviewId
+) => {
+  try {
+    await toggleLike(reviewId);
+
+    loadReviews();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const handleDislike = async (
+  reviewId
+) => {
+  try {
+    await toggleDislike(
+      reviewId
+    );
+
+    loadReviews();
+  } catch (error) {
+    console.error(error);
+  }
+};
+  
   useEffect(() => {
     const fetchPG = async () => {
       try {
@@ -70,6 +185,8 @@ const location = useLocation();
 
         if (data.success) {
           setPg(data.pg);
+
+          loadReviews();
 
           if (
             data.pg.images &&
@@ -145,14 +262,14 @@ const location = useLocation();
     ← Back
   </button>
 </div>
-        <div className="relative h-96 rounded-2xl overflow-hidden border">
+        <div className="relative h-[500px] rounded-2xl overflow-hidden border">
 
           {selectedImage ? (
             <>
               <img
                 src={selectedImage}
                 alt={pg.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
 
               {pg.images &&
@@ -520,7 +637,23 @@ Email Owner
         </div>
 
       </section>
-
+<PGReviewSection
+  pg={pg}
+  user={user}
+  reviews={reviews}
+  loadingReviews={loadingReviews}
+  handleAddReview={handleAddReview}
+  handleDeleteReview={
+    handleDeleteReview
+  }
+  handleLike={handleLike}
+  handleDislike={
+    handleDislike
+  }
+  handleReply={() => {}}
+  canReply={false}
+  loadReviews={loadReviews}
+/>
       <Footer />
     </>
   );

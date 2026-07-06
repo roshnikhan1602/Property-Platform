@@ -327,13 +327,13 @@ const loadReviews = async () => {
 </div>
         <div className="rounded-2xl overflow-hidden">
 
-<div className="relative h-96 rounded-2xl overflow-hidden border">
+<div className="relative h-[500px] rounded-2xl overflow-hidden border">
    {selectedImage ? (
   <>
     <img
       src={selectedImage}
       alt={property.title}
-      className="w-full h-full object-cover"
+     className="w-full h-full object-contain"
     />
 
     {property.images &&

@@ -122,6 +122,24 @@ const pgSchema = new mongoose.Schema(
       required: true,
     },
 
+    // Reviews
+    reviews: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PGReview",
+      },
+    ],
+
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
+
+    totalReviews: {
+      type: Number,
+      default: 0,
+    },
+
     isApproved: {
       type: Boolean,
       default: false,

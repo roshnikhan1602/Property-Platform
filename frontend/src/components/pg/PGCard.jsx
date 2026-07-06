@@ -122,6 +122,10 @@ function PGCard({ pg }) {
       )
     : "N/A";
 
+    const filledStars = Math.round(
+  pg.averageRating || 0
+);
+
   return (
     <>
       {toast.show && (
@@ -140,11 +144,11 @@ function PGCard({ pg }) {
 
       <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300">
 
-      <div className="relative h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
+     <div className="relative h-56 overflow-hidden">
 
   <button
     onClick={handleWishlist}
-    className="absolute top-4 right-4 w-11 h-11 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition cursor-pointer"
+    className="absolute top-4 right-4 z-10 w-11 h-11 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition cursor-pointer"
   >
     {saved ? (
       <FaHeart className="text-red-500 text-lg" />
@@ -153,11 +157,21 @@ function PGCard({ pg }) {
     )}
   </button>
 
-  <FaBed className="text-5xl text-blue-600" />
+  {pg.images && pg.images.length > 0 ? (
+    <img
+      src={pg.images[0]}
+      alt={pg.title}
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
+      <FaBed className="text-5xl text-blue-600" />
 
-  <p className="mt-3 text-gray-600 font-medium">
-    PG Image Coming Soon
-  </p>
+      <p className="mt-3 text-gray-600 font-medium">
+        PG Image Coming Soon
+      </p>
+    </div>
+  )}
 
 </div>
 
@@ -267,14 +281,27 @@ function PGCard({ pg }) {
             </div>
           )}
 
-          <button
-            onClick={() =>
-              navigate(`/pgs/${pg._id}`)
-            }
-            className="w-full mt-6 bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition cursor-pointer"
-          >
-            View PG Details
-          </button>
+  <div className="flex justify-between items-end mt-6">
+  <button
+    onClick={() =>
+      navigate(`/pgs/${pg._id}`)
+    }
+    className="bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition cursor-pointer"
+  >
+    View PG Details
+  </button>
+
+  <div className="text-right">
+    <div className="text-yellow-500 text-2xl leading-none">
+      {"★".repeat(filledStars)}
+      {"☆".repeat(5 - filledStars)}
+    </div>
+
+    <p className="text-sm font-semibold text-gray-600 mt-1">
+      {Number(pg.averageRating || 0).toFixed(1)} Rating
+    </p>
+  </div>
+</div>
 
         </div>
 

@@ -24,15 +24,27 @@ router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
 
-router.get("/me", authMiddleware, getMe);
+router.get(
+  "/me",
+  authMiddleware,
+  getMe
+);
 
 // Profile
-router.get("/profile/:id", getProfile);
-
-router.put("/profile/:id", updateProfile);
+router.get(
+  "/profile/:id",
+  getProfile
+);
 
 router.put(
-  "/profile-image/:id",
+  "/profile",
+  authMiddleware,
+  updateProfile
+);
+
+router.put(
+  "/profile-image",
+  authMiddleware,
   upload.single("profileImage"),
   uploadProfileImage
 );

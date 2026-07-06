@@ -9,6 +9,7 @@ dotenv.config();
 const connectDB = require("./config/db");
 
 const pgRoutes = require("./routes/pgRoutes");
+const pgReviewRoutes = require("./routes/pgReviewRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 
 connectDB();
@@ -56,6 +57,11 @@ app.use(
 app.use(
   "/api/reviews",
   require("./routes/reviewRoutes")
+);
+
+app.use(
+  "/api/pg-reviews",
+  pgReviewRoutes
 );
 
 app.use(

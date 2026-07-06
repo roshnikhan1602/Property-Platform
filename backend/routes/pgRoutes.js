@@ -29,12 +29,6 @@ router.get(
   getMyPGs
 );
 
-router.get(
-  "/:id",
-  authMiddleware,
-  getPGById
-);
-
 router.put(
   "/:id",
   authMiddleware,
@@ -50,6 +44,11 @@ router.delete(
 
 // Public Routes
 router.get("/", getAllPGs);
+
+router.get(
+  "/:id",
+  getPGById
+);
 
 router.put(
   "/:id/view",

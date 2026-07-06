@@ -153,12 +153,7 @@ const getPGById = async (req, res) => {
         message: "PG not found",
       });
     }
-if (pg.owner.toString() !== req.user.id) {
-  return res.status(403).json({
-    success: false,
-    message: "You are not authorized to update this PG",
-  });
-}
+
     res.status(200).json({
       success: true,
       pg,

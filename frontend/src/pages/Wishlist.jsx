@@ -122,15 +122,24 @@ function Wishlist() {
                   className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300"
                 >
 
-                  <div className="h-56 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
-
-                    {item.itemType === "Property" ? (
-                      <FaHome className="text-5xl text-blue-600" />
-                    ) : (
-                      <FaBed className="text-5xl text-blue-600" />
-                    )}
-
-                  </div>
+                 <div className="h-56 overflow-hidden">
+  {listing.images &&
+  listing.images.length > 0 ? (
+    <img
+      src={listing.images[0]}
+      alt={listing.title}
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+      {item.itemType === "Property" ? (
+        <FaHome className="text-5xl text-blue-600" />
+      ) : (
+        <FaBed className="text-5xl text-blue-600" />
+      )}
+    </div>
+  )}
+</div>
 
                   <div className="p-5">
 

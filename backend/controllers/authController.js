@@ -320,13 +320,13 @@ const updateProfile = async (req, res) => {
       };
     }
 
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      {
-        returnDocument: "after",
-      }
-    );
+  const user = await User.findByIdAndUpdate(
+  req.user.id,
+  updateData,
+  {
+    new: true,
+  }
+);
 
     if (!user) {
       return res.status(404).json({
@@ -384,17 +384,17 @@ const uploadProfileImage = async (
         }
       );
 
-    const user =
-      await User.findByIdAndUpdate(
-        req.params.id,
-        {
-          profileImage:
-            uploadedImage.secure_url,
-        },
-        {
-          returnDocument: "after",
-        }
-      );
+  const user =
+  await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      profileImage:
+        uploadedImage.secure_url,
+    },
+    {
+      new: true,
+    }
+  );
 
     if (!user) {
       return res.status(404).json({
