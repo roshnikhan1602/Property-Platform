@@ -168,22 +168,18 @@ const getPropertyById = async (req, res) => {
 
     if (!property) {
       return res.status(404).json({
+        success: false,
         message: "Property not found",
       });
     }
 
-    if (property.owner.toString() !== req.user.id) {
-  return res.status(403).json({
-    success: false,
-    message: "You are not authorized to update this property",
-  });
-}
     res.status(200).json({
       success: true,
       property,
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -201,7 +197,12 @@ const updateProperty = async (req, res) => {
         message: "Property not found",
       });
     }
-
+if (property.owner.toString() !== req.user.id) {
+  return res.status(403).json({
+    success: false,
+    message: "You are not authorized to update this property",
+  });
+}
     let imageUrls = property.images;
 
     if (req.files && req.files.length > 0) {

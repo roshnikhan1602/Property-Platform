@@ -30,12 +30,6 @@ router.get(
   getMyProperties
 );
 
-router.get(
-  "/:id",
-  authMiddleware,
-  getPropertyById
-);
-
 router.put(
   "/:id",
   authMiddleware,
@@ -56,6 +50,11 @@ router.get(
 );
 
 router.get("/", getAllProperties);
+
+router.get(
+  "/:id",
+  getPropertyById
+);
 
 router.put(
   "/:id/view",
