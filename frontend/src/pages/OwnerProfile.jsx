@@ -38,9 +38,12 @@ function OwnerProfile() {
         loggedInUser.profileImage || ""
       );
 
-      fetch(
-        `http://localhost:5000/api/properties/my-properties/${loggedInUser._id}`
-      )
+     fetch(
+  "http://localhost:5000/api/properties/my-properties",
+  {
+    credentials: "include",
+  }
+)
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
@@ -75,19 +78,19 @@ function OwnerProfile() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/auth/profile/${user._id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify({
-            name,
-            email,
-          }),
-        }
-      );
+  "http://localhost:5000/api/auth/profile",
+  {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name,
+      email,
+    }),
+  }
+);
 
       const data =
         await response.json();
@@ -168,12 +171,13 @@ setSuccessMessage(
 
                   try {
                     const response = await fetch(
-                      `http://localhost:5000/api/auth/profile-image/${user._id}`,
-                      {
-                        method: "PUT",
-                        body: formData,
-                      }
-                    );
+  "http://localhost:5000/api/auth/profile-image",
+  {
+    method: "PUT",
+    credentials: "include",
+    body: formData,
+  }
+);
 
                     const data =
                       await response.json();

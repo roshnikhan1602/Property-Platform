@@ -20,23 +20,31 @@ function OwnerDashboard() {
   const [totalProperties, setTotalProperties] = useState(0);
   const [totalPGs, setTotalPGs] = useState(0);
   const [totalViews, setTotalViews] = useState(0);
+useEffect(() => {
+  const loggedInUser = JSON.parse(localStorage.getItem("user"));
 
-  useEffect(() => {
-    const loggedInUser = JSON.parse(localStorage.getItem("user"));
+  if (!loggedInUser) return;
 
-    if (!loggedInUser) return;
+  setUser(loggedInUser);
+  fetchDashboardData();
+}, []);
 
-    setUser(loggedInUser);
-    fetchDashboardData(loggedInUser._id);
-  }, []);
-
-  const fetchDashboardData = async (userId) => {
+ const fetchDashboardData = async () => {
     try {
       const [propertyResponse, pgResponse] = await Promise.all([
-        fetch(`http://localhost:5000/api/properties/my-properties/${userId}`),
-        fetch(`http://localhost:5000/api/pgs/my-pgs/${userId}`),
-      ]);
-
+  fetch(
+    "http://localhost:5000/api/properties/my-properties",
+    {
+      credentials: "include",
+    }
+  ),
+  fetch(
+    "http://localhost:5000/api/pgs/my-pgs",
+    {
+      credentials: "include",
+    }
+  ),
+]);
       const propertyData = await propertyResponse.json();
       const pgData = await pgResponse.json();
 

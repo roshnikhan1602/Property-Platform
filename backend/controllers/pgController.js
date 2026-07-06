@@ -39,13 +39,14 @@ const addPG = async (req, res) => {
     }
 
     const pg = await PG.create({
-      ...req.body,
-      images: imageUrls,
-    });
+  ...req.body,
+  owner: req.user.id,
+  images: imageUrls,
+});
 
-    const user = await User.findById(
-      req.body.owner
-    );
+const user = await User.findById(
+  req.user.id
+);
 
     if (user && user.role === "user") {
       user.role = "owner";
@@ -124,9 +125,9 @@ const getAllPGs = async (req, res) => {
 };
 const getMyPGs = async (req, res) => {
   try {
-    const pgs = await PG.find({
-      owner: req.params.userId,
-    });
+ const pgs = await PG.find({
+  owner: req.user.id,
+});
 
     res.status(200).json({
       success: true,
@@ -152,7 +153,12 @@ const getPGById = async (req, res) => {
         message: "PG not found",
       });
     }
-
+if (pg.owner.toString() !== req.user.id) {
+  return res.status(403).json({
+    success: false,
+    message: "You are not authorized to update this PG",
+  });
+}
     res.status(200).json({
       success: true,
       pg,
@@ -177,7 +183,12 @@ const updatePG = async (req, res) => {
         message: "PG not found",
       });
     }
-
+if (pg.owner.toString() !== req.user.id) {
+  return res.status(403).json({
+    success: false,
+    message: "You are not authorized to update this PG",
+  });
+}
    let imageUrls = [];
 
 if (req.body.existingImages) {
@@ -245,16 +256,25 @@ if (req.files && req.files.length > 0) {
 
 const deletePG = async (req, res) => {
   try {
-    const pg = await PG.findByIdAndDelete(
-      req.params.id
-    );
+ const pg = await PG.findById(
+  req.params.id
+);
 
-    if (!pg) {
-      return res.status(404).json({
-        success: false,
-        message: "PG not found",
-      });
-    }
+if (!pg) {
+  return res.status(404).json({
+    success: false,
+    message: "PG not found",
+  });
+}
+
+if (pg.owner.toString() !== req.user.id) {
+  return res.status(403).json({
+    success: false,
+    message: "You are not authorized to delete this PG",
+  });
+}
+
+await pg.deleteOne();
 
     const remainingPGs =
       await PG.countDocuments({

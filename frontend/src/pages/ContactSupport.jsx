@@ -52,8 +52,11 @@ function ContactSupport({
     try {
       const response =
         await fetch(
-          `http://localhost:5000/api/support/user/${user._id}`
-        );
+  "http://localhost:5000/api/support/user",
+  {
+    credentials: "include",
+  }
+);
 
       const data =
         await response.json();
@@ -125,21 +128,18 @@ function ContactSupport({
           type: "error",
         });
       }
-      const response =
-        await fetch(
-          "http://localhost:5000/api/support",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-            body: JSON.stringify({
-              userId: user._id,
-              ...formData,
-            }),
-          }
-        );
+  
+        const response = await fetch(
+  "http://localhost:5000/api/support",
+  {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  }
+);
 
       const data =
         await response.json();

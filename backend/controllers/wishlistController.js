@@ -2,7 +2,9 @@ const Wishlist = require("../models/wishlistModel");
 
 const addToWishlist = async (req, res) => {
   try {
-    const { userId, itemId, itemType } = req.body;
+    const { itemId, itemType } = req.body;
+
+    const userId = req.user.id;
 
     const existingWishlist = await Wishlist.findOne({
       userId,
@@ -39,10 +41,8 @@ const addToWishlist = async (req, res) => {
 
 const getWishlist = async (req, res) => {
   try {
-    const { userId } = req.params;
-
     const wishlist = await Wishlist.find({
-      userId,
+      userId: req.user.id,
     }).populate("itemId");
 
     res.status(200).json({
@@ -61,11 +61,12 @@ const getWishlist = async (req, res) => {
 
 const removeFromWishlist = async (req, res) => {
   try {
-    // Support DELETE /:wishlistId
+    // DELETE /:wishlistId
     if (req.params.wishlistId) {
-      const wishlist = await Wishlist.findByIdAndDelete(
-        req.params.wishlistId
-      );
+      const wishlist = await Wishlist.findOneAndDelete({
+        _id: req.params.wishlistId,
+        userId: req.user.id,
+      });
 
       if (!wishlist) {
         return res.status(404).json({
@@ -80,11 +81,11 @@ const removeFromWishlist = async (req, res) => {
       });
     }
 
-    // Support POST /remove
-    const { userId, itemId, itemType } = req.body;
+    // POST /remove
+    const { itemId, itemType } = req.body;
 
     const wishlist = await Wishlist.findOneAndDelete({
-      userId,
+      userId: req.user.id,
       itemId,
       itemType,
     });

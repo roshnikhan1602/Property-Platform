@@ -61,8 +61,11 @@ const [submitting, setSubmitting] = useState(false);
     const fetchPG = async () => {
       try {
         const response = await fetch(
-           `http://localhost:5000/api/pgs/${id}`
-        );
+  `http://localhost:5000/api/pgs/${id}`,
+  {
+    credentials: "include",
+  }
+);
 
         const data = await response.json();
 
@@ -124,9 +127,7 @@ const [submitting, setSubmitting] = useState(false);
       return;
     }
 
-    const user = JSON.parse(
-      localStorage.getItem("user")
-    );
+  
     const form = new FormData();
 
 Object.keys(formData).forEach((key) => {
@@ -147,8 +148,6 @@ Object.keys(formData).forEach((key) => {
     form.append(key, formData[key]);
   }
 });
-
-form.append("owner", user._id);
 
 // Send existing Cloudinary image URLs
 const existingImages = images.filter(
@@ -171,6 +170,7 @@ images.forEach((image) => {
   `http://localhost:5000/api/pgs/${id}`,
   {
     method: "PUT",
+    credentials: "include",
     body: form,
   }
 );

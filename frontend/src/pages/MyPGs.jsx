@@ -33,9 +33,12 @@ function MyPGs() {
 
   const fetchMyPGs = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/pgs/my-pgs/${user._id}`
-      );
+     const response = await fetch(
+  "http://localhost:5000/api/pgs/my-pgs",
+  {
+    credentials: "include",
+  }
+);
 
       const data = await response.json();
 
@@ -63,11 +66,12 @@ function MyPGs() {
     setShowDeleteModal(false);
     try {
       const response = await fetch(
-        `http://localhost:5000/api/pgs/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
+  `http://localhost:5000/api/pgs/${id}`,
+  {
+    method: "DELETE",
+    credentials: "include",
+  }
+);
 
       const data = await response.json();
 
@@ -88,9 +92,12 @@ function MyPGs() {
         }, 3000);
 
         // Check remaining properties
-        const propertyResponse = await fetch(
-          `http://localhost:5000/api/properties/my-properties/${user._id}`
-        );
+       const propertyResponse = await fetch(
+  "http://localhost:5000/api/properties/my-properties",
+  {
+    credentials: "include",
+  }
+);
 
         const propertyData =
           await propertyResponse.json();

@@ -26,99 +26,88 @@ function PGCard({ pg }) {
     type: "success",
   });
 
-  const loggedInUser = JSON.parse(
-    localStorage.getItem("user")
-  );
-
-  const userId = loggedInUser?._id;
-
   useEffect(() => {
-    if (!userId || !pg) return;
+  if (!pg) return;
 
-    const checkWishlist = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:5000/api/wishlist/${userId}`
-        );
-
-        const data = await response.json();
-
-        if (data.success) {
-          const exists = data.wishlist.some(
-            (item) =>
-              item.itemType === "PG" &&
-              item.itemId?._id === pg._id
-          );
-
-          setSaved(exists);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    checkWishlist();
-  }, [pg, userId]);
-
-  const handleWishlist = async () => {
-    if (!userId) {
-      setToast({
-        show: true,
-        message: "Please login first",
-        type: "error",
-      });
-
-      return;
-    }
-
+  const checkWishlist = async () => {
     try {
-      const url = saved
-        ? "http://localhost:5000/api/wishlist/remove"
-        : "http://localhost:5000/api/wishlist/add";
+      const response = await fetch(
+        "http://localhost:5000/api/wishlist",
+        {
+          credentials: "include",
+        }
+      );
 
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          itemId: pg._id,
-          itemType: "PG",
-        }),
-      });
+      if (!response.ok) {
+        return;
+      }
 
       const data = await response.json();
 
       if (data.success) {
-        setSaved(!saved);
+        const exists = data.wishlist.some(
+          (item) =>
+            item.itemType === "PG" &&
+            item.itemId?._id === pg._id
+        );
 
-        setToast({
-          show: true,
-          message: saved
-            ? "PG removed from wishlist"
-            : "PG added to wishlist",
-          type: "success",
-        });
-      } else {
-        setToast({
-          show: true,
-          message: data.message,
-          type: "error",
-        });
+        setSaved(exists);
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  checkWishlist();
+}, [pg]);
+
+ const handleWishlist = async () => {
+  try {
+    const url = saved
+      ? "http://localhost:5000/api/wishlist/remove"
+      : "http://localhost:5000/api/wishlist/add";
+
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        itemId: pg._id,
+        itemType: "PG",
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      setSaved(!saved);
 
       setToast({
         show: true,
-        message:
-          "Something went wrong",
+        message: saved
+          ? "PG removed from wishlist"
+          : "PG added to wishlist",
+        type: "success",
+      });
+    } else {
+      setToast({
+        show: true,
+        message: data.message,
         type: "error",
       });
     }
-  };
+  } catch (error) {
+    console.error(error);
+
+    setToast({
+      show: true,
+      message: "Please login first",
+      type: "error",
+    });
+  }
+};
 
   if (!pg) return null;
 

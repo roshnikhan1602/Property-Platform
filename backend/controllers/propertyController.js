@@ -38,15 +38,15 @@ const addProperty = async (req, res) => {
       }
     }
 
-    const property =
-      await Property.create({
-        ...req.body,
-        images: imageUrls,
-      });
+    const property = await Property.create({
+  ...req.body,
+  owner: req.user.id,
+  images: imageUrls,
+});
 
-    const user = await User.findById(
-      req.body.owner
-    );
+const user = await User.findById(
+  req.user.id
+);
 
     if (user && user.role === "user") {
       user.role = "owner";
@@ -145,9 +145,9 @@ const getAllProperties = async (req, res) => {
 };
 const getMyProperties = async (req, res) => {
   try {
-    const properties = await Property.find({
-      owner: req.params.userId,
-    });
+   const properties = await Property.find({
+  owner: req.user.id,
+});
 
     res.status(200).json({
       success: true,
@@ -172,6 +172,12 @@ const getPropertyById = async (req, res) => {
       });
     }
 
+    if (property.owner.toString() !== req.user.id) {
+  return res.status(403).json({
+    success: false,
+    message: "You are not authorized to update this property",
+  });
+}
     res.status(200).json({
       success: true,
       property,
@@ -263,15 +269,25 @@ const updateProperty = async (req, res) => {
 };
 const deleteProperty = async (req, res) => {
   try {
-    const property = await Property.findByIdAndDelete(
-      req.params.id
-    );
+   const property = await Property.findById(
+  req.params.id
+);
 
-    if (!property) {
-      return res.status(404).json({
-        message: "Property not found",
-      });
-    }
+if (!property) {
+  return res.status(404).json({
+    success: false,
+    message: "Property not found",
+  });
+}
+
+if (property.owner.toString() !== req.user.id) {
+  return res.status(403).json({
+    success: false,
+    message: "You are not authorized to delete this property",
+  });
+}
+
+await property.deleteOne();
 
     const remainingProperties =
       await Property.countDocuments({

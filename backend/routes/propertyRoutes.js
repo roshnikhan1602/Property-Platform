@@ -1,6 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
+
 const upload = require("../middleware/upload");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -15,6 +16,7 @@ const {
   filterProperties,
 } = require("../controllers/propertyController");
 
+// Protected Routes
 router.post(
   "/",
   authMiddleware,
@@ -22,31 +24,42 @@ router.post(
   addProperty
 );
 
-router.get("/", getAllProperties);
+router.get(
+  "/my-properties",
+  authMiddleware,
+  getMyProperties
+);
 
+router.get(
+  "/:id",
+  authMiddleware,
+  getPropertyById
+);
+
+router.put(
+  "/:id",
+  authMiddleware,
+  upload.array("images", 10),
+  updateProperty
+);
+
+router.delete(
+  "/:id",
+  authMiddleware,
+  deleteProperty
+);
+
+// Public Routes
 router.get(
   "/filter/search",
   filterProperties
 );
 
+router.get("/", getAllProperties);
+
 router.put(
   "/:id/view",
   incrementViews
 );
-
-router.get(
-  "/my-properties/:userId",
-  getMyProperties
-);
-
-router.get("/:id", getPropertyById);
-
-router.put(
-  "/:id",
-  upload.array("images", 10),
-  updateProperty
-);
-
-router.delete("/:id", deleteProperty);
 
 module.exports = router;

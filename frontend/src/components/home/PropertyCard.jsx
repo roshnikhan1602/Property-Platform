@@ -20,100 +20,84 @@ function PropertyCard({ property }) {
     type: "success",
   });
 
-  const loggedInUser = JSON.parse(
-    localStorage.getItem("user")
-  );
-
-  const userId = loggedInUser?._id;
-
   useEffect(() => {
-    if (!userId) return;
-
-    const checkWishlist = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:5000/api/wishlist/${userId}`
-        );
-
-        const data = await response.json();
-
-        if (data.success) {
-          const exists =
-            data.wishlist.some(
-              (item) =>
-                item.propertyId?._id ===
-                property._id
-            );
-
-          setSaved(exists);
-        }
-      } catch (error) {
-        console.error(error);
+ const checkWishlist = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/wishlist",
+      {
+        credentials: "include",
       }
-    };
+    );
 
-    checkWishlist();
-  }, [property._id, userId]);
-
-  const handleWishlist = async () => {
-    if (!userId) {
-      setToast({
-        show: true,
-        message: "Please login first",
-        type: "error",
-      });
-
+    if (!response.ok) {
       return;
     }
 
-    try {
-      const url = saved
-        ? "http://localhost:5000/api/wishlist/remove"
-        : "http://localhost:5000/api/wishlist/add";
+    const data = await response.json();
 
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          itemId: property._id,
-          itemType: "Property",
-        }),
-      });
+    if (data.success) {
+      const exists = data.wishlist.some(
+        (item) => item.itemId?._id === property._id
+      );
 
-      const data = await response.json();
+      setSaved(exists);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-      if (data.success) {
-        setSaved(!saved);
+  checkWishlist();
+}, [property._id]);
 
-        setToast({
-          show: true,
-          message: saved
-            ? "Property removed from wishlist"
-            : "Property added to wishlist",
-          type: "success",
-        });
-      } else {
-        setToast({
-          show: true,
-          message: data.message,
-          type: "error",
-        });
-      }
-    } catch (error) {
-      console.error(error);
+  const handleWishlist = async () => {
+  try {
+    const url = saved
+      ? "http://localhost:5000/api/wishlist/remove"
+      : "http://localhost:5000/api/wishlist/add";
+
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        itemId: property._id,
+        itemType: "Property",
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      setSaved(!saved);
 
       setToast({
         show: true,
-        message:
-          "Something went wrong",
+        message: saved
+          ? "Property removed from wishlist"
+          : "Property added to wishlist",
+        type: "success",
+      });
+    } else {
+      setToast({
+        show: true,
+        message: data.message,
         type: "error",
       });
     }
-  };
+  } catch (error) {
+    console.error(error);
+
+    setToast({
+      show: true,
+      message: "Please login first",
+      type: "error",
+    });
+  }
+};
 
   const postedDate =
     property.createdAt

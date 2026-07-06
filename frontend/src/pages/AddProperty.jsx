@@ -92,25 +92,22 @@ function AddProperty() {
       return;
     }
 
-    const user = JSON.parse(
-      localStorage.getItem("user")
-    );
     const form = new FormData();
 
 Object.keys(formData).forEach((key) => {
   form.append(key, formData[key]);
 });
 
-form.append("owner", user._id);
 
 images.forEach((image) => {
   form.append("images", image);
 });
     try {
-     const response = await fetch(
+  const response = await fetch(
   "http://localhost:5000/api/properties",
   {
     method: "POST",
+    credentials: "include",
     body: form,
   }
 );
@@ -118,15 +115,6 @@ images.forEach((image) => {
       const data = await response.json();
 
       if (data.success) {
-        const updatedUser = {
-          ...user,
-          role: "owner",
-        };
-
-        localStorage.setItem(
-          "user",
-          JSON.stringify(updatedUser)
-        );
 
         setFormData({
           title: "",

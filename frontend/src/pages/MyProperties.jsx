@@ -35,9 +35,12 @@ function MyProperties() {
 
   const fetchMyProperties = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/properties/my-properties/${user._id}`
-      );
+    const response = await fetch(
+  "http://localhost:5000/api/properties/my-properties",
+  {
+    credentials: "include",
+  }
+);
 
       const data = await response.json();
 
@@ -65,11 +68,12 @@ function MyProperties() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/properties/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
+  `http://localhost:5000/api/properties/${id}`,
+  {
+    method: "DELETE",
+    credentials: "include",
+  }
+);
 
       const data = await response.json();
 
@@ -94,8 +98,11 @@ function MyProperties() {
 
         // Fetch remaining PGs
         const pgResponse = await fetch(
-          `http://localhost:5000/api/pgs/my-pgs/${user._id}`
-        );
+  "http://localhost:5000/api/pgs/my-pgs",
+  {
+    credentials: "include",
+  }
+);
 
         const pgData =
           await pgResponse.json();

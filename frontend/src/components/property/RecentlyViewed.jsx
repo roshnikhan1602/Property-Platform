@@ -24,9 +24,12 @@ function RecentlyViewed() {
 
       for (const property of recentlyViewed) {
         try {
-          const response = await fetch(
-            `http://localhost:5000/api/properties/${property._id}`
-          );
+         const response = await fetch(
+  `http://localhost:5000/api/properties/${property._id}`,
+  {
+    credentials: "include",
+  }
+);
 
           if (response.ok) {
             validProperties.push(property);
@@ -121,7 +124,7 @@ function RecentlyViewed() {
                     `/properties/${property._id}`
                   )
                 }
-               className="mt-3 w-full py-2 text-sm-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer"
+              className="mt-3 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer"
               >
                 View
               </button>

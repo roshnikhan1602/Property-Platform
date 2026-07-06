@@ -89,28 +89,24 @@ function AddPG() {
       return;
     }
 
-    const user = JSON.parse(
-      localStorage.getItem("user")
-    );
     const form = new FormData();
 
     Object.keys(formData).forEach((key) => {
       form.append(key, formData[key]);
     });
 
-    form.append("owner", user._id);
-
     images.forEach((image) => {
       form.append("images", image);
     });
     try {
       const response = await fetch(
-        "http://localhost:5000/api/pgs",
-        {
-          method: "POST",
-          body: form,
-        }
-      );
+  "http://localhost:5000/api/pgs",
+  {
+    method: "POST",
+    credentials: "include",
+    body: form,
+  }
+);
 
       const data =
         await response.json();

@@ -2,19 +2,37 @@ const express = require("express");
 
 const router = express.Router();
 
+const authMiddleware = require("../middleware/authMiddleware");
+
 const {
   addToWishlist,
   getWishlist,
   removeFromWishlist,
 } = require("../controllers/wishlistController");
 
-router.post("/add", addToWishlist);
+// Protected Routes
+router.post(
+  "/add",
+  authMiddleware,
+  addToWishlist
+);
 
-router.post("/remove", removeFromWishlist);
+router.post(
+  "/remove",
+  authMiddleware,
+  removeFromWishlist
+);
 
-// New DELETE route
-router.delete("/:wishlistId", removeFromWishlist);
+router.delete(
+  "/:wishlistId",
+  authMiddleware,
+  removeFromWishlist
+);
 
-router.get("/:userId", getWishlist);
+router.get(
+  "/",
+  authMiddleware,
+  getWishlist
+);
 
 module.exports = router;

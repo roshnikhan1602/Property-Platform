@@ -60,37 +60,36 @@ function AdminDashboard() {
   const location = useLocation();
 
   const fetchData = () => {
-    fetch(
-      "http://localhost:5000/api/admin/users"
-    )
+    fetch("http://localhost:5000/api/admin/users", {
+  credentials: "include",
+})
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
           setUsers(data.users);
         }
       });
-
-    fetch(
-      "http://localhost:5000/api/admin/properties"
-    )
+fetch("http://localhost:5000/api/admin/properties", {
+  credentials: "include",
+})
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
           setProperties(data.properties);
         }
       });
-    fetch(
-      "http://localhost:5000/api/admin/pgs"
-    )
+    fetch("http://localhost:5000/api/admin/pgs", {
+  credentials: "include",
+})
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
           setPgs(data.pgs);
         }
       });
-    fetch(
-      "http://localhost:5000/api/support"
-    )
+    fetch("http://localhost:5000/api/support", {
+  credentials: "include",
+})
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -267,12 +266,10 @@ useEffect(() => {
 }, [activeTab]);
   const handleApprove = async (id) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/admin/approve/${id}`,
-        {
-          method: "PUT",
-        }
-      );
+      const response = await fetch(`http://localhost:5000/api/admin/approve/${id}`, {
+  method: "PUT",
+  credentials: "include",
+})
 
       const data =
         await response.json();
@@ -298,12 +295,10 @@ useEffect(() => {
   const handleDisapprove =
     async (id) => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/admin/disapprove/${id}`,
-          {
-            method: "PUT",
-          }
-        );
+        const response = await fetch(`http://localhost:5000/api/admin/disapprove/${id}`, {
+  method: "PUT",
+  credentials: "include",
+})
 
         const data =
           await response.json();
@@ -334,12 +329,10 @@ useEffect(() => {
       "Are you sure you want to delete this property? This action cannot be undone.",
     onConfirm: async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/admin/property/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`http://localhost:5000/api/admin/property/${id}`, {
+  method: "DELETE",
+  credentials: "include",
+})
 
         const data = await response.json();
 
@@ -375,12 +368,10 @@ useEffect(() => {
 };
   const handleApprovePG = async (id) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/admin/pg/approve/${id}`,
-        {
-          method: "PUT",
-        }
-      );
+      const response = await fetch(`http://localhost:5000/api/admin/pg/approve/${id}`, {
+  method: "PUT",
+  credentials: "include",
+})
 
       const data = await response.json();
 
@@ -399,12 +390,10 @@ useEffect(() => {
 
   const handleDisapprovePG = async (id) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/admin/pg/disapprove/${id}`,
-        {
-          method: "PUT",
-        }
-      );
+      const response = await fetch(`http://localhost:5000/api/admin/pg/disapprove/${id}`, {
+  method: "PUT",
+  credentials: "include",
+})
 
       const data = await response.json();
 
@@ -429,12 +418,10 @@ useEffect(() => {
       "Are you sure you want to delete this PG? This action cannot be undone.",
     onConfirm: async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/admin/pg/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`http://localhost:5000/api/admin/pg/${id}`, {
+  method: "DELETE",
+  credentials: "include",
+})
 
         const data = await response.json();
 
@@ -468,12 +455,10 @@ useEffect(() => {
 };
   const handleResolve = async (id) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/support/resolve/${id}`,
-        {
-          method: "PUT",
-        }
-      );
+      const response = await fetch(`http://localhost:5000/api/support/resolve/${id}`, {
+  method: "PUT",
+  credentials: "include",
+})
 
       const data =
         await response.json();
@@ -495,19 +480,16 @@ useEffect(() => {
 
   const handleReply = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/support/reply/${selectedMessageId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify({
-            reply: replyText,
-          }),
-        }
-      );
+      const response = await fetch(`http://localhost:5000/api/support/reply/${selectedMessageId}`, {
+  method: "PUT",
+  credentials: "include",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    reply: replyText,
+  }),
+})
 
       const data =
         await response.json();
@@ -533,9 +515,9 @@ useEffect(() => {
 
   const handleViewUser = async (id) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/admin/user/${id}`
-      );
+      const response = await fetch(`http://localhost:5000/api/admin/user/${id}`, {
+  credentials: "include",
+})
 
       const data = await response.json();
 
@@ -560,12 +542,10 @@ useEffect(() => {
       "Are you sure you want to delete this user? This action cannot be undone.",
     onConfirm: async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/admin/user/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`http://localhost:5000/api/admin/user/${id}`, {
+  method: "DELETE",
+  credentials: "include",
+})
 
         const data = await response.json();
 

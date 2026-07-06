@@ -53,8 +53,11 @@ function EditProperty() {
     const fetchProperty = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/properties/${id}`
-        );
+  `http://localhost:5000/api/properties/${id}`,
+  {
+    credentials: "include",
+  }
+);
 
         const data = await response.json();
 
@@ -114,9 +117,6 @@ function EditProperty() {
       return;
     }
 
-    const user = JSON.parse(
-      localStorage.getItem("user")
-    );
     const form = new FormData();
 
     Object.keys(formData).forEach((key) => {
@@ -138,7 +138,6 @@ function EditProperty() {
       }
     });
 
-    form.append("owner", user._id);
 
     images.forEach((image) => {
       if (typeof image !== "string") {
@@ -146,13 +145,14 @@ function EditProperty() {
       }
     });
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/properties/${id}`,
-        {
-          method: "PUT",
-          body: form,
-        }
-      );
+     const response = await fetch(
+  `http://localhost:5000/api/properties/${id}`,
+  {
+    method: "PUT",
+    credentials: "include",
+    body: form,
+  }
+);
       const data = await response.json();
 
       if (data.success) {

@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const upload = require("../middleware/upload");
+const authMiddleware = require("../middleware/authMiddleware");
 
 const {
   addPG,
@@ -14,32 +15,45 @@ const {
   incrementPGViews,
 } = require("../controllers/pgController");
 
+// Protected Routes
 router.post(
   "/",
+  authMiddleware,
   upload.array("images", 10),
   addPG
 );
 
-router.get("/", getAllPGs);
-
 router.get(
-  "/my-pgs/:userId",
+  "/my-pgs",
+  authMiddleware,
   getMyPGs
 );
+
+router.get(
+  "/:id",
+  authMiddleware,
+  getPGById
+);
+
+router.put(
+  "/:id",
+  authMiddleware,
+  upload.array("images", 10),
+  updatePG
+);
+
+router.delete(
+  "/:id",
+  authMiddleware,
+  deletePG
+);
+
+// Public Routes
+router.get("/", getAllPGs);
 
 router.put(
   "/:id/view",
   incrementPGViews
 );
-
-router.get("/:id", getPGById);
-
-router.put(
-  "/:id",
-  upload.array("images", 10),
-  updatePG
-);
-
-router.delete("/:id", deletePG);
 
 module.exports = router;

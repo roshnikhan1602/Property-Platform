@@ -17,25 +17,20 @@ function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const loggedInUser = JSON.parse(
-    localStorage.getItem("user")
-  );
 
-  const userId = loggedInUser?._id;
 
-  useEffect(() => {
-    if (userId) {
-      fetchWishlist();
-    } else {
-      setLoading(false);
-    }
-  }, [userId]);
+ useEffect(() => {
+  fetchWishlist();
+}, []);
 
   const fetchWishlist = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/wishlist/${userId}`
-      );
+  "http://localhost:5000/api/wishlist",
+  {
+    credentials: "include",
+  }
+);
 
       const data = await response.json();
 
@@ -52,11 +47,12 @@ function Wishlist() {
   const removeFromWishlist = async (wishlistId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/wishlist/${wishlistId}`,
-        {
-          method: "DELETE",
-        }
-      );
+  `http://localhost:5000/api/wishlist/${wishlistId}`,
+  {
+    method: "DELETE",
+    credentials: "include",
+  }
+);
 
       const data = await response.json();
 
