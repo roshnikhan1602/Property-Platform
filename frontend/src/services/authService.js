@@ -3,6 +3,7 @@ const BASE_URL = "http://localhost:5000/api/auth";
 export const sendOTP = async (mobileNumber) => {
   const response = await fetch(`${BASE_URL}/send-otp`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -17,6 +18,7 @@ export const sendOTP = async (mobileNumber) => {
 export const verifyOTP = async (mobileNumber, otp) => {
   const response = await fetch(`${BASE_URL}/verify-otp`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -32,6 +34,7 @@ export const verifyOTP = async (mobileNumber, otp) => {
 export const signup = async (userData) => {
   const response = await fetch(`${BASE_URL}/signup`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -44,6 +47,7 @@ export const signup = async (userData) => {
 export const login = async (userData) => {
   const response = await fetch(`${BASE_URL}/login`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
