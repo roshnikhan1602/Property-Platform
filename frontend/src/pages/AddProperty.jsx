@@ -10,21 +10,6 @@ import { FaHome } from "react-icons/fa";
 function AddProperty() {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const user = localStorage.getItem("user");
-
-    if (!user) {
-      
-      setToast({
-        show: true,
-        message: "Please login to post a property",
-        type: "error",
-      });
-
-      navigate("/");
-    }
-  }, [navigate]);
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",

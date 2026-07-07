@@ -41,10 +41,8 @@ const location = useLocation();
 
 const [loadingReviews, setLoadingReviews] =
   useState(false);
+const [user, setUser] = useState(null);
 
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
   const handleNextImage = () => {
     const currentIndex =
       pg.images.indexOf(selectedImage);
@@ -174,6 +172,25 @@ const handleDislike = async (
 };
   
   useEffect(() => {
+    const fetchUser = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/auth/me",
+      {
+        credentials: "include",
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+      setUser(data.user);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
     const fetchPG = async () => {
       try {
         const response = await fetch(
@@ -204,7 +221,8 @@ const handleDislike = async (
       }
     };
 
-    fetchPG();
+    fetchUser();
+fetchPG();
   }, [id]);
 
   if (loading) {

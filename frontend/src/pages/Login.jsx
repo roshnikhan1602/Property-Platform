@@ -60,13 +60,6 @@ function Login() {
       });
 
       if (response.success) {
-        if (response.user) {
-        localStorage.setItem(
-  "user",
-  JSON.stringify(response.user)
-);
-        }
-
         showToast("Login successful.");
 
         setTimeout(() => {

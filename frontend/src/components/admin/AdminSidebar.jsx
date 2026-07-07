@@ -113,10 +113,21 @@ function AdminSidebar({
       <div className="absolute bottom-0 w-full border-t">
 
         <button
-          onClick={() => {
-            localStorage.removeItem("user");
-            window.location.href = "/";
-          }}
+          onClick={async () => {
+  try {
+    await fetch(
+      "http://localhost:5000/api/auth/logout",
+      {
+        method: "POST",
+        credentials: "include",
+      }
+    );
+  } catch (error) {
+    console.error(error);
+  }
+
+  window.location.href = "/";
+}}
           className="w-full flex items-center gap-5 px-5 py-4 text-red-600 hover:bg-red-50 transition cursor-pointer"
         >
 

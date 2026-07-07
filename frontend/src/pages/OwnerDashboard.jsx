@@ -21,12 +21,27 @@ function OwnerDashboard() {
   const [totalPGs, setTotalPGs] = useState(0);
   const [totalViews, setTotalViews] = useState(0);
 useEffect(() => {
-  const loggedInUser = JSON.parse(localStorage.getItem("user"));
+  const fetchUser = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/me",
+        {
+          credentials: "include",
+        }
+      );
 
-  if (!loggedInUser) return;
+      const data = await response.json();
 
-  setUser(loggedInUser);
-  fetchDashboardData();
+      if (data.success) {
+        setUser(data.user);
+        fetchDashboardData();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  fetchUser();
 }, []);
 
  const fetchDashboardData = async () => {

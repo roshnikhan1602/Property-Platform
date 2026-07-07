@@ -29,6 +29,7 @@ const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
   const [loadingReviews, setLoadingReviews] = useState(false);
+  const [user, setUser] = useState(null);
   const [toast, setToast] = useState({
   show: false,
   message: "",
@@ -182,7 +183,7 @@ const loadReviews = async () => {
       return;
     }
 
-    await likeReview(reviewId, user._id);
+   await likeReview(reviewId);
     loadReviews();
   };
 
@@ -196,14 +197,30 @@ const loadReviews = async () => {
       return;
     }
 
-    await dislikeReview(reviewId, user._id);
+   await dislikeReview(reviewId);
     loadReviews();
   };
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
-
+  
   useEffect(() => {
+    const fetchUser = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/auth/me",
+      {
+        credentials: "include",
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+      setUser(data.user);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
     const fetchProperty = async () => {
       try {
         const response = await fetch(
@@ -262,8 +279,9 @@ const loadReviews = async () => {
       }
     };
 
-    fetchProperty();
-    loadReviews();
+    fetchUser();
+fetchProperty();
+loadReviews();
   }, [id]);
 
   if (loading) {

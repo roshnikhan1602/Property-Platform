@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import {
   FaHeart,
   FaHistory,
@@ -10,16 +11,36 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
 function UserDashboard() {
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/auth/me",
+          {
+            credentials: "include",
+          }
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   return (
     <>
       <Navbar />
 
       <section className="max-w-7xl mx-auto px-6 pt-28 pb-10">
-
         <div className="mb-10">
           <h1 className="text-4xl font-bold text-gray-900">
             Dashboard
@@ -31,7 +52,6 @@ function UserDashboard() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-
           <Link
             to="/wishlist"
             className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 transition-all duration-300"
@@ -115,9 +135,7 @@ function UserDashboard() {
               Manage your account settings
             </p>
           </Link>
-
         </div>
-
       </section>
 
       <Footer />

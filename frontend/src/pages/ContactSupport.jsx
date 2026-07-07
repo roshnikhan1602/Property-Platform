@@ -31,9 +31,6 @@ function ContactSupport({
 
   const [myTickets, setMyTickets] =
     useState([]);
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
 
   const handleChange = (e) => {
     setFormData({
@@ -43,11 +40,6 @@ function ContactSupport({
     });
   };
   const fetchMyTickets = async () => {
-    const user = JSON.parse(
-      localStorage.getItem("user")
-    );
-
-    if (!user?._id) return;
 
     try {
       const response =
@@ -115,19 +107,6 @@ function ContactSupport({
 
     try {
       setLoading(true);
-
-      const user = JSON.parse(
-        localStorage.getItem("user")
-      );
-
-      if (!user?._id) {
-        return setToast({
-          show: true,
-          message:
-            "Please login to submit a support ticket",
-          type: "error",
-        });
-      }
   
         const response = await fetch(
   "http://localhost:5000/api/support",
@@ -345,7 +324,7 @@ function ContactSupport({
         </div>
       </div>
       
-     {user && (
+    {myTickets && (
   <div className="max-w-6xl mx-auto px-6 pb-16">
 
     <div className="bg-white p-8 rounded-2xl shadow-md">

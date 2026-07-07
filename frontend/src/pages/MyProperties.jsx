@@ -29,9 +29,7 @@ function MyProperties() {
 
   const navigate = useNavigate();
 
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
+ 
 
   const fetchMyProperties = async () => {
     try {
@@ -58,10 +56,8 @@ function MyProperties() {
   };
 
   useEffect(() => {
-    if (user) {
-      fetchMyProperties();
-    }
-  }, []);
+  fetchMyProperties();
+}, []);
 
   const handleDelete = async (id) => {
     setShowDeleteModal(false);
@@ -113,26 +109,15 @@ function MyProperties() {
             : 0;
 
         // Downgrade owner only when BOTH properties and PGs are zero
-        if (
-          updatedProperties.length === 0 &&
-          totalPGs === 0 &&
-          user.role === "owner"
-        ) {
-          const updatedUser = {
-            ...user,
-            role: "user",
-          };
-
-          localStorage.setItem(
-            "user",
-            JSON.stringify(updatedUser)
-          );
-
-          setTimeout(() => {
-            navigate("/user-dashboard");
-            window.location.reload();
-          }, 1000);
-        }
+       if (
+  updatedProperties.length === 0 &&
+  totalPGs === 0
+) {
+  setTimeout(() => {
+    navigate("/user-dashboard");
+    window.location.reload();
+  }, 1000);
+}
       }
     } catch (error) {
       console.error(error);

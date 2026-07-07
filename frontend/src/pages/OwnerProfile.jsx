@@ -26,46 +26,31 @@ function OwnerProfile() {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    const loggedInUser = JSON.parse(
-      localStorage.getItem("user")
+   const fetchUser = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/auth/me",
+      {
+        credentials: "include",
+      }
     );
 
-    if (loggedInUser) {
-      setUser(loggedInUser);
-      setName(loggedInUser.name || "");
-      setEmail(loggedInUser.email || "");
-      setProfileImage(
-        loggedInUser.profileImage || ""
-      );
+    const data = await response.json();
 
-     fetch(
-  "http://localhost:5000/api/properties/my-properties",
-  {
-    credentials: "include",
-  }
-)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            setTotalProperties(
-              data.properties.length
-            );
-
-            const views =
-              data.properties.reduce(
-                (total, property) =>
-                  total +
-                  (property.views || 0),
-                0
-              );
-
-            setTotalViews(views);
-          }
-        })
-        .catch((err) =>
-          console.error(err)
-        );
+    if (data.success) {
+      setUser(data.user);
+      setName(data.user.name || "");
+      setEmail(data.user.email || "");
+      setProfileImage(data.user.profileImage || "");
     }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+fetchUser(); 
+
+   
   }, []);
 
   const handleUpdateProfile = async (
@@ -78,7 +63,7 @@ function OwnerProfile() {
 
     try {
       const response = await fetch(
-  "http://localhost:5000/api/auth/profile",
+  `http://localhost:5000/api/auth/profile/${user._id}`,
   {
     method: "PUT",
     credentials: "include",
@@ -96,12 +81,6 @@ function OwnerProfile() {
         await response.json();
 
       if (data.success) {
-        localStorage.setItem(
-          "user",
-          JSON.stringify(data.user)
-        );
-
-
        setUser(data.user);
 
 setProfileImage(
@@ -171,7 +150,7 @@ setSuccessMessage(
 
                   try {
                     const response = await fetch(
-  "http://localhost:5000/api/auth/profile-image",
+  `http://localhost:5000/api/auth/profile-image/${user._id}`,
   {
     method: "PUT",
     credentials: "include",
@@ -188,11 +167,6 @@ setSuccessMessage(
                       );
 
                       setUser(data.user);
-
-                      localStorage.setItem(
-                        "user",
-                        JSON.stringify(data.user)
-                      );
                     
                       if (fileInputRef.current) {
   fileInputRef.current.value = "";

@@ -9,14 +9,6 @@ import { FaTimes } from "react-icons/fa";
 function AddPG() {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const user = localStorage.getItem("user");
-
-    if (!user) {
-      navigate("/");
-    }
-  }, [navigate]);
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",

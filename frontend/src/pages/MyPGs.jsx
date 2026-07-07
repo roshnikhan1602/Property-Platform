@@ -27,9 +27,6 @@ function MyPGs() {
 
   const [selectedPGId, setSelectedPGId] =
     useState(null);
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
 
   const fetchMyPGs = async () => {
     try {
@@ -56,11 +53,9 @@ function MyPGs() {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      fetchMyPGs();
-    }
-  }, []);
+useEffect(() => {
+  fetchMyPGs();
+}, []);
 
   const handleDelete = async (id) => {
     setShowDeleteModal(false);
@@ -109,25 +104,13 @@ function MyPGs() {
 
         // Downgrade only if NO PGs and NO Properties
         if (
-          updatedPGs.length === 0 &&
-          totalProperties === 0 &&
-          user.role === "owner"
-        ) {
-          const updatedUser = {
-            ...user,
-            role: "user",
-          };
-
-          localStorage.setItem(
-            "user",
-            JSON.stringify(updatedUser)
-          );
-
-          setTimeout(() => {
-            window.location.href =
-              "/user-dashboard";
-          }, 1000);
-        }
+  updatedPGs.length === 0 &&
+  totalProperties === 0
+) {
+  setTimeout(() => {
+    window.location.href = "/user-dashboard";
+  }, 1000);
+}
       }
     } catch (error) {
       console.error(error);

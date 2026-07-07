@@ -10,18 +10,6 @@ import { FaTimes } from "react-icons/fa";
 function EditProperty() {
   const navigate = useNavigate();
   const { id } = useParams();
-  useEffect(() => {
-    const user = localStorage.getItem("user");
-
-    if (!user) {
-      setToast({
-        show: true,
-        message: "Please login first",
-        type: "error",
-      });
-      navigate("/");
-    }
-  }, [navigate]);
 
   const [formData, setFormData] = useState({
     title: "",

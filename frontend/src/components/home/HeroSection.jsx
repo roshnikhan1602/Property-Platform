@@ -5,29 +5,47 @@ import HeroSlider from "./HeroSlider";
 function HeroSection({ setShowLoginModal }) {
   const navigate = useNavigate();
 
-  const handlePostProperty = () => {
-    const user = JSON.parse(
-      localStorage.getItem("user")
+ const handlePostProperty = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/auth/me",
+      {
+        credentials: "include",
+      }
     );
 
-    if (user) {
+    const data = await response.json();
+
+    if (data.success) {
       navigate("/add-property");
     } else {
       setShowLoginModal(true);
     }
-  };
+  } catch {
+    setShowLoginModal(true);
+  }
+};
 
-  const handlePostPG = () => {
-    const user = JSON.parse(
-      localStorage.getItem("user")
+  const handlePostPG = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/auth/me",
+      {
+        credentials: "include",
+      }
     );
 
-    if (user) {
+    const data = await response.json();
+
+    if (data.success) {
       navigate("/add-pg");
     } else {
       setShowLoginModal(true);
     }
-  };
+  } catch {
+    setShowLoginModal(true);
+  }
+};
 
   return (
     <section

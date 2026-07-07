@@ -23,27 +23,31 @@ function Navbar() {
   const location = useLocation();
 
  useEffect(() => {
-  const loadUser = () => {
-   try {
-  const loggedInUser =
-    localStorage.getItem("user");
+  const loadUser = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/auth/me",
+      {
+        credentials: "include",
+      }
+    );
 
-  setUser(
-    loggedInUser
-      ? JSON.parse(loggedInUser)
-      : null
-  );
-} catch {
+    const data = await response.json();
+
+    if (data.success) {
+      setUser(data.user);
+    } else {
+      setUser(null);
+    }
+  } catch (error) {
+  console.error(error);
   setUser(null);
 }
-  };
+};
 
   loadUser();
 
-  window.addEventListener(
-    "storage",
-    loadUser
-  );
+
 
   window.addEventListener(
     "focus",
@@ -51,10 +55,6 @@ function Navbar() {
   );
 
   return () => {
-    window.removeEventListener(
-      "storage",
-      loadUser
-    );
 
     window.removeEventListener(
       "focus",
@@ -104,12 +104,21 @@ function Navbar() {
     };
   }, []);
 
- const handleLogout = () => {
-  localStorage.removeItem("user");
+ const handleLogout = async () => {
+  try {
+    await fetch(
+      "http://localhost:5000/api/auth/logout",
+      {
+        method: "POST",
+        credentials: "include",
+      }
+    );
+  } catch (error) {
+    console.error(error);
+  }
 
   setUser(null);
   setShowDropdown(false);
-
   navigate("/");
 };
 
