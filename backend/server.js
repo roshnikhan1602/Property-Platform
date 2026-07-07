@@ -11,6 +11,8 @@ const connectDB = require("./config/db");
 const pgRoutes = require("./routes/pgRoutes");
 const pgReviewRoutes = require("./routes/pgReviewRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const subscriptionRoutes = require("./routes/subscriptionRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 
 connectDB();
 
@@ -72,6 +74,16 @@ app.use(
 app.use(
   "/api/chatbot",
   chatRoutes
+);
+
+app.use(
+  "/api/subscriptions",
+  subscriptionRoutes
+);
+
+app.use(
+  "/api/payment",
+  paymentRoutes
 );
 
 app.get("/", (req, res) => {

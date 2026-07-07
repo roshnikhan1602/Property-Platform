@@ -1,5 +1,6 @@
 const Property = require("../models/Property");
 const User = require("../models/User");
+const Subscription = require("../models/Subscription");
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
 
@@ -37,6 +38,30 @@ const addProperty = async (req, res) => {
         );
       }
     }
+
+// Check subscription limits
+const subscription =
+  await Subscription.findOne({
+    user: req.user.id,
+    status: "Active",
+  });
+
+const propertyCount =
+  await Property.countDocuments({
+    owner: req.user.id,
+  });
+
+if (
+  subscription &&
+  subscription.propertyLimit !== -1 &&
+  propertyCount >=
+    subscription.propertyLimit
+) {
+  return res.status(403).json({
+    success: false,
+    message: `Your ${subscription.plan} plan allows only ${subscription.propertyLimit} properties. Upgrade your subscription to add more.`,
+  });
+}
 
     const property = await Property.create({
   ...req.body,
@@ -84,9 +109,10 @@ const getAllProperties = async (req, res) => {
     const limit = parseInt(req.query.limit) || 9;
     const skip = (page - 1) * limit;
 
-    const filters = {
-      isApproved: true,
-    };
+   const filters = {
+  isApproved: true,
+  isActive: true,
+};
 
     if (city) {
       filters.city = {
@@ -125,9 +151,12 @@ const getAllProperties = async (req, res) => {
     const totalProperties = await Property.countDocuments(filters);
 
     const properties = await Property.find(filters)
-      .sort({ views: -1 })
-      .skip(skip)
-      .limit(limit);
+  .sort({
+    createdAt: -1,
+    _id: -1,
+  })
+  .skip(skip)
+  .limit(limit);
 
     res.status(200).json({
       success: true,

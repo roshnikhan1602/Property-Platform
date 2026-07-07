@@ -9,7 +9,10 @@ import {
 
 import Toast from "../common/Toast";
 
-function PropertyCard({ property }) {
+function PropertyCard({
+  property,
+  wishlistIds,
+}) {
   const navigate = useNavigate();
 
   const [saved, setSaved] = useState(false);
@@ -21,35 +24,10 @@ function PropertyCard({ property }) {
   });
 
   useEffect(() => {
- const checkWishlist = async () => {
-  try {
-    const response = await fetch(
-      "http://localhost:5000/api/wishlist",
-      {
-        credentials: "include",
-      }
-    );
-
-    if (!response.ok) {
-      return;
-    }
-
-    const data = await response.json();
-
-    if (data.success) {
-      const exists = data.wishlist.some(
-        (item) => item.itemId?._id === property._id
-      );
-
-      setSaved(exists);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-  checkWishlist();
-}, [property._id]);
+  setSaved(
+    wishlistIds?.includes(property._id)
+  );
+}, [wishlistIds, property._id]);
 
   const handleWishlist = async () => {
   try {

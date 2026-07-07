@@ -26,6 +26,7 @@ import MyPGs from "./pages/MyPGs";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Subscription from "./pages/Subscription";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
@@ -168,6 +169,15 @@ function App() {
           element={
             <ProtectedRoute>
               <MyPGs />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/subscription"
+          element={
+            <ProtectedRoute>
+              <Subscription />
             </ProtectedRoute>
           }
         />

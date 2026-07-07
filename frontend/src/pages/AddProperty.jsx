@@ -134,7 +134,8 @@ images.forEach((image) => {
         setSubmitting(false);
         setToast({
           show: true,
-          message: "Failed to add property",
+          message: data.message ||
+  "Failed to add Property",
           type: "error",
         });
       }

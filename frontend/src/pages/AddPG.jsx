@@ -139,12 +139,12 @@ function AddPG() {
       } else {
         setSubmitting(false);
 
-        setToast({
-          show: true,
-          message: "Failed to add PG",
-          type: "error",
-        });
-
+         setToast({
+    show: true,
+    message:
+      data.message || "Failed to add PG",
+    type: "error",
+  });
       }
     } catch (error) {
       console.error(error);

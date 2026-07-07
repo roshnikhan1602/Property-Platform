@@ -1,0 +1,159 @@
+const crypto = require("crypto");
+
+const razorpay = require("../config/razorpay");
+const Payment = require("../models/Payment");
+const Subscription = require("../models/Subscription");
+
+const createOrder = async (req, res) => {
+  try {
+    const { plan, amount } = req.body;
+
+    const options = {
+      amount: amount * 100,
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`,
+    };
+
+    const order = await razorpay.orders.create(
+      options
+    );
+
+    console.log(order);
+
+    res.json({
+      success: true,
+      order,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to create order.",
+    });
+  }
+};
+
+const verifyPayment = async (req, res) => {
+  try {
+    const {
+      plan,
+      amount,
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    } = req.body;
+
+    const generatedSignature = crypto
+      .createHmac(
+        "sha256",
+        process.env.RAZORPAY_KEY_SECRET
+      )
+      .update(
+        razorpay_order_id +
+          "|" +
+          razorpay_payment_id
+      )
+      .digest("hex");
+
+    if (
+      generatedSignature !==
+      razorpay_signature
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Payment verification failed.",
+      });
+    }
+
+    const limits = {
+      Free: {
+        propertyLimit: 2,
+        pgLimit: 1,
+      },
+      Premium: {
+        propertyLimit: 10,
+        pgLimit: 10,
+      },
+      Elite: {
+        propertyLimit: -1,
+        pgLimit: -1,
+      },
+    };
+
+    const startDate = new Date();
+
+    const endDate = new Date();
+    endDate.setMonth(
+      endDate.getMonth() + 1
+    );
+
+    let subscription =
+      await Subscription.findOne({
+        user: req.user.id,
+        status: "Active",
+      });
+
+    if (subscription) {
+      subscription.plan = plan;
+      subscription.amount = amount;
+      subscription.propertyLimit =
+        limits[plan].propertyLimit;
+      subscription.pgLimit =
+        limits[plan].pgLimit;
+      subscription.startDate =
+        startDate;
+      subscription.endDate = endDate;
+
+      await subscription.save();
+    } else {
+      subscription =
+        await Subscription.create({
+          user: req.user.id,
+          plan,
+          amount,
+          propertyLimit:
+            limits[plan].propertyLimit,
+          pgLimit:
+            limits[plan].pgLimit,
+          startDate,
+          endDate,
+          status: "Active",
+        });
+    }
+
+    await Payment.create({
+      user: req.user.id,
+      subscription:
+        subscription._id,
+      plan,
+      amount,
+      razorpayOrderId:
+        razorpay_order_id,
+      razorpayPaymentId:
+        razorpay_payment_id,
+      razorpaySignature:
+        razorpay_signature,
+      status: "Success",
+    });
+
+    res.json({
+      success: true,
+      message:
+        "Payment verified successfully.",
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message:
+        "Payment verification failed.",
+    });
+  }
+};
+
+module.exports = {
+  createOrder,
+  verifyPayment,
+};
