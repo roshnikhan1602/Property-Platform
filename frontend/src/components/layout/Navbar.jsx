@@ -12,6 +12,8 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
+import NotificationBell from "../notifications/NotificationBell";
+
 function Navbar() {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -198,7 +200,11 @@ function Navbar() {
           >
             <FaRegHeart />
           </button>
-
+          {user && (
+            <NotificationBell
+              isTransparent={isTransparent}
+            />
+          )}
           {user ? (
             <div
               className="relative"

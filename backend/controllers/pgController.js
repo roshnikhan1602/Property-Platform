@@ -1,5 +1,6 @@
 const PG = require("../models/PG");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
 
@@ -39,10 +40,32 @@ const addPG = async (req, res) => {
     }
 
     const pg = await PG.create({
-  ...req.body,
-  owner: req.user.id,
-  images: imageUrls,
+      ...req.body,
+      owner: req.user.id,
+      images: imageUrls,
+    });
+    const admins = await User.find({
+  role: "admin",
 });
+
+for (const admin of admins) {
+  await Notification.create({
+    user: admin._id,
+    title: "New PG Submitted",
+    message: `"${pg.title}" has been submitted and is awaiting approval.`,
+    type: "general",
+    referenceId: pg._id,
+    referenceType: "PG",
+  });
+}
+
+    await Notification.create({
+      user: req.user.id,
+      title: "PG Submitted",
+      message:
+        "Your PG has been submitted successfully and is awaiting admin approval.",
+      type: "pg",
+    });
 
 const user = await User.findById(
   req.user.id
@@ -233,6 +256,12 @@ if (req.files && req.files.length > 0) {
         }
       );
 
+      await Notification.create({
+        user: req.user.id,
+        title: "PG Updated",
+        message: `"${updatedPG.title}" has been updated successfully.`,
+        type: "pg",
+      });
     res.status(200).json({
       success: true,
       message:
@@ -268,6 +297,13 @@ if (pg.owner.toString() !== req.user.id) {
     message: "You are not authorized to delete this PG",
   });
 }
+
+await Notification.create({
+  user: req.user.id,
+  title: "PG Deleted",
+  message: `"${pg.title}" has been deleted successfully.`,
+  type: "general",
+});
 
 await pg.deleteOne();
 

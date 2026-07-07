@@ -7,6 +7,7 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Toast from "../components/common/Toast";
 import ConfirmModal from "../components/common/ConfirmModal";
+import Notifications from "../pages/Notifications";
 
 function AdminDashboard() {
   const [users, setUsers] = useState([]);
@@ -24,6 +25,12 @@ function AdminDashboard() {
     useState("");
   const [propertyView, setPropertyView] =
     useState("properties");
+
+    {
+  activeTab === "notifications" && (
+    <Notifications />
+  )
+}
 
   const [pendingView, setPendingView] =
     useState("properties");

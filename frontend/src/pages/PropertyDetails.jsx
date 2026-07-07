@@ -248,26 +248,29 @@ const loadReviews = async () => {
           );
 
           // Recently Viewed Properties
-          const recentlyViewed =
-            JSON.parse(
-              localStorage.getItem("recentlyViewed")
-            ) || [];
+          // Recently Viewed (Properties + PGs)
+        const recentlyViewed =
+          JSON.parse(
+            localStorage.getItem("recentlyViewed")
+          ) || [];
 
-          const filteredProperties =
-            recentlyViewed.filter(
-              (item) =>
-                item._id !== data.property._id
-            );
-
-          const updatedProperties = [
-            data.property,
-            ...filteredProperties,
-          ].slice(0, 5);
-
-          localStorage.setItem(
-            "recentlyViewed",
-            JSON.stringify(updatedProperties)
+        const filteredItems =
+          recentlyViewed.filter(
+            (item) => item._id !== data.property._id
           );
+
+        const updatedItems = [
+          {
+            ...data.property,
+            itemType: "property",
+          },
+          ...filteredItems,
+        ].slice(0, 5);
+
+        localStorage.setItem(
+          "recentlyViewed",
+          JSON.stringify(updatedItems)
+        );
         }
       } catch (error) {
         console.error(

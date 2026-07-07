@@ -1,5 +1,6 @@
 const Property = require("../models/Property");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
 
@@ -39,14 +40,35 @@ const addProperty = async (req, res) => {
     }
 
     const property = await Property.create({
-  ...req.body,
-  owner: req.user.id,
-  images: imageUrls,
+        ...req.body,
+        owner: req.user.id,
+        images: imageUrls,
+      });
+      const admins = await User.find({
+  role: "admin",
 });
 
-const user = await User.findById(
-  req.user.id
-);
+for (const admin of admins) {
+  await Notification.create({
+    user: admin._id,
+    title: "New Property Submitted",
+    message: `"${property.title}" has been submitted and is awaiting approval.`,
+    type: "general",
+    referenceId: property._id,
+    referenceType: "Property",
+  });
+}
+      await Notification.create({
+        user: req.user.id,
+        title: "Property Submitted",
+        message:
+          "Your property has been submitted successfully and is awaiting admin approval.",
+        type: "general",
+      });
+
+      const user = await User.findById(
+        req.user.id
+      );
 
     if (user && user.role === "user") {
       user.role = "owner";
@@ -253,6 +275,13 @@ if (property.owner.toString() !== req.user.id) {
         }
       );
 
+      await Notification.create({
+        user: req.user.id,
+        title: "Property Updated",
+        message: `"${updatedProperty.title}" has been updated successfully.`,
+        type: "property",
+      });
+
     res.status(200).json({
       success: true,
       message:
@@ -287,6 +316,13 @@ if (property.owner.toString() !== req.user.id) {
     message: "You are not authorized to delete this property",
   });
 }
+
+await Notification.create({
+  user: req.user.id,
+  title: "Property Deleted",
+  message: `"${property.title}" has been deleted successfully.`,
+  type: "general",
+});
 
 await property.deleteOne();
 

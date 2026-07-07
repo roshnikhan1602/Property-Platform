@@ -30,6 +30,8 @@ import Signup from "./pages/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 
+import Notifications from "./pages/Notifications";
+
 function App() {
   return (
     <BrowserRouter>
@@ -171,6 +173,11 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+        path="/notifications"
+        element={<Notifications />}
+      />
 
         {/* Admin */}
         <Route

@@ -201,6 +201,28 @@ const handleDislike = async (
           await response.json();
 
         if (data.success) {
+          const recentlyViewed =
+              JSON.parse(
+                localStorage.getItem("recentlyViewed")
+              ) || [];
+
+            const filteredItems =
+              recentlyViewed.filter(
+                (item) => item._id !== data.pg._id
+              );
+
+            const updatedItems = [
+              {
+                ...data.pg,
+                itemType: "pg",
+              },
+              ...filteredItems,
+            ].slice(0, 5);
+
+            localStorage.setItem(
+              "recentlyViewed",
+              JSON.stringify(updatedItems)
+            );
           setPg(data.pg);
 
           loadReviews();

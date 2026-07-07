@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const Property = require("../models/Property");
 const PG = require("../models/PG");
+const Notification = require("../models/Notification");
 const getAllUsers = async (req, res) => {
   try {
    const users = await User.find().lean();
@@ -157,6 +158,20 @@ const approveProperty = async (
         }
       );
 
+      console.log("Property:", property);
+      if (property) {
+          await Notification.create({
+            user: property.owner,
+            title: "Property Approved 🎉",
+            message: `"${property.title}" has been approved by the admin.`,
+            type: "property-approved",
+            referenceId: property._id,
+            referenceType: "Property",
+          });
+        }
+
+        console.log("Approval notification created");
+        
     res.status(200).json({
       success: true,
       message:
@@ -170,32 +185,40 @@ const approveProperty = async (
   }
 };
 
-const disapproveProperty =
-  async (req, res) => {
-    try {
-      const property =
-        await Property.findByIdAndUpdate(
-          req.params.id,
-          {
-            isApproved: false,
-          },
-          {
-            new: true,
-          }
-        );
+const disapproveProperty = async (req, res) => {
+  try {
+    const property = await Property.findByIdAndUpdate(
+      req.params.id,
+      {
+        isApproved: false,
+      },
+      {
+        new: true,
+      }
+    );
 
-      res.status(200).json({
-        success: true,
-        message:
-          "Property disapproved successfully",
-        property,
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: error.message,
+    if (property) {
+      await Notification.create({
+        user: property.owner,
+        title: "Property Rejected ❌",
+        message: `"${property.title}" has been rejected by the admin.`,
+        type: "property-rejected",
+        referenceId: property._id,
+        referenceType: "Property",
       });
     }
-  };
+
+    res.status(200).json({
+      success: true,
+      message: "Property disapproved successfully",
+      property,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
 
 const deleteProperty = async (
   req,
@@ -244,6 +267,23 @@ const approvePG = async (req, res) => {
       }
     );
 
+    if (pg) {
+      await Notification.create({
+        user: pg.owner,
+        title: "PG Approved 🎉",
+        message: `"${pg.title}" has been approved by the admin.`,
+        type: "pg-approved",
+      });
+    }
+
+    if (pg) {
+        await Notification.create({
+          user: pg.owner,
+          title: "PG Rejected",
+          message: `"${pg.title}" has been rejected by the admin.`,
+          type: "rejection",
+        });
+      }
     res.status(200).json({
       success: true,
       message: "PG approved successfully",
@@ -267,6 +307,17 @@ const disapprovePG = async (req, res) => {
         new: true,
       }
     );
+
+    if (pg) {
+      await Notification.create({
+        user: pg.owner,
+        title: "PG Rejected ❌",
+        message: `"${pg.title}" has been rejected by the admin.`,
+        type: "pg-rejected",
+        referenceId: pg._id,
+        referenceType: "PG",
+      });
+    }
 
     res.status(200).json({
       success: true,

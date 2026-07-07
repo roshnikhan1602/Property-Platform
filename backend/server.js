@@ -11,6 +11,7 @@ const connectDB = require("./config/db");
 const pgRoutes = require("./routes/pgRoutes");
 const pgReviewRoutes = require("./routes/pgReviewRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 connectDB();
 
@@ -74,6 +75,12 @@ app.use(
   chatRoutes
 );
 
+// ✅ Notification Routes
+app.use(
+  "/api/notifications",
+  notificationRoutes
+);
+
 app.get("/", (req, res) => {
   res.send("Property Platform Backend 🚀");
 });
@@ -81,5 +88,7 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(
+    `Server running on port ${PORT}`
+  );
 });

@@ -40,6 +40,7 @@ function MyPGs() {
       const data = await response.json();
 
       if (data.success) {
+        
         setPgs(data.pgs);
       }
     } catch (error) {
