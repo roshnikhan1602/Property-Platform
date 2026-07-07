@@ -5,6 +5,7 @@ import {
   FaHistory,
   FaBuilding,
   FaUserCircle,
+  FaCrown,
 } from "react-icons/fa";
 
 import Navbar from "../components/layout/Navbar";
@@ -51,7 +52,8 @@ function UserDashboard() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+
           <Link
             to="/wishlist"
             className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 transition-all duration-300"
@@ -116,6 +118,27 @@ function UserDashboard() {
           </Link>
 
           <Link
+            to="/subscription"
+            className="bg-white border border-yellow-300 rounded-2xl p-6 hover:shadow-xl hover:border-yellow-500 transition-all duration-300"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <FaCrown className="text-yellow-500 text-2xl" />
+
+              <span className="text-sm text-gray-400">
+                View →
+              </span>
+            </div>
+
+            <h2 className="text-xl font-semibold text-gray-900">
+              Subscription
+            </h2>
+
+            <p className="text-gray-500 mt-2">
+              Upgrade your plan
+            </p>
+          </Link>
+
+          <Link
             to="/owner-profile"
             className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 transition-all duration-300"
           >
@@ -135,6 +158,7 @@ function UserDashboard() {
               Manage your account settings
             </p>
           </Link>
+
         </div>
       </section>
 

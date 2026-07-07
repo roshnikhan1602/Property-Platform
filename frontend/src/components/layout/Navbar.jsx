@@ -4,7 +4,7 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-
+import { RiVipDiamondFill } from "react-icons/ri";
 import {
   FaRegHeart,
   FaUserCircle,
@@ -15,7 +15,8 @@ import {
 import NotificationBell from "../notifications/NotificationBell";
 
 function Navbar() {
-  const [user, setUser] = useState(null);
+const [user, setUser] = useState(null);
+const [subscription, setSubscription] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -37,10 +38,34 @@ function Navbar() {
     const data = await response.json();
 
     if (data.success) {
-      setUser(data.user);
+  setUser(data.user);
+
+  try {
+    const subscriptionResponse = await fetch(
+      "http://localhost:5000/api/subscriptions/current",
+      {
+        credentials: "include",
+      }
+    );
+
+    const subscriptionData =
+      await subscriptionResponse.json();
+
+    if (subscriptionData.success) {
+      setSubscription(
+        subscriptionData.subscription
+      );
     } else {
-      setUser(null);
+      setSubscription(null);
     }
+  } catch {
+    setSubscription(null);
+  }
+
+} else {
+  setUser(null);
+  setSubscription(null);
+}
   } catch (error) {
   console.error(error);
   setUser(null);
@@ -182,6 +207,25 @@ function Navbar() {
           >
             PG
           </Link>
+
+<Link
+  to="/subscription"
+  className={`flex items-center gap-2 font-medium transition ${
+    isTransparent
+      ? "text-white hover:text-blue-300"
+      : "text-gray-700 hover:text-blue-600"
+  }`}
+>
+  <RiVipDiamondFill className="text-blue-500 text-lg" />
+
+  <span>
+    {subscription?.plan === "Elite"
+      ? "Elite"
+      : subscription?.plan === "Premium"
+      ? "Premium"
+      : "Subscribe"}
+  </span>
+</Link>
 
         </div>
 

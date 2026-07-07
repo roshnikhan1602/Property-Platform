@@ -15,6 +15,8 @@ function PropertyListing({
   const [totalPages, setTotalPages] =
   useState(1);
   const [loading, setLoading] = useState(true);
+  const [wishlistIds, setWishlistIds] =
+  useState([]);
 
 const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -83,7 +85,33 @@ if (data.success) {
       }
     };
 
-    fetchProperties();
+    const fetchWishlist = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/wishlist",
+      {
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) return;
+
+    const data = await response.json();
+
+    if (data.success) {
+      setWishlistIds(
+        data.wishlist.map(
+          (item) => item.itemId?._id
+        )
+      );
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+fetchProperties();
+fetchWishlist();
   },[
   city,
   locality,
@@ -200,10 +228,11 @@ if (data.success) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
 
   {properties.map((property) => (
-    <PropertyCard
-      key={property._id}
-      property={property}
-    />
+  <PropertyCard
+  key={property._id}
+  property={property}
+  wishlistIds={wishlistIds}
+/>
   ))}
 
 </div>

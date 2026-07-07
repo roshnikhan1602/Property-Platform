@@ -1,6 +1,6 @@
 const PG = require("../models/PG");
 const User = require("../models/User");
-const Notification = require("../models/Notification");
+const Subscription = require("../models/Subscription");
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
 
@@ -38,6 +38,29 @@ const addPG = async (req, res) => {
         );
       }
     }
+
+// Check subscription limits
+const subscription =
+  await Subscription.findOne({
+    user: req.user.id,
+    status: "Active",
+  });
+
+const pgCount =
+  await PG.countDocuments({
+    owner: req.user.id,
+  });
+
+if (
+  subscription &&
+  subscription.pgLimit !== -1 &&
+  pgCount >= subscription.pgLimit
+) {
+  return res.status(403).json({
+    success: false,
+    message: `Your ${subscription.plan} plan allows only ${subscription.pgLimit} PG listings. Upgrade your subscription to add more.`,
+  });
+}
 
     const pg = await PG.create({
       ...req.body,

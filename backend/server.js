@@ -11,7 +11,12 @@ const connectDB = require("./config/db");
 const pgRoutes = require("./routes/pgRoutes");
 const pgReviewRoutes = require("./routes/pgReviewRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+<<<<<<< HEAD
 const notificationRoutes = require("./routes/notificationRoutes");
+=======
+const subscriptionRoutes = require("./routes/subscriptionRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+>>>>>>> 1731bd46bd93d62364519c991cb4978a45788e42
 
 connectDB();
 
@@ -75,10 +80,21 @@ app.use(
   chatRoutes
 );
 
+<<<<<<< HEAD
 // ✅ Notification Routes
 app.use(
   "/api/notifications",
   notificationRoutes
+=======
+app.use(
+  "/api/subscriptions",
+  subscriptionRoutes
+);
+
+app.use(
+  "/api/payment",
+  paymentRoutes
+>>>>>>> 1731bd46bd93d62364519c991cb4978a45788e42
 );
 
 app.get("/", (req, res) => {
