@@ -1,5 +1,6 @@
 const Review = require("../models/Review");
 const Property = require("../models/Property");
+const Notification = require("../models/Notification");
 
 const updatePropertyRating = async (propertyId) => {
   const reviews = await Review.find({
@@ -87,6 +88,15 @@ const addReview = async (req, res) => {
       comment,
     });
 
+    await Notification.create({
+      user: property.owner,
+      title: "New Property Review ⭐",
+      message: `${userName} reviewed your property "${property.title}".`,
+      type: "review",
+      referenceId: review._id,
+      referenceType: "Review",
+    });
+
     await updatePropertyRating(
       property._id
     );
@@ -156,6 +166,14 @@ const updateReview = async (req, res) => {
     review.editedAt = new Date();
 
     await review.save();
+    await Notification.create({
+  user: review.user,
+  title: "Owner Replied 💬",
+  message: `${review.propertyTitle} owner replied to your review.`,
+  type: "review-reply",
+  referenceId: review._id,
+  referenceType: "Review",
+});
 
     await updatePropertyRating(
       review.property

@@ -36,6 +36,14 @@ const reviewSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    ownerReply: {
+  type: String,
+  default: "",
+},
+
+ownerReplyDate: {
+  type: Date,
+},
 
     rating: {
       type: Number,
