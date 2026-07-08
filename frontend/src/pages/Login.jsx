@@ -48,7 +48,10 @@ function Login() {
     }
 
     if (!/^\d{10}$/.test(mobileNumber)) {
-      return showToast("Enter a valid 10 digit mobile number.", "error");
+      return showToast(
+        "Enter a valid 10 digit mobile number.",
+        "error"
+      );
     }
 
     try {
@@ -66,15 +69,18 @@ function Login() {
           navigate("/");
         }, 1200);
       } else {
-        showToast(response.message || "Invalid credentials.", "error");
+        showToast(
+          response.message || "Invalid credentials.",
+          "error"
+        );
       }
     } catch (error) {
       console.error(error);
 
-     showToast(
-  error.message || "Login failed.",
-  "error"
-);
+      showToast(
+        error.message || "Login failed.",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -130,6 +136,15 @@ function Login() {
                 placeholder="Enter your password"
                 className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
+
+              <div className="text-right mt-2">
+                <Link
+                  to="/forgot-password"
+                  className="text-sm text-blue-600 hover:underline font-medium"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
             </div>
 
             <button

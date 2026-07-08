@@ -56,3 +56,67 @@ export const login = async (userData) => {
 
   return response.json();
 };
+
+// Forgot Password
+
+export const sendForgotPasswordOTP = async (mobileNumber) => {
+  const response = await fetch(
+    `${BASE_URL}/forgot-password/send-otp`,
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        mobileNumber,
+      }),
+    }
+  );
+
+  return response.json();
+};
+
+export const verifyForgotPasswordOTP = async (
+  mobileNumber,
+  otp
+) => {
+  const response = await fetch(
+    `${BASE_URL}/forgot-password/verify-otp`,
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        mobileNumber,
+        otp,
+      }),
+    }
+  );
+
+  return response.json();
+};
+
+export const resetPassword = async (
+  mobileNumber,
+  password
+) => {
+  const response = await fetch(
+    `${BASE_URL}/forgot-password/reset`,
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        mobileNumber,
+        password,
+      }),
+    }
+  );
+
+  return response.json();
+};

@@ -26,6 +26,7 @@ import MyPGs from "./pages/MyPGs";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
 import Subscription from "./pages/Subscription";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -48,6 +49,10 @@ function App() {
           element={<Signup />}
         />
 
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
         {/* Public Routes */}
         <Route
           path="/"
@@ -176,22 +181,22 @@ function App() {
         />
 
         <Route
-  path="/notifications"
-  element={
-    <ProtectedRoute>
-      <Notifications />
-    </ProtectedRoute>
-  }
-/>
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <Notifications />
+            </ProtectedRoute>
+          }
+        />
 
-<Route
-  path="/subscription"
-  element={
-    <ProtectedRoute>
-      <Subscription />
-    </ProtectedRoute>
-  }
-/>
+        <Route
+          path="/subscription"
+          element={
+            <ProtectedRoute>
+              <Subscription />
+            </ProtectedRoute>
+          }
+        />
 
 
         {/* Admin */}

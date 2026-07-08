@@ -28,16 +28,22 @@ const [subscription, setSubscription] = useState(null);
  useEffect(() => {
   const loadUser = async () => {
   try {
-    const response = await fetch(
-      "http://localhost:5000/api/auth/me",
-      {
-        credentials: "include",
-      }
-    );
+   const response = await fetch(
+  "http://localhost:5000/api/auth/me",
+  {
+    credentials: "include",
+  }
+);
 
-    const data = await response.json();
+if (response.status === 401) {
+  setUser(null);
+  setSubscription(null);
+  return;
+}
 
-    if (data.success) {
+const data = await response.json();
+
+if (data.success) {
   setUser(data.user);
 
   try {
@@ -67,8 +73,9 @@ const [subscription, setSubscription] = useState(null);
   setSubscription(null);
 }
   } catch (error) {
-  console.error(error);
+  console.error("Failed to load user:", error);
   setUser(null);
+  setSubscription(null);
 }
 };
 

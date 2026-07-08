@@ -113,6 +113,157 @@ const verifyOTPController = async (req, res) => {
   }
 };
 
+const sendForgotPasswordOTP = async (req, res) => {
+  try {
+    const { mobileNumber } = req.body;
+
+    if (!mobileNumber) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile number is required",
+      });
+    }
+
+    const user = await User.findOne({ mobileNumber });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "No account found with this mobile number",
+      });
+    }
+
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    await OTP.findOneAndUpdate(
+      { mobileNumber },
+      {
+        otp,
+        verified: false,
+        verifiedAt: null,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      },
+      {
+        upsert: true,
+        returnDocument: "after",
+      }
+    );
+
+    console.log(`Forgot Password OTP for ${mobileNumber}: ${otp}`);
+
+    res.status(200).json({
+      success: true,
+      message: "OTP sent successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const verifyForgotPasswordOTP = async (req, res) => {
+  try {
+    const { mobileNumber, otp } = req.body;
+
+    if (!mobileNumber || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile number and OTP are required",
+      });
+    }
+
+    const otpData = await OTP.findOne({ mobileNumber });
+
+    if (!otpData) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP not found",
+      });
+    }
+
+    if (otpData.expiresAt < new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP expired",
+      });
+    }
+
+    if (otpData.otp !== otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP",
+      });
+    }
+
+    otpData.verified = true;
+    otpData.verifiedAt = new Date();
+
+    await otpData.save();
+
+    res.status(200).json({
+      success: true,
+      message: "OTP verified successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { mobileNumber, password } = req.body;
+
+    if (!mobileNumber || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile number and new password are required",
+      });
+    }
+
+    const otpData = await OTP.findOne({ mobileNumber });
+
+    if (!otpData || !otpData.verified) {
+      return res.status(400).json({
+        success: false,
+        message: "Please verify OTP first",
+      });
+    }
+
+    const user = await User.findOne({ mobileNumber });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    await OTP.deleteOne({ mobileNumber });
+
+    res.status(200).json({
+      success: true,
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const signup = async (req, res) => {
   try {
     const { name, mobileNumber, password } = req.body;
@@ -420,6 +571,9 @@ const uploadProfileImage = async (
 module.exports = {
   sendOTPController,
   verifyOTPController,
+  sendForgotPasswordOTP,
+  verifyForgotPasswordOTP,
+  resetPassword,
   signup,
   login,
   logout,
