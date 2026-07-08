@@ -60,11 +60,18 @@ function Login() {
       });
 
       if (response.success) {
-        showToast("Login successful.");
+  // Save logged-in user
+  localStorage.setItem(
+    "user",
+    JSON.stringify(response.user)
+  );
 
-        setTimeout(() => {
-          navigate("/");
-        }, 1200);
+  showToast("Login successful.");
+
+  setTimeout(() => {
+    navigate("/");
+  }, 1200);
+
       } else {
         showToast(response.message || "Invalid credentials.", "error");
       }

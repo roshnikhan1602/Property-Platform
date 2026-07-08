@@ -3,6 +3,7 @@ const User = require("../models/User");
 const Subscription = require("../models/Subscription");
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
+const Notification = require("../models/Notification");
 
 const addPG = async (req, res) => {
   try {

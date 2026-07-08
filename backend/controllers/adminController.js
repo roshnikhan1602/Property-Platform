@@ -158,7 +158,7 @@ const approveProperty = async (
         }
       );
 
-      console.log("Property:", property);
+      
       if (property) {
           await Notification.create({
             user: property.owner,
@@ -170,7 +170,7 @@ const approveProperty = async (
           });
         }
 
-        console.log("Approval notification created");
+       
         
     res.status(200).json({
       success: true,
@@ -267,23 +267,26 @@ const approvePG = async (req, res) => {
       }
     );
 
-    if (pg) {
-      await Notification.create({
-        user: pg.owner,
-        title: "PG Approved 🎉",
-        message: `"${pg.title}" has been approved by the admin.`,
-        type: "pg-approved",
-      });
-    }
+    console.log("Property:", property);
 
-    if (pg) {
-        await Notification.create({
-          user: pg.owner,
-          title: "PG Rejected",
-          message: `"${pg.title}" has been rejected by the admin.`,
-          type: "rejection",
-        });
-      }
+if (property) {
+  const notification = await Notification.create({
+    user: property.owner,
+    title: "Property Approved 🎉",
+    message: `"${property.title}" has been approved by the admin.`,
+    type: "property-approved",
+    referenceId: property._id,
+    referenceType: "Property",
+  });
+}
+    // if (pg) {
+    //     await Notification.create({
+    //       user: pg.owner,
+    //       title: "PG Rejected",
+    //       message: `"${pg.title}" has been rejected by the admin.`,
+    //       type: "rejection",
+    //     });
+    //   }
     res.status(200).json({
       success: true,
       message: "PG approved successfully",
