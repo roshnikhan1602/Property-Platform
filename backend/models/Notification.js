@@ -21,20 +21,22 @@ const notificationSchema = new mongoose.Schema(
     },
 
     type: {
-      type: String,
-      enum: [
-        "property-approved",
-        "property-rejected",
-        "pg-approved",
-        "pg-rejected",
-        "subscription",
-        "review",
-        "support",
-        "welcome",
-        "general",
-      ],
-      default: "general",
-    },
+  type: String,
+  enum: [
+    "property-approved",
+    "property-rejected",
+    "pg-approved",
+    "pg-rejected",
+    "subscription",
+    "review",
+    "support",
+    "support-reply",
+    "support-resolved",
+    "welcome",
+    "general",
+  ],
+  default: "general",
+},
 
     referenceId: {
       type: mongoose.Schema.Types.ObjectId,

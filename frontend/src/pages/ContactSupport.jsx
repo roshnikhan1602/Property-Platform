@@ -42,9 +42,9 @@ function ContactSupport({
   const fetchMyTickets = async () => {
 
     try {
-      const response =
-        await fetch(
-  "http://localhost:5000/api/support/user",
+      const user = JSON.parse(localStorage.getItem("user"));
+      const response = await fetch(
+  `http://localhost:5000/api/support/user/${user._id}`,
   {
     credentials: "include",
   }
@@ -105,20 +105,30 @@ function ContactSupport({
       });
     }
 
-    try {
-      setLoading(true);
+   try {
+  setLoading(true);
+
+  // 👇 ADD THIS
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const response = await fetch(
+    "http://localhost:5000/api/support",
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      // 👇 REPLACE THIS
+      body: JSON.stringify({
+        userId: user._id,
+        ...formData,
+      }),
+    }
+  );
+
   
-        const response = await fetch(
-  "http://localhost:5000/api/support",
-  {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  }
-);
 
       const data =
         await response.json();
