@@ -116,23 +116,35 @@ function PropertyCard({
         />
       )}
 
-      <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300">
+  <div
+  onClick={() =>
+    navigate(`/properties/${property._id}`)
+  }
+  className="group bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer"
+>
 
         <div className="relative h-56 overflow-hidden">
 
   {property.images &&
   property.images.length > 0 ? (
 
-    <img
-      src={property.images[0]}
-      alt={property.title}
-      className="w-full h-full object-cover"
-    />
+   <img
+  src={property.images[0]}
+  alt={property.title}
+  onClick={() =>
+    navigate(`/properties/${property._id}`)
+  }
+  className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+/>
 
   ) : (
 
-    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
-
+   <div
+  onClick={() =>
+    navigate(`/properties/${property._id}`)
+  }
+  className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center cursor-pointer"
+>
       <FaHome className="text-5xl text-blue-600" />
 
       <p className="mt-3 text-gray-600 font-medium">
@@ -144,7 +156,10 @@ function PropertyCard({
   )}
 
   <button
-    onClick={handleWishlist}
+  onClick={(e) => {
+    e.stopPropagation();
+    handleWishlist();
+  }}
     className="absolute top-4 right-4 bg-white/90 p-3 rounded-full shadow-md hover:scale-110 transition-all duration-300 cursor-pointer"
   >
     {saved ? (
@@ -159,9 +174,9 @@ function PropertyCard({
 
           <div className="flex justify-between items-start gap-3">
 
-            <h3 className="text-xl font-bold text-gray-800">
-              {property.title}
-            </h3>
+            <h3 className="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition">
+  {property.title}
+</h3>
 
             <span className="bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
               {property.listingType}
@@ -207,12 +222,11 @@ function PropertyCard({
 
           <div className="flex items-center justify-between mt-6">
 
-            <button
-              onClick={() =>
-                navigate(
-                  `/properties/${property._id}`
-                )
-              }
+           <button
+  onClick={(e) => {
+    e.stopPropagation();
+    navigate(`/properties/${property._id}`);
+  }}
               className="bg-blue-600 text-white py-3 px-6 rounded-xl font-medium hover:bg-blue-700 transition cursor-pointer"
             >
               View Details

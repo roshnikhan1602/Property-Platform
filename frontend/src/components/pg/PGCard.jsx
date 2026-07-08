@@ -142,12 +142,21 @@ function PGCard({ pg }) {
         />
       )}
 
-      <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300">
+     <div
+  onClick={() =>
+    navigate(`/pgs/${pg._id}`)
+  }
+  className="group bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer"
+>
+    <div className="relative h-56 overflow-hidden">
 
-     <div className="relative h-56 overflow-hidden">
+  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-300 z-10 pointer-events-none"></div>
 
-  <button
-    onClick={handleWishlist}
+ <button
+  onClick={(e) => {
+    e.stopPropagation();
+    handleWishlist();
+  }}
     className="absolute top-4 right-4 z-10 w-11 h-11 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition cursor-pointer"
   >
     {saved ? (
@@ -161,7 +170,7 @@ function PGCard({ pg }) {
     <img
       src={pg.images[0]}
       alt={pg.title}
-      className="w-full h-full object-cover"
+      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
     />
   ) : (
     <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center">
@@ -179,7 +188,7 @@ function PGCard({ pg }) {
 
           <div className="flex justify-between items-start gap-3">
 
-            <h3 className="text-xl font-bold text-gray-800">
+            <h3 className="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition">
               {pg.title}
             </h3>
 
@@ -283,9 +292,10 @@ function PGCard({ pg }) {
 
   <div className="flex justify-between items-end mt-6">
   <button
-    onClick={() =>
-      navigate(`/pgs/${pg._id}`)
-    }
+  onClick={(e) => {
+    e.stopPropagation();
+    navigate(`/pgs/${pg._id}`);
+  }}
     className="bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition cursor-pointer"
   >
     View PG Details

@@ -16,6 +16,9 @@ import Wishlist from "./pages/Wishlist";
 import OwnerProfile from "./pages/OwnerProfile";
 import AdminDashboard from "./pages/AdminDashboard";
 import ContactSupport from "./pages/ContactSupport";
+import FAQs from "./pages/FAQs";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
 import About from "./pages/About";
 
 import PGListing from "./pages/PGListing";
@@ -88,6 +91,20 @@ function App() {
           path="/about"
           element={<About />}
         />
+        <Route
+  path="/faqs"
+  element={<FAQs />}
+/>
+
+<Route
+  path="/privacy-policy"
+  element={<PrivacyPolicy />}
+/>
+
+<Route
+  path="/terms-conditions"
+  element={<TermsConditions />}
+/>
 
         {/* Protected Routes */}
         <Route

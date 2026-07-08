@@ -307,12 +307,14 @@ if (property.owner.toString() !== req.user.id) {
         }
       );
 
-      await Notification.create({
-        user: req.user.id,
-        title: "Property Updated",
-        message: `"${updatedProperty.title}" has been updated successfully.`,
-        type: "property",
-      });
+    await Notification.create({
+  user: req.user.id,
+  title: "Property Updated",
+  message: `"${updatedProperty.title}" has been updated successfully.`,
+  type: "general",
+  referenceId: updatedProperty._id,
+  referenceType: "Property",
+});
 
     res.status(200).json({
       success: true,
