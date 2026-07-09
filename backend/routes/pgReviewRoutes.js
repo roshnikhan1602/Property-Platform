@@ -10,6 +10,7 @@ const {
   updateReview,
   deleteReview,
   replyToReview,
+  deleteReply,
   toggleLike,
   toggleDislike,
 } = require("../controllers/pgReviewController");
@@ -38,6 +39,12 @@ router.put(
   "/reply/:id",
   authMiddleware,
   replyToReview
+);
+
+router.delete(
+  "/reply/:id",
+  authMiddleware,
+  deleteReply
 );
 
 router.put(

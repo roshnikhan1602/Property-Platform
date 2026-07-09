@@ -8,6 +8,7 @@ const {
   updateReview,
   deleteReview,
   replyToReview,
+  deleteReply,
   toggleLike,
   toggleDislike,
 } = require("../controllers/reviewController");
@@ -42,6 +43,11 @@ router.put(
 router.put(
   "/dislike/:id",
   toggleDislike
+);
+
+router.put(
+  "/delete-reply/:id",
+  deleteReply
 );
 
 module.exports = router;

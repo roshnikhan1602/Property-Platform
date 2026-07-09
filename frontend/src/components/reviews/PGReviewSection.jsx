@@ -9,9 +9,11 @@ function PGReviewSection({
   loadingReviews,
   handleAddReview,
   handleDeleteReview,
+  handleUpdateReview,
   handleLike,
   handleDislike,
   handleReply,
+  handleDeleteReply,
   canReply,
   loadReviews,
 }) {
@@ -136,10 +138,10 @@ function PGReviewSection({
                 currentUser={user}
                 onLike={handleLike}
                 onDislike={handleDislike}
-                onDelete={
-                  handleDeleteReview
-                }
+                onDelete={handleDeleteReview}
+                onUpdate={handleUpdateReview}
                 onReply={handleReply}
+                onDeleteReply={handleDeleteReply}
                 canReply={canReply}
                 onUpdated={loadReviews}
               />

@@ -166,15 +166,7 @@ const updateReview = async (req, res) => {
     review.editedAt = new Date();
 
     await review.save();
-    await Notification.create({
-  user: review.user,
-  title: "Owner Replied 💬",
-  message: `${review.propertyTitle} owner replied to your review.`,
-  type: "review-reply",
-  referenceId: review._id,
-  referenceType: "Review",
-});
-
+   
     await updatePropertyRating(
       review.property
     );
@@ -233,16 +225,18 @@ const deleteReview = async (
   }
 };
 
-const replyToReview = async (
-  req,
-  res
-) => {
+const replyToReview = async (req, res) => {
   try {
     const { ownerReply } = req.body;
 
-    const review = await Review.findById(
-      req.params.id
-    );
+    if (!ownerReply || ownerReply.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "Reply is required",
+      });
+    }
+
+    const review = await Review.findById(req.params.id);
 
     if (!review) {
       return res.status(404).json({
@@ -251,14 +245,89 @@ const replyToReview = async (
       });
     }
 
+    const property = await Property.findById(
+      review.property
+    );
+
+    if (!property) {
+      return res.status(404).json({
+        success: false,
+        message: "Property not found",
+      });
+    }
+
+    // Only property owner can reply
+    const { ownerId } = req.body;
+   if (property.owner.toString() !== ownerId) {
+  return res.status(403).json({
+    success: false,
+    message: "You are not authorized to reply.",
+  });
+}
+
     review.ownerReply = ownerReply;
+
+    await review.save();
+
+    // Notify reviewer
+    await Notification.create({
+      user: review.user,
+      title: "Owner Replied 💬",
+      message: `The owner replied to your review on "${review.propertyTitle}".`,
+      type: "review-reply",
+      referenceId: review._id,
+      referenceType: "Review",
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Reply added successfully",
+      review,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const deleteReply = async (req, res) => {
+  try {
+    const { ownerId } = req.body;
+
+    const review = await Review.findById(req.params.id);
+
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        message: "Review not found",
+      });
+    }
+
+    const property = await Property.findById(review.property);
+
+    if (!property) {
+      return res.status(404).json({
+        success: false,
+        message: "Property not found",
+      });
+    }
+
+    if (property.owner.toString() !== ownerId) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized",
+      });
+    }
+
+    review.ownerReply = "";
 
     await review.save();
 
     res.status(200).json({
       success: true,
-      message:
-        "Reply added successfully",
+      message: "Reply deleted successfully",
       review,
     });
   } catch (error) {
@@ -388,6 +457,7 @@ module.exports = {
   updateReview,
   deleteReview,
   replyToReview,
+  deleteReply,
   toggleLike,
   toggleDislike,
 };

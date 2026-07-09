@@ -5,6 +5,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import Toast from "../components/common/Toast";
+import ShareModal from "../share/ShareModal";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ReviewSection from "../components/reviews/ReviewSection";
@@ -14,8 +15,8 @@ import {
   likeReview,
   dislikeReview,
   deleteReview,
-  updateReview,
-} from "../services/reviewService";
+  replyToReview,
+} from "../services/reviewService"; 
 
 
 function PropertyDetails({
@@ -30,6 +31,8 @@ const location = useLocation();
   const [reviews, setReviews] = useState([]);
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [user, setUser] = useState(null);
+  const [showShareModal, setShowShareModal] =
+  useState(false);
   const [toast, setToast] = useState({
   show: false,
   message: "",
@@ -64,29 +67,9 @@ const handlePreviousImage = () => {
   );
 };
 
-const handleShare = async () => {
-  try {
-    await navigator.clipboard.writeText(
-      window.location.href
-    );
-
-    setToast({
-      show: true,
-      message:
-        "Property link copied successfully!",
-      type: "success",
-    });
-  } catch (error) {
-    console.error(error);
-
-    setToast({
-      show: true,
-      message: "Unable to copy link.",
-      type: "error",
-    });
-  }
+const handleShare = () => {
+  setShowShareModal(true);
 };
-
 const loadReviews = async () => {
     try {
       setLoadingReviews(true);
@@ -172,6 +155,32 @@ const loadReviews = async () => {
       });
     }
   };
+
+  const handleReply = async (
+  reviewId,
+  ownerReply
+) => {
+  const data = await replyToReview(
+    reviewId,
+    ownerReply
+  );
+
+  if (data.success) {
+    setToast({
+      show: true,
+      message: "Reply added successfully!",
+      type: "success",
+    });
+
+    loadReviews();
+  } else {
+    setToast({
+      show: true,
+      message: data.message,
+      type: "error",
+    });
+  }
+};
 
   const handleLike = async (reviewId) => {
     if (!user) {
@@ -301,6 +310,7 @@ loadReviews();
           </h2>
         </div>
         <Footer />
+        
       </>
     );
   }
@@ -702,14 +712,14 @@ property.images.length > 1 && (
           </button>
 
           <button
-            onClick={handleShare}
+            onClick={() => setShowShareModal(true)}
             className="bg-green-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-green-700 transition"
           >
             🔗 Share Property
           </button>
 
         </div>
-        <ReviewSection
+       <ReviewSection
           property={property}
           user={user}
           reviews={reviews}
@@ -718,6 +728,12 @@ property.images.length > 1 && (
           handleDeleteReview={handleDeleteReview}
           handleLike={handleLike}
           handleDislike={handleDislike}
+          handleReply={handleReply}
+          canReply={
+            user &&
+            user.role === "owner" &&
+            String(property.owner) === String(user._id)
+          }
           loadReviews={loadReviews}
         />
       </section>
@@ -734,6 +750,16 @@ property.images.length > 1 && (
           }
         />
       )}
+      <ShareModal
+  isOpen={showShareModal}
+  onClose={() =>
+    setShowShareModal(false)
+  }
+  title={property.title}
+  location={`${property.locality}, ${property.city}, ${property.state}`}
+  price={property.price}
+  url={window.location.href}
+/>
       <Footer />
     </>
   );

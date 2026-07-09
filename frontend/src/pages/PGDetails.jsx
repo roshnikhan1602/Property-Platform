@@ -7,6 +7,7 @@ import {
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import ShareModal from "../share/ShareModal";
 import {
   FaBed,
   FaMapMarkerAlt,
@@ -19,9 +20,13 @@ import {
   getPGReviews,
   addReview,
   deleteReview,
+  updateReview,
+  replyToReview,
+  deleteReply,
   toggleLike,
   toggleDislike,
 } from "../services/pgReviewService";
+
 function PGDetails({
   setShowLoginModal,
 }) {
@@ -42,6 +47,8 @@ const location = useLocation();
 const [loadingReviews, setLoadingReviews] =
   useState(false);
 const [user, setUser] = useState(null);
+const [showShareModal, setShowShareModal] =
+  useState(false);
 
   const handleNextImage = () => {
     const currentIndex =
@@ -144,6 +151,55 @@ const handleDeleteReview =
       console.error(error);
     }
   };
+  const handleReply = async (
+  reviewId,
+  ownerReply
+) => {
+  try {
+    const data = await replyToReview(
+      reviewId,
+      ownerReply
+    );
+
+    if (data.success) {
+      loadReviews();
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const handleDeleteReply = async (
+  reviewId
+) => {
+  try {
+    const data = await deleteReply(reviewId);
+
+    if (data.success) {
+      loadReviews();
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const handleUpdateReview = async (
+  reviewId,
+  reviewData
+) => {
+  try {
+    const data = await updateReview(
+      reviewId,
+      reviewData
+    );
+
+    if (data.success) {
+      loadReviews();
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const handleLike = async (
   reviewId
@@ -675,7 +731,16 @@ Email Owner
           )}
 
         </div>
-
+      <div className="mt-10 flex justify-center">
+  <button
+    onClick={() =>
+      setShowShareModal(true)
+    }
+    className="bg-green-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-green-700 transition"
+  >
+    🔗 Share PG
+  </button>
+</div>
       </section>
 <PGReviewSection
   pg={pg}
@@ -683,16 +748,29 @@ Email Owner
   reviews={reviews}
   loadingReviews={loadingReviews}
   handleAddReview={handleAddReview}
-  handleDeleteReview={
-    handleDeleteReview
-  }
+  handleDeleteReview={handleDeleteReview}
+  handleUpdateReview={handleUpdateReview}
   handleLike={handleLike}
-  handleDislike={
-    handleDislike
+  handleDislike={handleDislike}
+  handleReply={handleReply}
+  handleDeleteReply={handleDeleteReply}
+  canReply={
+    user &&
+    pg &&
+    pg.owner &&
+    pg.owner.toString() === user._id
   }
-  handleReply={() => {}}
-  canReply={false}
   loadReviews={loadReviews}
+/>
+<ShareModal
+  isOpen={showShareModal}
+  onClose={() =>
+    setShowShareModal(false)
+  }
+  title={pg.title}
+  location={`${pg.locality}, ${pg.city}, ${pg.state}`}
+  price={pg.rent}
+  url={window.location.href}
 />
       <Footer />
     </>

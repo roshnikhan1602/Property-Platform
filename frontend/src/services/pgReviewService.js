@@ -58,6 +58,16 @@ export const replyToReview = async (
   return response.data;
 };
 
+export const deleteReply = async (
+  reviewId
+) => {
+  const response = await axios.delete(
+    `${API}/reply/${reviewId}`,
+    config
+  );
+  return response.data;
+};
+
 export const toggleLike = async (
   reviewId
 ) => {

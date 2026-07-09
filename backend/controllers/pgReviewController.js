@@ -1,6 +1,7 @@
 const PGReview = require("../models/PGReview");
 const PG = require("../models/PG");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
 
 const updatePGRating = async (pgId) => {
   const reviews = await PGReview.find({
@@ -82,19 +83,28 @@ const addReview = async (req, res) => {
     }
 
     const review =
-      await PGReview.create({
-        pg: pg._id,
-        pgTitle: pg.title,
-        owner: pg.owner,
-        user: user._id,
-        userName: user.name,
-        userProfileImage:
-          user.profileImage || "",
-        rating,
-        comment,
-      });
+  await PGReview.create({
+    pg: pg._id,
+    pgTitle: pg.title,
+    owner: pg.owner,
+    user: user._id,
+    userName: user.name,
+    userProfileImage:
+      user.profileImage || "",
+    rating,
+    comment,
+  });
 
-    await updatePGRating(pg._id);
+await Notification.create({
+  user: pg.owner,
+  title: "New PG Review ⭐",
+  message: `${user.name} reviewed your PG "${pg.title}".`,
+  type: "review",
+  referenceId: review._id,
+  referenceType: "Review",
+});
+
+await updatePGRating(pg._id);
 
     res.status(201).json({
       success: true,
@@ -292,19 +302,83 @@ const replyToReview = async (
       });
     }
 
-    if (!ownerReply?.trim()) {
+  if (!ownerReply?.trim()) {
   return res.status(400).json({
     success: false,
     message: "Reply is required",
   });
 }
 
-    await review.save();
+review.ownerReply = ownerReply;
+
+await review.save();
+
+await Notification.create({
+  user: review.user,
+  title: "Owner Replied 💬",
+  message: `The owner replied to your review on "${review.pgTitle}".`,
+  type: "review-reply",
+  referenceId: review._id,
+  referenceType: "Review",
+});
 
     res.status(200).json({
       success: true,
       message:
         "Reply added successfully",
+      review,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const deleteReply = async (req, res) => {
+  try {
+    const review = await PGReview.findById(
+      req.params.id
+    );
+
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        message: "Review not found",
+      });
+    }
+
+    const pg = await PG.findById(
+      review.pg
+    );
+
+    if (!pg) {
+      return res.status(404).json({
+        success: false,
+        message: "PG not found",
+      });
+    }
+
+    if (
+      pg.owner.toString() !==
+      req.user.id
+    ) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Only the PG owner can delete the reply",
+      });
+    }
+
+    review.ownerReply = "";
+
+    await review.save();
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Reply deleted successfully",
       review,
     });
   } catch (error) {
@@ -446,6 +520,7 @@ module.exports = {
   updateReview,
   deleteReview,
   replyToReview,
+  deleteReply,
   toggleLike,
   toggleDislike,
 };

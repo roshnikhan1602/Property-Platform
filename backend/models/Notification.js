@@ -29,6 +29,7 @@ const notificationSchema = new mongoose.Schema(
     "pg-rejected",
     "subscription",
     "review",
+    "review-reply", 
     "support",
     "support-reply",
     "support-resolved",
