@@ -31,6 +31,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import Subscription from "./pages/Subscription";
+import SubscriptionHistory from "./pages/SubscriptionHistory";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
@@ -215,6 +216,14 @@ function App() {
           }
         />
 
+<Route
+  path="/subscription-history"
+  element={
+    <ProtectedRoute>
+      <SubscriptionHistory />
+    </ProtectedRoute>
+  }
+/>
 
         {/* Admin */}
         <Route

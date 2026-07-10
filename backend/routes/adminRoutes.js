@@ -16,14 +16,30 @@ const {
   approvePG,
   disapprovePG,
   deletePG,
+
+  getDashboardStats,
+  getAllSubscriptions,
 } = require("../controllers/adminController");
 
+router.get(
+  "/dashboard-stats",
+  getDashboardStats
+);
+
+// Subscription Routes
+router.get(
+  "/subscriptions",
+  getAllSubscriptions
+);
+
+// User Routes
 router.get("/users", getAllUsers);
 
 router.get("/user/:id", getUserById);
 
 router.delete("/user/:id", deleteUser);
 
+// Property Routes
 router.get("/properties", getAllProperties);
 
 router.get(
@@ -31,7 +47,10 @@ router.get(
   getApprovedProperties
 );
 
-router.put("/approve/:id", approveProperty);
+router.put(
+  "/approve/:id",
+  approveProperty
+);
 
 router.put(
   "/disapprove/:id",

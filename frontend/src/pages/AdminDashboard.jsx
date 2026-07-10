@@ -3,11 +3,19 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
+
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Toast from "../components/common/Toast";
 import ConfirmModal from "../components/common/ConfirmModal";
-import Notifications from "../pages/Notifications";
+import AdminSidebar from "../components/adminDashboard/AdminSidebar";
+import AnalyticsCards from "../components/adminDashboard/AnalyticsCards";
+import UsersTable from "../components/adminDashboard/UsersTable";
+import PropertiesTable from "../components/adminDashboard/PropertiesTable";
+import PendingTable from "../components/adminDashboard/PendingTable";
+import ApprovedTable from "../components/adminDashboard/ApprovedTable";
+import SupportTable from "../components/adminDashboard/SupportTable";
+import SubscriptionsTable from "../components/adminDashboard/SubscriptionsTable";
 
 function AdminDashboard() {
   const [users, setUsers] = useState([]);
@@ -21,16 +29,32 @@ function AdminDashboard() {
   const [supportMessages, setSupportMessages] =
     useState([]);
 
+    const [subscriptions, setSubscriptions] =
+  useState([]);
+
+    const [dashboardStats, setDashboardStats] =
+  useState({
+    totalUsers: 0,
+    totalOwners: 0,
+    totalProperties: 0,
+    totalPGs: 0,
+    freeUsers: 0,
+    premiumUsers: 0,
+    eliteUsers: 0,
+    activeSubscriptions: 0,
+    totalRevenue: 0,
+    monthlyRevenue: 0,
+    totalPayments: 0,
+    upgrades: 0,
+    downgrades: 0,
+  });
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const [activeTab, setActiveTab] =
     useState("");
   const [propertyView, setPropertyView] =
     useState("properties");
-
-    {
-  activeTab === "notifications" && (
-    <Notifications />
-  )
-}
 
   const [pendingView, setPendingView] =
     useState("properties");
@@ -105,6 +129,33 @@ fetch("http://localhost:5000/api/admin/properties", {
           );
         }
       });
+      fetch(
+  "http://localhost:5000/api/admin/dashboard-stats",
+  {
+    credentials: "include",
+  }
+)
+  .then((res) => res.json())
+  .then((data) => {
+    if (data.success) {
+      setDashboardStats(data.stats);
+    }
+  });
+
+  fetch(
+  "http://localhost:5000/api/admin/subscriptions",
+  {
+    credentials: "include",
+  }
+)
+  .then((res) => res.json())
+  .then((data) => {
+    if (data.success) {
+      setSubscriptions(
+        data.subscriptions
+      );
+    }
+  });
   };
 
   useEffect(() => {
@@ -161,6 +212,10 @@ fetch("http://localhost:5000/api/admin/properties", {
   useState(1);
   const [supportPage, setSupportPage] =
   useState(1);
+  const [
+  subscriptionPage,
+  setSubscriptionPage,
+] = useState(1);
   const [userPage, setUserPage] =
   useState(1);
   const propertyData =
@@ -232,6 +287,20 @@ const paginatedSupport =
       ROWS_PER_PAGE
   );
 
+  const subscriptionTotalPages =
+  Math.ceil(
+    subscriptions.length /
+      ROWS_PER_PAGE
+  ) || 1;
+
+const paginatedSubscriptions =
+  subscriptions.slice(
+    (subscriptionPage - 1) *
+      ROWS_PER_PAGE,
+    subscriptionPage *
+      ROWS_PER_PAGE
+  );
+
   const userTotalPages =
   Math.ceil(
     users.length /
@@ -270,7 +339,9 @@ useEffect(() => {
   setPendingPage(1);
   setApprovedPage(1);
   setSupportPage(1);
+  setSubscriptionPage(1);
 }, [activeTab]);
+
   const handleApprove = async (id) => {
     try {
       const response = await fetch(`http://localhost:5000/api/admin/approve/${id}`, {
@@ -593,1031 +664,133 @@ useEffect(() => {
 
   return (
     <>
-      <Navbar />
-      {toast.show && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() =>
-            setToast({
-              show: false,
-              message: "",
-              type: "success",
-            })
-          }
-        />
-      )}
-      <section className="max-w-7xl mx-auto px-6 pt-28 pb-10">
-
-        <h1 className="text-4xl font-bold mb-8">
-          Admin Dashboard
-        </h1>
-
-        <div className="grid md:grid-cols-5 gap-6 mb-10">
-
-          <div
-            onClick={() =>
-              setActiveTab("users")
-            }
-            className={`shadow-lg rounded-2xl p-8 cursor-pointer hover:shadow-xl ${activeTab === "users"
-              ? "bg-blue-600 text-white"
-              : "bg-white"
-              }`}
-          >
-            <h2
-              className={
-                activeTab === "users"
-                  ? "text-white font-medium"
-                  : "text-gray-500"
-              }
-            >
-              Users
-            </h2>
-
-            <p
-              className={`text-5xl font-bold mt-3 ${activeTab === "users"
-                ? "text-white"
-                : "text-blue-600"
-                }`}
-            >
-              {users.length}
-            </p>
-          </div>
-
-          <div
-            onClick={() =>
-              setActiveTab("properties")
-            }
-            className={`shadow-lg rounded-2xl p-8 cursor-pointer hover:shadow-xl ${activeTab === "properties"
-                ? "bg-green-600 text-white"
-                : "bg-white"
-              }`}
-          >
-            <h2
-              className={
-                activeTab === "properties"
-                  ? "text-white font-medium"
-                  : "text-gray-500"
-              }
-            >
-              Properties
-            </h2>
-
-            <p
-              className={`text-5xl font-bold mt-3 ${activeTab === "properties"
-                  ? "text-white"
-                  : "text-green-600"
-                }`}
-            >
-             {properties.length + pgs.length}
-            </p>
-          </div>
-
-          <div
-            onClick={() =>
-              setActiveTab("pending")
-            }
-            className={`shadow-lg rounded-2xl p-8 cursor-pointer hover:shadow-xl ${activeTab === "pending"
-              ? "bg-orange-500 text-white"
-              : "bg-white"
-              }`}
-          >
-            <h2
-              className={
-                activeTab === "pending"
-                  ? "text-white font-medium"
-                  : "text-gray-500"
-              }
-            >
-              Pending
-            </h2>
-
-            <p
-              className={`text-5xl font-bold mt-3 ${activeTab === "pending"
-                ? "text-white"
-                : "text-orange-500"
-                }`}
-            >
-              {pendingProperties.length + pendingPGs.length}
-            </p>
-          </div>
-
-          <div
-            onClick={() =>
-              setActiveTab("approved")
-            }
-            className={`shadow-lg rounded-2xl p-8 cursor-pointer hover:shadow-xl ${activeTab === "approved"
-              ? "bg-purple-600 text-white"
-              : "bg-white"
-              }`}
-          >
-            <h2
-              className={
-                activeTab === "approved"
-                  ? "text-white font-medium"
-                  : "text-gray-500"
-              }
-            >
-              Approved
-            </h2>
-
-            <p
-              className={`text-5xl font-bold mt-3 ${activeTab === "approved"
-                ? "text-white"
-                : "text-purple-600"
-                }`}
-            >
-              {approvedProperties.length + approvedPGs.length}
-            </p>
-          </div>
-
-          <div
-            onClick={() =>
-              setActiveTab("support")
-            }
-            className={`shadow-lg rounded-2xl p-8 cursor-pointer hover:shadow-xl ${activeTab === "support"
-              ? "bg-red-600 text-white"
-              : "bg-white"
-              }`}
-          >
-            <h2
-              className={
-                activeTab === "support"
-                  ? "text-white font-medium"
-                  : "text-gray-500"
-              }
-            >
-              Support
-            </h2>
-
-            <p
-              className={`text-5xl font-bold mt-3 ${activeTab === "support"
-                ? "text-white"
-                : "text-red-600"
-                }`}
-            >
-              {supportMessages.length}
-            </p>
-          </div>
-        </div>
-
-        {activeTab === "users" && (
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-
-            <div className="p-6 border-b">
-              <h2 className="text-2xl font-bold">
-                All Users
-              </h2>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full">
-
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="text-left px-6 py-4">
-                      User
-                    </th>
-
-                    <th className="text-left px-6 py-4">
-                      Mobile
-                    </th>
-
-                    <th className="text-left px-6 py-4">
-  Role
-</th>
-
-<th className="text-center px-6 py-4">
-  Properties
-</th>
-
-<th className="text-center px-6 py-4">
-  PGs
-</th>
-
-<th className="text-left px-6 py-4">
-  Joined
-</th>
-
-                    <th className="text-center px-6 py-4">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-
-                  {paginatedUsers.map((user) => (
-                    <tr
-                      key={user._id}
-                      className="border-t hover:bg-gray-50"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-
-                          <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
-                            {user.name
-                              ?.charAt(0)
-                              .toUpperCase()}
-                          </div>
-
-                          <div>
-                            <p className="font-semibold">
-                              {user.name}
-                            </p>
-
-                            <p className="text-sm text-gray-500">
-                              {user.email ||
-                                "No Email"}
-                            </p>
-                          </div>
-
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-4">
-                        {user.mobileNumber}
-                      </td>
-
-                      <td className="px-6 py-4">
-  <span className="capitalize px-3 py-1 rounded-full bg-gray-100 text-sm">
-    {user.role}
-  </span>
-</td>
-
-<td className="px-6 py-4 text-center">
-  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-    {user.propertyCount}
-  </span>
-</td>
-
-<td className="px-6 py-4 text-center">
-  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
-    {user.pgCount}
-  </span>
-</td>
-
-<td className="px-6 py-4">
-  {new Date(
-    user.createdAt
-  ).toLocaleDateString()}
-</td>
-
-                      <td className="px-6 py-4">
-                        <div className="flex justify-center gap-2">
-
-                          <button
-                            onClick={() =>
-                              handleViewUser(
-                                user._id
-                              )
-                            }
-                            className="bg-blue-600 text-white px-3 py-2 rounded-lg"
-                          >
-                            View
-                          </button>
-
-                          {user.role !==
-                            "admin" && (
-                              <button
-                                onClick={() =>
-                                  handleDeleteUser(
-                                    user._id
-                                  )
-                                }
-                                className="bg-red-600 text-white px-3 py-2 rounded-lg"
-                              >
-                                Delete
-                              </button>
-                            )}
-
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-
-               </tbody>
-
-              </table>
-            </div>
-
-            <div className="flex justify-center items-center gap-3 mt-6 mb-6">
-
-              <button
-                disabled={userPage === 1}
-                onClick={() =>
-                  setUserPage(userPage - 1)
-                }
-                className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
-              >
-                Previous
-              </button>
-
-              <span className="font-medium">
-                Page {userPage} of {userTotalPages}
-              </span>
-
-              <button
-                disabled={
-                  userPage === userTotalPages
-                }
-                onClick={() =>
-                  setUserPage(userPage + 1)
-                }
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
-              >
-                Next
-              </button>
-
-            </div>
-
-          </div>
-        )}
-
-
-
-
-        {activeTab === "properties" && (
-          <>
-            <div className="flex gap-3 mb-5">
-              <button
-                onClick={() =>
-                  setPropertyView("properties")
-                }
-                className={`px-5 py-2 rounded-lg font-medium ${propertyView === "properties"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200"
-                  }`}
-              >
-                Properties
-              </button>
-
-              <button
-                onClick={() =>
-                  setPropertyView("pgs")
-                }
-                className={`px-5 py-2 rounded-lg font-medium ${propertyView === "pgs"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200"
-                  }`}
-              >
-                PGs
-              </button>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-
-              <div className="p-6 border-b">
-                <h2 className="text-2xl font-bold">
-                  {propertyView === "properties"
-                    ? "All Properties"
-                    : "All PGs"}
-                </h2>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full">
-
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="text-left px-6 py-4">
-                        {propertyView === "properties"
-                          ? "Property"
-                          : "PG"}
-                      </th>
-
-                      <th className="text-left px-6 py-4">
-                        City
-                      </th>
-
-                      <th className="text-left px-6 py-4">
-                        {propertyView === "properties"
-                          ? "Price"
-                          : "Rent"}
-                      </th>
-
-                      <th className="text-center px-6 py-4">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-
-                    {
-                      paginatedProperties.map((item) => (
-                        <tr
-                          key={item._id}
-                          className="border-t hover:bg-gray-50"
-                        >
-                          <td className="px-6 py-4 font-semibold">
-                            {item.title}
-                          </td>
-
-                          <td className="px-6 py-4">
-                            {item.city}
-                          </td>
-
-                          <td className="px-6 py-4">
-                            ₹
-                            {propertyView ===
-                              "properties"
-                              ? item.price
-                              : item.rent}
-                          </td>
-
-                          <td className="px-6 py-4">
-                            <div className="flex justify-center gap-2">
-
-                              <button
-                                onClick={() =>
-                                navigate(
-  propertyView === "properties"
-    ? `/properties/${item._id}`
-    : `/pgs/${item._id}`,
-  {
-    state: {
-      fromAdmin: true,
-      activeTab,
-      propertyView,
-      page: propertyPage,
-    },
-  }
-)
-                                }
-                                className="bg-blue-600 text-white px-3 py-2 rounded-lg"
-                              >
-                                View
-                              </button>
-
-                              <button
-                                onClick={() =>
-                                  propertyView === "properties"
-                                    ? handleDelete(item._id)
-                                    : handleDeletePG(item._id)
-                                }
-                                className="bg-red-600 text-white px-3 py-2 rounded-lg"
-                              >
-                                Delete
-                              </button>
-
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-
-                  </tbody>
-
-                </table>
-              </div>
-              <div className="flex justify-center items-center gap-3 mt-6">
-
-                <button
-                  disabled={propertyPage === 1}
-                  onClick={() =>
-                    setPropertyPage(
-                      propertyPage - 1
-                    )
-                  }
-                  className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
-                >
-                  Previous
-                </button>
-
-                <span className="font-medium">
-  Page {propertyPage} of {propertyTotalPages}
-</span>
-
-                <button
-                 disabled={
-  propertyPage === propertyTotalPages
-}
-                  onClick={() =>
-                    setPropertyPage(
-                      propertyPage + 1
-                    )
-                  }
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
-                >
-                  Next
-                </button>
-
-              </div>
-            </div>
-
-
-          </>
-        )}
-        {activeTab === "pending" && (
-         <>
-  <div className="flex gap-3 mb-5">
-
-    <button
-      onClick={() =>
-        setPendingView("properties")
-      }
-      className={`px-5 py-2 rounded-lg font-medium ${
-        pendingView === "properties"
-          ? "bg-orange-500 text-white"
-          : "bg-gray-200"
-      }`}
-    >
-      Properties
-    </button>
-
-    <button
-      onClick={() =>
-        setPendingView("pgs")
-      }
-      className={`px-5 py-2 rounded-lg font-medium ${
-        pendingView === "pgs"
-          ? "bg-orange-500 text-white"
-          : "bg-gray-200"
-      }`}
-    >
-      PGs
-    </button>
-
-  </div>
-
-  <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-
-            <div className="p-6 border-b">
-              <h2 className="text-2xl font-bold">
-  {pendingView === "properties"
-    ? "Pending Properties"
-    : "Pending PGs"}
-</h2>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full">
-
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="text-left px-6 py-4">
-  {pendingView === "properties"
-    ? "Property"
-    : "PG"}
-</th>
-
-                    <th className="text-left px-6 py-4">
-                      City
-                    </th>
-
-                   <th className="text-left px-6 py-4">
-  {pendingView === "properties"
-    ? "Price"
-    : "Rent"}
-</th>
-
-                    <th className="text-center px-6 py-4">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-
-                 {paginatedPending.map((item) => (
-  <tr
-    key={item._id}
-    className="border-t hover:bg-gray-50"
-  >
-    <td className="px-6 py-4 font-semibold">
-      {item.title}
-    </td>
-
-    <td className="px-6 py-4">
-      {item.city}
-    </td>
-
-    <td className="px-6 py-4">
-      ₹
-      {pendingView === "properties"
-        ? item.price
-        : item.rent}
-    </td>
-
-    <td className="px-6 py-4">
-      <div className="flex justify-center gap-2">
-
-        <button
-          onClick={() =>
-            navigate(
-  pendingView === "properties"
-    ? `/properties/${item._id}`
-    : `/pgs/${item._id}`,
-  {
-    state: {
-      fromAdmin: true,
-      activeTab,
-      pendingView,
-      page: pendingPage,
-    },
-  }
-)
-          }
-          className="bg-blue-600 text-white px-3 py-2 rounded-lg"
-        >
-          View
-        </button>
-
-        <button
-          onClick={() =>
-            pendingView === "properties"
-              ? handleApprove(item._id)
-              : handleApprovePG(item._id)
-          }
-          className="bg-green-600 text-white px-3 py-2 rounded-lg"
-        >
-          Approve
-        </button>
-
-      </div>
-    </td>
-  </tr>
-))}
-                      
-                </tbody>
-
-              </table>
-            </div>
-
-            <div className="flex justify-center items-center gap-3 mt-6 mb-6">
-
-              <button
-                disabled={pendingPage === 1}
-                onClick={() =>
-                  setPendingPage(pendingPage - 1)
-                }
-                className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
-              >
-                Previous
-              </button>
-
-              <span className="font-medium">
-                Page {pendingPage} of {pendingTotalPages}
-              </span>
-
-              <button
-                disabled={
-                  pendingPage === pendingTotalPages
-                }
-                onClick={() =>
-                  setPendingPage(
-                    pendingPage + 1
-                  )
-                }
-                className="px-4 py-2 bg-orange-500 text-white rounded-lg disabled:opacity-50"
-              >
-                Next
-              </button>
-
-            </div>
-
-        </div>
-</>
+    <Navbar sidebarOpen={sidebarOpen} />
+    <AdminSidebar
+  sidebarOpen={sidebarOpen}
+  setSidebarOpen={setSidebarOpen}
+  setActiveTab={setActiveTab}
+/>
+
+{toast.show && (
+  <Toast
+    message={toast.message}
+    type={toast.type}
+    onClose={() =>
+      setToast({
+        show: false,
+        message: "",
+        type: "success",
+      })
+    }
+  />
 )}
 
-   {activeTab === "approved" && (
-  <>
-    <div className="flex gap-3 mb-5">
-      <button
-        onClick={() =>
-          setApprovedView("properties")
-        }
-        className={`px-5 py-2 rounded-lg font-medium ${
-          approvedView === "properties"
-            ? "bg-purple-600 text-white"
-            : "bg-gray-200"
-        }`}
-      >
-        Properties
-      </button>
+<div
+  className={`transition-all duration-300 ${
+    sidebarOpen ? "ml-64" : "ml-16"
+  }`}
+>
+ <section className="max-w-7xl mx-auto px-6 pt-12 pb-10">
 
-      <button
-        onClick={() =>
-          setApprovedView("pgs")
-        }
-        className={`px-5 py-2 rounded-lg font-medium ${
-          approvedView === "pgs"
-            ? "bg-purple-600 text-white"
-            : "bg-gray-200"
-        }`}
-      >
-        PGs
-      </button>
-    </div>
 
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-      <div className="p-6 border-b">
-        <h2 className="text-2xl font-bold">
-          {approvedView === "properties"
-            ? "Approved Properties"
-            : "Approved PGs"}
-        </h2>
-      </div>
+    {/* Analytics Cards */}
 
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="text-left px-6 py-4">
-                {approvedView === "properties"
-                  ? "Property"
-                  : "PG"}
-              </th>
-
-              <th className="text-left px-6 py-4">
-                City
-              </th>
-
-              <th className="text-left px-6 py-4">
-                Views
-              </th>
-
-              <th className="text-center px-6 py-4">
-                Actions
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {paginatedApproved.map((item) => (
-              <tr
-                key={item._id}
-                className="border-t hover:bg-gray-50"
-              >
-                <td className="px-6 py-4 font-semibold">
-                  {item.title}
-                </td>
-
-                <td className="px-6 py-4">
-                  {item.city}
-                </td>
-
-                <td className="px-6 py-4">
-                  {item.views || 0}
-                </td>
-
-                <td className="px-6 py-4">
-                  <div className="flex justify-center gap-2">
-                    <button
-                      onClick={() =>
-                        navigate(
-  approvedView === "properties"
-    ? `/properties/${item._id}`
-    : `/pgs/${item._id}`,
-  {
-    state: {
-      fromAdmin: true,
-      activeTab,
-      approvedView,
-      page: approvedPage,
-    },
-  }
-)
-                      }
-                      className="bg-blue-600 text-white px-3 py-2 rounded-lg"
-                    >
-                      View
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        approvedView ===
-                        "properties"
-                          ? handleDisapprove(
-                              item._id
-                            )
-                          : handleDisapprovePG(
-                              item._id
-                            )
-                      }
-                      className="bg-yellow-500 text-white px-3 py-2 rounded-lg"
-                    >
-                      Disapprove
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        approvedView ===
-                        "properties"
-                          ? handleDelete(
-                              item._id
-                            )
-                          : handleDeletePG(
-                              item._id
-                            )
-                      }
-                      className="bg-red-600 text-white px-3 py-2 rounded-lg"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex justify-center items-center gap-3 mt-6 mb-6">
-        <button
-          disabled={approvedPage === 1}
-          onClick={() =>
-            setApprovedPage(
-              approvedPage - 1
-            )
-          }
-          className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
-        >
-          Previous
-        </button>
-
-        <span className="font-medium">
-          Page {approvedPage} of{" "}
-          {approvedTotalPages}
-        </span>
-
-        <button
-          disabled={
-            approvedPage ===
-            approvedTotalPages
-          }
-          onClick={() =>
-            setApprovedPage(
-              approvedPage + 1
-            )
-          }
-          className="px-4 py-2 bg-purple-600 text-white rounded-lg disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
-    </div>
-  </>
+{activeTab === "" && (
+ <AnalyticsCards
+  dashboardStats={dashboardStats}
+  pendingProperties={pendingProperties}
+  pendingPGs={pendingPGs}
+  approvedProperties={approvedProperties}
+  approvedPGs={approvedPGs}
+  supportMessages={supportMessages}
+/>
 )}
 
-        {activeTab === "support" && (
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+{activeTab === "users" && (
+  <UsersTable
+    paginatedUsers={paginatedUsers}
+    userPage={userPage}
+    userTotalPages={userTotalPages}
+    setUserPage={setUserPage}
+    handleViewUser={handleViewUser}
+    handleDeleteUser={handleDeleteUser}
+  />
+)}
 
-            <div className="p-6 border-b">
-              <h2 className="text-2xl font-bold">
-                Support Messages
-              </h2>
-            </div>
+{activeTab === "properties" && (
+  <PropertiesTable
+    propertyView={propertyView}
+    setPropertyView={setPropertyView}
+    paginatedProperties={paginatedProperties}
+    propertyPage={propertyPage}
+    propertyTotalPages={propertyTotalPages}
+    setPropertyPage={setPropertyPage}
+    navigate={navigate}
+    activeTab={activeTab}
+    handleDelete={handleDelete}
+    handleDeletePG={handleDeletePG}
+  />
+)}
+       
+       {activeTab === "pending" && (
+  <PendingTable
+    pendingView={pendingView}
+    setPendingView={setPendingView}
+    paginatedPending={paginatedPending}
+    pendingPage={pendingPage}
+    pendingTotalPages={pendingTotalPages}
+    setPendingPage={setPendingPage}
+    navigate={navigate}
+    activeTab={activeTab}
+    handleApprove={handleApprove}
+    handleApprovePG={handleApprovePG}
+  />
+)}
 
-            <div className="overflow-x-auto">
-              <table className="w-full">
+ {activeTab === "approved" && (
+  <ApprovedTable
+    approvedView={approvedView}
+    setApprovedView={setApprovedView}
+    paginatedApproved={paginatedApproved}
+    approvedPage={approvedPage}
+    approvedTotalPages={approvedTotalPages}
+    setApprovedPage={setApprovedPage}
+    navigate={navigate}
+    activeTab={activeTab}
+    handleDisapprove={handleDisapprove}
+    handleDisapprovePG={handleDisapprovePG}
+    handleDelete={handleDelete}
+    handleDeletePG={handleDeletePG}
+  />
+)}
 
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="text-left px-6 py-4">
-                      Name
-                    </th>
+       {activeTab === "support" && (
+  <SupportTable
+    paginatedSupport={paginatedSupport}
+    supportPage={supportPage}
+    supportTotalPages={supportTotalPages}
+    setSupportPage={setSupportPage}
+    setSelectedMessageId={setSelectedMessageId}
+    setShowReplyModal={setShowReplyModal}
+    handleResolve={handleResolve}
+  />
+)}
 
-                    <th className="text-left px-6 py-4">
-                      Email
-                    </th>
-
-                    <th className="text-left px-6 py-4">
-                      Message
-                    </th>
-                    <th className="text-left px-6 py-4">
-                      Date
-                    </th>
-                    <th className="text-left px-6 py-4">
-                      Status
-                    </th>
-                    <th className="text-left px-6 py-4">
-                      Reply
-                    </th>
-
-                    <th className="text-left px-6 py-4">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-
-                  {paginatedSupport.map(
-                    (item) => (
-                      <tr
-                        key={item._id}
-                        className="border-t hover:bg-gray-50"
-                      >
-                        <td className="px-6 py-4 font-medium">
-                          {item.name}
-                        </td>
-
-                        <td className="px-6 py-4">
-                          {item.email}
-                        </td>
-
-                        <td className="px-6 py-4 max-w-md">
-                          {item.message}
-                        </td>
-
-                        <td className="px-6 py-4">
-                          {new Date(
-                            item.createdAt
-                          ).toLocaleString()}
-                        </td>
-
-                        <td className="px-6 py-4">
-                          <span
-                            className={`px-3 py-1 rounded-full text-sm ${item.status === "Pending"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : item.status === "Replied"
-                                ? "bg-blue-100 text-blue-700"
-                                : "bg-green-100 text-green-700"
-                              }`}
-                          >
-                            {item.status}
-                          </span>
-                        </td>
-
-                        <td className="px-6 py-4">
-                          {item.reply || "-"}
-                        </td>
-
-                        <td className="px-6 py-4">
-                          <div className="flex gap-2">
-
-                            <button
-                              disabled={
-                                item.status === "Replied" ||
-                                item.status === "Resolved"
-                              }
-                              onClick={() => {
-                                setSelectedMessageId(item._id);
-                                setShowReplyModal(true);
-                              }}
-                              className="bg-blue-600 text-white px-3 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              Reply
-                            </button>
-                            <button
-                              disabled={
-                                item.status === "Resolved"
-                              }
-                              onClick={() =>
-                                handleResolve(item._id)
-                              }
-                              className="bg-green-600 text-white px-3 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              Resolve
-                            </button>
-
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  )}
-
-                </tbody>
-
-            </table>
-</div>
-
-<div className="flex justify-center items-center gap-3 mt-6 mb-6">
-
-  <button
-    disabled={supportPage === 1}
-    onClick={() =>
-      setSupportPage(
-        supportPage - 1
-      )
+{activeTab === "subscriptions" && (
+  <SubscriptionsTable
+    subscriptions={
+      paginatedSubscriptions
     }
-    className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
-  >
-    Previous
-  </button>
-
-  <span className="font-medium">
-    Page {supportPage} of {supportTotalPages}
-  </span>
-
-  <button
-    disabled={
-      supportPage === supportTotalPages
+    subscriptionPage={
+      subscriptionPage
     }
-    onClick={() =>
-      setSupportPage(
-        supportPage + 1
-      )
+    subscriptionTotalPages={
+      subscriptionTotalPages
     }
-    className="px-4 py-2 bg-red-600 text-white rounded-lg disabled:opacity-50"
-  >
-    Next
-  </button>
-
-</div>
-
-</div>
+    setSubscriptionPage={
+      setSubscriptionPage
+    }
+  />
 )}
       </section>
 
@@ -1735,6 +908,8 @@ useEffect(() => {
     }
   />
 )}
+</div>
+
       <Footer />
     </>
   );

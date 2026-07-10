@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   createOrder,
   verifyPayment,
+  downgradeSubscription,
 } from "../../services/subscriptionService";
 import Toast from "../common/Toast";
 
@@ -22,11 +23,49 @@ function PlanCard({
   const isCurrentPlan =
     currentPlan?.plan === plan.name;
 
-  const handlePayment = async () => {
-    if (plan.price === 0) return;
+    const planPrices = {
+  Free: 0,
+  Premium: 299,
+  Elite: 999,
+};
 
-    try {
-      setLoading(true);
+const isDowngrade =
+  currentPlan &&
+  planPrices[plan.name] <
+    planPrices[currentPlan.plan];
+
+const handlePayment = async () => {
+  try {
+    setLoading(true);
+
+    // Downgrade without payment
+if (isDowngrade) {
+      const response =
+        await downgradeSubscription(
+          plan.name
+        );
+
+      if (response.success) {
+        setToast({
+          show: true,
+          message:
+            "Subscription updated successfully.",
+          type: "success",
+        });
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else {
+        setToast({
+          show: true,
+          message: response.message,
+          type: "error",
+        });
+      }
+
+      return;
+    }  
 
       const orderResponse =
         await createOrder(

@@ -8,6 +8,7 @@ import {
   FaPlusCircle,
   FaHeart,
   FaCrown,
+  FaFileInvoiceDollar,
 } from "react-icons/fa";
 
 import Navbar from "../components/layout/Navbar";
@@ -185,17 +186,17 @@ useEffect(() => {
           </Link>
 
 <Link
-  to="/subscription"
-  className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-yellow-100 hover:text-yellow-600 transition-all"
+  to="/subscription-history"
+  className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-indigo-100 hover:text-indigo-600 transition-all"
 >
-  <FaCrown className="min-w-[22px]" />
+  <FaFileInvoiceDollar className="min-w-[22px]" />
 
   <span
     className={`transition-all duration-300 whitespace-nowrap ${
       sidebarOpen ? "opacity-100" : "opacity-0"
     }`}
   >
-    Subscription
+    Subscription History
   </span>
 </Link>
 

@@ -63,3 +63,35 @@ export const verifyPayment =
 
     return response.json();
   };
+
+  export const downgradeSubscription =
+  async (plan) => {
+    const response = await fetch(
+      `${BASE_URL}/subscriptions/downgrade`,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          plan,
+        }),
+      }
+    );
+
+    return response.json();
+  };
+
+  export const getSubscriptionHistory =
+  async () => {
+    const response = await fetch(
+      `${BASE_URL}/subscriptions/history`,
+      {
+        credentials: "include",
+      }
+    );
+
+    return response.json();
+  };
