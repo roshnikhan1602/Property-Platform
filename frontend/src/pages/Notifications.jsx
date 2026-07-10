@@ -3,6 +3,7 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import NotificationCard from "../components/notifications/NotificationCard";
 import EmptyNotifications from "../components/notifications/EmptyNotifications";
+import ConfirmModal from "../components/common/ConfirmModal";
 
 import {
   getNotifications,
@@ -22,10 +23,14 @@ function Notifications() {
   const [filter, setFilter] =
     useState("all");
 
+  const [showConfirmModal, setShowConfirmModal] =
+  useState(false);
+
   const loadNotifications =
     async () => {
       try {
         setLoading(true);
+  
 
         const data =
           await getNotifications();
@@ -87,23 +92,18 @@ function Notifications() {
       }
     };
 
-  const handleClear =
-    async () => {
-      if (
-        !window.confirm(
-          "Clear all notifications?"
-        )
-      )
-        return;
+ const handleClear =
+  async () => {
+    try {
+      await clearNotifications();
 
-      try {
-        await clearNotifications();
+      setShowConfirmModal(false);
 
-        loadNotifications();
-      } catch (error) {
-        console.error(error);
-      }
-    };
+      loadNotifications();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const filteredNotifications =
     notifications.filter((item) => {
@@ -191,7 +191,9 @@ function Notifications() {
           </button>
 
           <button
-            onClick={handleClear}
+            onClick={() =>
+              setShowConfirmModal(true)
+            }
             className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition"
           >
             Clear All
@@ -234,6 +236,18 @@ function Notifications() {
         )}
 
       </section>
+
+      {showConfirmModal && (
+        <ConfirmModal
+        title="Clear Notifications"
+        message="Are you sure you want to clear all notifications?"
+        confirmText="Clear All"
+        onConfirm={handleClear}
+        onCancel={() =>
+          setShowConfirmModal(false)
+        }
+      />
+      )}
 
       <Footer />
     </>

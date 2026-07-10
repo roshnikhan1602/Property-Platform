@@ -15,6 +15,9 @@ const notificationRoutes = require("./routes/notificationRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 
+// NEW
+const shareRoutes = require("./routes/shareRoutes");
+
 connectDB();
 
 const app = express();
@@ -77,11 +80,12 @@ app.use(
   chatRoutes
 );
 
-// ✅ Notification Routes
+// Notification Routes
 app.use(
   "/api/notifications",
   notificationRoutes
 );
+
 app.use(
   "/api/subscriptions",
   subscriptionRoutes
@@ -90,6 +94,12 @@ app.use(
 app.use(
   "/api/payment",
   paymentRoutes
+);
+
+// NEW Share Route
+app.use(
+  "/api/share",
+  shareRoutes
 );
 
 app.get("/", (req, res) => {

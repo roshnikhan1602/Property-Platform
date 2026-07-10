@@ -719,23 +719,27 @@ property.images.length > 1 && (
           </button>
 
         </div>
-       <ReviewSection
-          property={property}
-          user={user}
-          reviews={reviews}
-          loadingReviews={loadingReviews}
-          handleAddReview={handleAddReview}
-          handleDeleteReview={handleDeleteReview}
-          handleLike={handleLike}
-          handleDislike={handleDislike}
-          handleReply={handleReply}
-          canReply={
-            user &&
-            user.role === "owner" &&
-            String(property.owner) === String(user._id)
-          }
-          loadReviews={loadReviews}
-        />
+      <ReviewSection
+        property={property}
+        user={user}
+        reviews={reviews}
+        loadingReviews={loadingReviews}
+        handleAddReview={handleAddReview}
+        handleDeleteReview={handleDeleteReview}
+        handleLike={handleLike}
+        handleDislike={handleDislike}
+        handleReply={handleReply}
+        canReply={
+          user &&
+          user.role === "owner" &&
+          String(property.owner) === String(user._id)
+        }
+        isOwner={
+          user &&
+          String(property.owner) === String(user._id)
+        }
+        loadReviews={loadReviews}
+      />
       </section>
       {toast.show && (
         <Toast

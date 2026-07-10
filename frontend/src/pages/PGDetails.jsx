@@ -758,7 +758,13 @@ Email Owner
     user &&
     pg &&
     pg.owner &&
-    pg.owner.toString() === user._id
+    String(pg.owner) === String(user._id)
+  }
+  isOwner={
+    user &&
+    pg &&
+    pg.owner &&
+    String(pg.owner) === String(user._id)
   }
   loadReviews={loadReviews}
 />
