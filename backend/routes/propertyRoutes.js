@@ -12,6 +12,7 @@ const {
   getPropertyById,
   updateProperty,
   deleteProperty,
+  togglePropertyStatus,
   incrementViews,
   filterProperties,
 } = require("../controllers/propertyController");
@@ -35,6 +36,12 @@ router.put(
   authMiddleware,
   upload.array("images", 10),
   updateProperty
+);
+
+router.put(
+  "/:id/toggle-status",
+  authMiddleware,
+  togglePropertyStatus
 );
 
 router.delete(

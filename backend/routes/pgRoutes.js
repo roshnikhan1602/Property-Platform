@@ -12,6 +12,7 @@ const {
   getPGById,
   updatePG,
   deletePG,
+  // togglePGStatus,
   incrementPGViews,
 } = require("../controllers/pgController");
 
@@ -35,6 +36,12 @@ router.put(
   upload.array("images", 10),
   updatePG
 );
+
+// router.put(
+//   "/:id/status",
+//   authMiddleware,
+//   togglePGStatus
+// );
 
 router.delete(
   "/:id",

@@ -1,51 +1,76 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import CountUp from "react-countup";
 
 import HeroSlider from "./HeroSlider";
+import { getPlatformStats } from "../../services/statsService";
 
 function HeroSection({ setShowLoginModal }) {
   const navigate = useNavigate();
 
- const handlePostProperty = async () => {
-  try {
-    const response = await fetch(
-      "http://localhost:5000/api/auth/me",
-      {
-        credentials: "include",
+  const [stats, setStats] = useState({
+    properties: 0,
+    cities: 0,
+    users: 0,
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await getPlatformStats();
+
+        if (data.success) {
+          setStats(data.stats);
+        }
+      } catch (error) {
+        console.error(error);
       }
-    );
+    };
 
-    const data = await response.json();
+    fetchStats();
+  }, []);
 
-    if (data.success) {
-      navigate("/add-property");
-    } else {
+  const handlePostProperty = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/me",
+        {
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        navigate("/add-property");
+      } else {
+        setShowLoginModal(true);
+      }
+    } catch {
       setShowLoginModal(true);
     }
-  } catch {
-    setShowLoginModal(true);
-  }
-};
+  };
 
   const handlePostPG = async () => {
-  try {
-    const response = await fetch(
-      "http://localhost:5000/api/auth/me",
-      {
-        credentials: "include",
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/me",
+        {
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        navigate("/add-pg");
+      } else {
+        setShowLoginModal(true);
       }
-    );
-
-    const data = await response.json();
-
-    if (data.success) {
-      navigate("/add-pg");
-    } else {
+    } catch {
       setShowLoginModal(true);
     }
-  } catch {
-    setShowLoginModal(true);
-  }
-};
+  };
 
   return (
     <section
@@ -67,11 +92,8 @@ function HeroSection({ setShowLoginModal }) {
             </span>
 
             <h1 className="mt-6 text-5xl md:text-7xl font-bold text-white leading-tight">
-              Find Your
-              
-                {" "}
-                Dream Property
-              
+              Find Your{" "}
+              Dream Property
             </h1>
 
             <p className="mt-6 text-lg text-gray-200 max-w-xl">
@@ -81,9 +103,7 @@ function HeroSection({ setShowLoginModal }) {
 
             <div className="mt-10 flex flex-col sm:flex-row flex-wrap items-center lg:items-start gap-4">
               <button
-                onClick={() =>
-                  navigate("/properties")
-                }
+                onClick={() => navigate("/properties")}
                 className="bg-white border-2 border-white text-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-all duration-300 cursor-pointer"
               >
                 Browse Properties
@@ -111,7 +131,7 @@ function HeroSection({ setShowLoginModal }) {
         <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 text-center border border-white/10">
             <h2 className="text-4xl font-bold text-white">
-              10,000+
+              {stats.properties}+
             </h2>
 
             <p className="mt-2 text-gray-200">
@@ -121,7 +141,7 @@ function HeroSection({ setShowLoginModal }) {
 
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 text-center border border-white/10">
             <h2 className="text-4xl font-bold text-white">
-              100+
+              {stats.cities}+
             </h2>
 
             <p className="mt-2 text-gray-200">
@@ -131,7 +151,7 @@ function HeroSection({ setShowLoginModal }) {
 
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 text-center border border-white/10">
             <h2 className="text-4xl font-bold text-white">
-              5,000+
+              {stats.users}+
             </h2>
 
             <p className="mt-2 text-gray-200">

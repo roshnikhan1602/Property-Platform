@@ -80,6 +80,11 @@ app.use(
   chatRoutes
 );
 
+app.use(
+  "/api/stats",
+  require("./routes/statsRoutes")
+);
+
 // Notification Routes
 app.use(
   "/api/notifications",

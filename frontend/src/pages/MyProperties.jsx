@@ -71,6 +71,7 @@ function MyProperties() {
   }
 );
 
+
       const data = await response.json();
 
       if (data.success) {
@@ -91,6 +92,8 @@ function MyProperties() {
         setTimeout(() => {
           setSuccessMessage("");
         }, 3000);
+
+        
 
         // Fetch remaining PGs
         const pgResponse = await fetch(
@@ -133,6 +136,51 @@ function MyProperties() {
       }, 3000);
     }
   };
+  const handleToggleStatus = async (id) => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/properties/${id}/toggle-status`,
+      {
+        method: "PUT",
+        credentials: "include",
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+      setProperties((prev) =>
+        prev.map((property) =>
+          property._id === id
+            ? data.property
+            : property
+        )
+      );
+
+      setSuccessMessage(
+        `Property ${
+          data.property.isActive
+            ? "Activated"
+            : "Deactivated"
+        } Successfully`
+      );
+
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000);
+    }
+  } catch (error) {
+    console.error(error);
+
+    setErrorMessage(
+      "Failed to update property status."
+    );
+
+    setTimeout(() => {
+      setErrorMessage("");
+    }, 3000);
+  }
+};
 
   return (
     <>
@@ -198,6 +246,18 @@ function MyProperties() {
                   {property.title}
                 </h2>
 
+                <div className="mt-3">
+                  {property.isActive ? (
+                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                      🟢 Active
+                    </span>
+                  ) : (
+                    <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium">
+                      🔴 Inactive
+                    </span>
+                  )}
+                </div>
+
                 <p className="text-gray-500 mt-2 flex items-center gap-2">
                   <FaMapMarkerAlt className="text-red-500" />
                   {property.city},{" "}
@@ -219,6 +279,21 @@ function MyProperties() {
                 </div>
 
                 <div className="flex gap-2 mt-5">
+
+                  <button
+                      onClick={() =>
+                        handleToggleStatus(property._id)
+                      }
+                      className={`flex-1 py-2 rounded-lg text-sm transition cursor-pointer ${
+                        property.isActive
+                          ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+                          : "bg-green-100 text-green-700 hover:bg-green-200"
+                      }`}
+                    >
+                      {property.isActive
+                        ? "Deactivate"
+                        : "Activate"}
+                    </button>
 
                   <Link
                     to={`/properties/${property._id}`}

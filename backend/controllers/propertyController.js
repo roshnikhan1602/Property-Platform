@@ -391,6 +391,56 @@ await property.deleteOne();
   }
 };
 
+const togglePropertyStatus = async (req, res) => {
+  try {
+    const property = await Property.findById(req.params.id);
+
+    if (!property) {
+      return res.status(404).json({
+        success: false,
+        message: "Property not found",
+      });
+    }
+
+    if (property.owner.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this property",
+      });
+    }
+
+    property.isActive = !property.isActive;
+
+    await property.save();
+
+    await Notification.create({
+      user: req.user.id,
+      title: property.isActive
+        ? "Property Activated"
+        : "Property Deactivated",
+      message: `"${property.title}" has been ${
+        property.isActive ? "activated" : "deactivated"
+      }.`,
+      type: "general",
+      referenceId: property._id,
+      referenceType: "Property",
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `Property ${
+        property.isActive ? "activated" : "deactivated"
+      } successfully.`,
+      property,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const incrementViews = async (req, res) => {
   try {
     const property = await Property.findByIdAndUpdate(
@@ -470,6 +520,7 @@ module.exports = {
   getPropertyById,
   updateProperty,
   deleteProperty,
+  togglePropertyStatus,
   incrementViews,
   filterProperties,
 };

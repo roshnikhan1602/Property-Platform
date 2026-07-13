@@ -38,10 +38,15 @@ import AdminRoute from "./components/AdminRoute";
 
 import Notifications from "./pages/Notifications";
 
+// ✅ NEW IMPORT
+import GuestSessionManager from "./components/common/GuestSessionManager";
 
 function App() {
   return (
     <BrowserRouter>
+      {/* Guest session timer */}
+      <GuestSessionManager />
+
       <Routes>
         {/* Authentication */}
         <Route
@@ -58,6 +63,7 @@ function App() {
           path="/forgot-password"
           element={<ForgotPassword />}
         />
+
         {/* Public Routes */}
         <Route
           path="/"
@@ -93,22 +99,24 @@ function App() {
           path="/about"
           element={<About />}
         />
+
         <Route
-  path="/faqs"
-  element={<FAQs />}
-/>
+          path="/faqs"
+          element={<FAQs />}
+        />
 
-<Route
-  path="/privacy-policy"
-  element={<PrivacyPolicy />}
-/>
+        <Route
+          path="/privacy-policy"
+          element={<PrivacyPolicy />}
+        />
 
-<Route
-  path="/terms-conditions"
-  element={<TermsConditions />}
-/>
+        <Route
+          path="/terms-conditions"
+          element={<TermsConditions />}
+        />
 
         {/* Protected Routes */}
+
         <Route
           path="/add-property"
           element={
@@ -217,16 +225,17 @@ function App() {
           }
         />
 
-<Route
-  path="/subscription-history"
-  element={
-    <ProtectedRoute>
-      <SubscriptionHistory />
-    </ProtectedRoute>
-  }
-/>
+        <Route
+          path="/subscription-history"
+          element={
+            <ProtectedRoute>
+              <SubscriptionHistory />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Admin */}
+
         <Route
           path="/admin-dashboard"
           element={

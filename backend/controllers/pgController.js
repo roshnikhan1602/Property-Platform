@@ -302,6 +302,56 @@ if (req.files && req.files.length > 0) {
   }
 };
 
+// const togglePGStatus = async (req, res) => {
+//   try {
+//     const pg = await PG.findById(req.params.id);
+
+//     if (!pg) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "PG not found",
+//       });
+//     }
+
+//     if (pg.owner.toString() !== req.user.id) {
+//       return res.status(403).json({
+//         success: false,
+//         message: "You are not authorized to update this PG",
+//       });
+//     }
+
+//     pg.isActive = !pg.isActive;
+
+//     await pg.save();
+
+//     await Notification.create({
+//       user: req.user.id,
+//       title: pg.isActive
+//         ? "PG Activated"
+//         : "PG Deactivated",
+//       message: `"${pg.title}" has been ${
+//         pg.isActive ? "activated" : "deactivated"
+//       }.`,
+//       type: "general",
+//       referenceId: pg._id,
+//       referenceType: "PG",
+//     });
+
+//     res.status(200).json({
+//       success: true,
+//       message: `PG ${
+//         pg.isActive ? "activated" : "deactivated"
+//       } successfully.`,
+//       pg,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: error.message,
+//     });
+//   }
+// };
+
 const deletePG = async (req, res) => {
   try {
  const pg = await PG.findById(
@@ -403,6 +453,7 @@ module.exports = {
   getMyPGs,
   getPGById,
   updatePG,
+  // togglePGStatus,
   deletePG,
   incrementPGViews,
 };
