@@ -26,6 +26,7 @@ function PropertyDetails({
   const navigate = useNavigate();
 const location = useLocation();
   const [property, setProperty] = useState(null);
+  const [contactAvailable, setContactAvailable] = useState(true);
   const [selectedImage, setSelectedImage] = useState("");
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
@@ -238,8 +239,11 @@ const loadReviews = async () => {
 
         const data = await response.json();
 
-        if (data.success) {
-          setProperty(data.property);
+      if (data.success) {
+  setProperty(data.property);
+  setContactAvailable(
+  data.contactAvailable ?? true
+);
           if (
             data.property.images &&
             data.property.images.length > 0
@@ -584,77 +588,96 @@ property.images.length > 1 && (
             Owner Contact Details
           </h2>
 
-          {user ? (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+  {user ? (
+  contactAvailable ? (
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <p className="text-gray-500">
+            Owner Name
+          </p>
+          <p className="font-semibold text-lg">
+            {property.ownerName ||
+              "Not Available"}
+          </p>
+        </div>
 
-                <div>
-                  <p className="text-gray-500">
-                    Owner Name
-                  </p>
-                  <p className="font-semibold text-lg">
-                    {property.ownerName ||
-                      "Not Available"}
-                  </p>
-                </div>
+        <div>
+          <p className="text-gray-500">
+            Phone Number
+          </p>
+          <p className="font-semibold text-lg">
+            {property.ownerPhone ||
+              "Not Available"}
+          </p>
+        </div>
 
-                <div>
-                  <p className="text-gray-500">
-                    Phone Number
-                  </p>
-                  <p className="font-semibold text-lg">
-                    {property.ownerPhone ||
-                      "Not Available"}
-                  </p>
-                </div>
+        <div>
+          <p className="text-gray-500">
+            Email Address
+          </p>
+          <p className="font-semibold text-lg break-all">
+            {property.ownerEmail ||
+              "Not Available"}
+          </p>
+        </div>
+      </div>
 
-                <div>
-                  <p className="text-gray-500">
-                    Email Address
-                  </p>
-                  <p className="font-semibold text-lg break-all">
-                    {property.ownerEmail ||
-                      "Not Available"}
-                  </p>
-                </div>
+      <div className="flex flex-col md:flex-row gap-4 mt-8">
+        <a
+          href={`tel:${property.ownerPhone}`}
+          className="bg-green-600 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-green-700 transition"
+        >
+          📞 Call Owner
+        </a>
 
-              </div>
+        <a
+          href={`mailto:${property.ownerEmail}`}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-blue-700 transition"
+        >
+          ✉️ Email Owner
+        </a>
+      </div>
+    </>
+  ) : (
+    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
+      <div className="text-5xl mb-4">
+        🔒
+      </div>
 
-              <div className="flex flex-col md:flex-row gap-4 mt-8">
+      <h3 className="text-xl font-bold text-gray-800">
+        Contact Details Unavailable
+      </h3>
 
-                <a
-                  href={`tel:${property.ownerPhone}`}
-                  className="bg-green-600 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-green-700 transition"
-                >
-                  📞 Call Owner
-                </a>
+      <p className="text-gray-600 mt-3">
+        The owner's subscription has
+        expired.
+      </p>
 
-                <a
-                  href={`mailto:${property.ownerEmail}`}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-blue-700 transition"
-                >
-                  ✉️ Email Owner
-                </a>
+      <p className="text-gray-600">
+        Contact details will be available
+        again once the subscription is
+        renewed.
+      </p>
+    </div>
+  )
+) : (
+  <div className="text-center py-6">
+    <p className="text-lg text-gray-600 mb-4">
+      Login to view owner contact
+      details
+    </p>
 
-              </div>
-            </>
-          ) : (
-            <div className="text-center py-6">
-              <p className="text-lg text-gray-600 mb-4">
-                Login to view owner contact
-                details
-              </p>
-
-              <button
-                onClick={() => {
-                  window.location.href = "/";
-                }}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
-              >
-                Login
-              </button>
-            </div>
-          )}
+    <button
+      onClick={() => {
+        window.location.href = "/";
+      }}
+      className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+    >
+      Login
+    </button>
+  </div>
+)}
 
         </div>
 

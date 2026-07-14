@@ -3,32 +3,151 @@ function SubscriptionsTable({
   subscriptionPage,
   subscriptionTotalPages,
   setSubscriptionPage,
+  subscriptionSearch,
+  setSubscriptionSearch,
+  subscriptionPlan,
+  setSubscriptionPlan,
+  subscriptionStatus,
+  setSubscriptionStatus,
+  subscriptionSort,
+setSubscriptionSort,
 }) {
   const getDaysLeft = (endDate) => {
-    if (!endDate) return "-";
+  if (!endDate)
+    return {
+      text: "-",
+      className:
+        "bg-gray-100 text-gray-700",
+    };
 
-    const today = new Date();
+  const today = new Date();
 
-    const expiry = new Date(endDate);
+  const expiry = new Date(endDate);
 
-    const diff = Math.ceil(
-      (expiry - today) /
-        (1000 * 60 * 60 * 24)
-    );
+  const diff = Math.ceil(
+    (expiry - today) /
+      (1000 * 60 * 60 * 24)
+  );
 
-    return diff > 0
-      ? `${diff} Days`
-      : "Expired";
+  if (diff < 0)
+    return {
+      text: "Expired",
+      className:
+        "bg-red-100 text-red-700",
+    };
+
+  if (diff <= 7)
+    return {
+      text: `${diff} Days`,
+      className:
+        "bg-orange-100 text-orange-700",
+    };
+
+  if (diff <= 30)
+    return {
+      text: `${diff} Days`,
+      className:
+        "bg-yellow-100 text-yellow-700",
+    };
+
+  return {
+    text: `${diff} Days`,
+    className:
+      "bg-green-100 text-green-700",
   };
+};
 
   return (
     <>
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div className="p-6 border-b">
-          <h2 className="text-2xl font-bold">
-            Subscription Management
-          </h2>
-        </div>
+     <div className="p-6 border-b">
+  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <h2 className="text-2xl font-bold">
+      Subscription Management
+    </h2>
+
+    <div className="flex flex-col sm:flex-row gap-3">
+      <input
+        type="text"
+        placeholder="Search by user..."
+        value={subscriptionSearch}
+        onChange={(e) =>
+          setSubscriptionSearch(
+            e.target.value
+          )
+        }
+        className="border rounded-lg px-4 py-2 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      <select
+        value={subscriptionPlan}
+        onChange={(e) =>
+          setSubscriptionPlan(
+            e.target.value
+          )
+        }
+        className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="All">
+          All Plans
+        </option>
+        <option value="Free">
+          Free
+        </option>
+        <option value="Premium">
+          Premium
+        </option>
+        <option value="Elite">
+          Elite
+        </option>
+      </select>
+
+      <select
+  value={subscriptionStatus}
+  onChange={(e) =>
+    setSubscriptionStatus(
+      e.target.value
+    )
+  }
+  className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+>
+  <option value="All">
+    All Status
+  </option>
+
+  <option value="Active">
+    Active
+  </option>
+
+  <option value="Expired">
+    Expired
+  </option>
+</select>
+
+<select
+  value={subscriptionSort}
+  onChange={(e) =>
+    setSubscriptionSort(
+      e.target.value
+    )
+  }
+  className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+>
+  <option>Newest</option>
+
+  <option>Oldest</option>
+
+  <option>Highest Amount</option>
+
+  <option>Lowest Amount</option>
+
+  <option>Expiry Soon</option>
+
+  <option>Latest Expiry</option>
+</select>
+    </div>
+  </div>
+</div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -145,9 +264,19 @@ function SubscriptionsTable({
 </td>
 
 <td className="px-6 py-4">
-  {getDaysLeft(
-    subscription.endDate
-  )}
+  <span
+    className={`px-3 py-1 rounded-full text-sm font-medium ${
+      getDaysLeft(
+        subscription.endDate
+      ).className
+    }`}
+  >
+    {
+      getDaysLeft(
+        subscription.endDate
+      ).text
+    }
+  </span>
 </td>
 </tr>
 )

@@ -35,6 +35,8 @@ function PGDetails({
   const navigate = useNavigate();
 const location = useLocation();
   const [pg, setPg] = useState(null);
+  const [contactAvailable, setContactAvailable] =
+  useState(true);
   const [selectedImage, setSelectedImage] =
     useState("");
 
@@ -280,6 +282,9 @@ const handleDislike = async (
               JSON.stringify(updatedItems)
             );
           setPg(data.pg);
+setContactAvailable(
+  data.contactAvailable
+);
 
           loadReviews();
 
@@ -655,7 +660,8 @@ fetchPG();
             Owner Contact
           </h2>
 
-          {user ? (
+       {user ? (
+  contactAvailable ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -710,8 +716,27 @@ Email Owner
                 </a>
 
               </div>
-            </>
-          ) : (
+            
+         </>
+) : (
+  <div className="bg-yellow-50 border border-yellow-300 rounded-xl p-8 text-center">
+    <div className="text-5xl mb-4">🔒</div>
+
+    <h3 className="text-xl font-bold">
+      Contact Details Unavailable
+    </h3>
+
+    <p className="text-gray-600 mt-2">
+      The owner's subscription has expired.
+    </p>
+
+    <p className="text-gray-500 text-sm mt-1">
+      Contact details will become available
+      once the subscription is renewed.
+    </p>
+  </div>
+)
+) : (
             <div className="text-center py-4">
 
               <p className="text-gray-600 mb-4">
