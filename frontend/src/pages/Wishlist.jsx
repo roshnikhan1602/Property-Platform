@@ -19,18 +19,18 @@ function Wishlist() {
 
 
 
- useEffect(() => {
-  fetchWishlist();
-}, []);
+  useEffect(() => {
+    fetchWishlist();
+  }, []);
 
   const fetchWishlist = async () => {
     try {
       const response = await fetch(
-  "http://localhost:5000/api/wishlist",
-  {
-    credentials: "include",
-  }
-);
+        "http://localhost:5000/api/wishlist",
+        {
+          credentials: "include",
+        }
+      );
 
       const data = await response.json();
 
@@ -47,12 +47,12 @@ function Wishlist() {
   const removeFromWishlist = async (wishlistId) => {
     try {
       const response = await fetch(
-  `http://localhost:5000/api/wishlist/${wishlistId}`,
-  {
-    method: "DELETE",
-    credentials: "include",
-  }
-);
+        `http://localhost:5000/api/wishlist/${wishlistId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
 
       const data = await response.json();
 
@@ -119,27 +119,30 @@ function Wishlist() {
               return (
                 <div
                   key={item._id}
-                  className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300"
+                  className={`bg-white rounded-2xl shadow-md overflow-hidden transition duration-300 ${listing.isActive
+                      ? "hover:shadow-xl"
+                      : "border-2 border-red-200 opacity-90"
+                    }`}
                 >
 
-                 <div className="h-56 overflow-hidden">
-  {listing.images &&
-  listing.images.length > 0 ? (
-    <img
-      src={listing.images[0]}
-      alt={listing.title}
-      className="w-full h-full object-cover"
-    />
-  ) : (
-    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
-      {item.itemType === "Property" ? (
-        <FaHome className="text-5xl text-blue-600" />
-      ) : (
-        <FaBed className="text-5xl text-blue-600" />
-      )}
-    </div>
-  )}
-</div>
+                  <div className="h-56 overflow-hidden">
+                    {listing.images &&
+                      listing.images.length > 0 ? (
+                      <img
+                        src={listing.images[0]}
+                        alt={listing.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                        {item.itemType === "Property" ? (
+                          <FaHome className="text-5xl text-blue-600" />
+                        ) : (
+                          <FaBed className="text-5xl text-blue-600" />
+                        )}
+                      </div>
+                    )}
+                  </div>
 
                   <div className="p-5">
 
@@ -159,7 +162,32 @@ function Wishlist() {
                       <FaMapMarkerAlt className="text-red-500" />
                       {listing.city}, {listing.state}
                     </p>
-                                        {item.itemType === "Property" ? (
+
+                    <div className="mt-3 h-24">
+                      {listing.isActive ? (
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3 h-full">
+                          <p className="text-green-600 font-semibold">
+                            🟢 Available
+                          </p>
+
+                          <p className="text-sm text-gray-600 mt-1">
+                            Ready for booking/contact.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-3 h-full">
+                          <p className="text-red-600 font-semibold">
+                            🔴 Currently Unavailable
+                          </p>
+
+                          <p className="text-sm text-gray-600 mt-1">
+                            Reason: {listing.deactivationReason}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {item.itemType === "Property" ? (
                       <h4 className="text-2xl font-bold text-blue-600 mt-5">
                         ₹ {listing.price?.toLocaleString()}
                       </h4>
@@ -172,16 +200,23 @@ function Wishlist() {
                     <div className="grid grid-cols-2 gap-3 mt-6">
 
                       <button
+                        disabled={!listing.isActive}
                         onClick={() =>
+                          listing.isActive &&
                           navigate(
                             item.itemType === "Property"
                               ? `/properties/${listing._id}`
                               : `/pgs/${listing._id}`
                           )
                         }
-                        className="bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition cursor-pointer"
+                        className={`py-3 rounded-xl transition ${listing.isActive
+                            ? "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
+                            : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                          }`}
                       >
-                        View
+                        {listing.isActive
+                          ? "View"
+                          : "Unavailable"}
                       </button>
 
                       <button

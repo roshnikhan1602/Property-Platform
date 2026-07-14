@@ -1,7 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
-
+const optionalAuthMiddleware = require("../middleware/optionalAuthMiddleware");
 const upload = require("../middleware/upload");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -60,6 +60,7 @@ router.get("/", getAllProperties);
 
 router.get(
   "/:id",
+  optionalAuthMiddleware,
   getPropertyById
 );
 

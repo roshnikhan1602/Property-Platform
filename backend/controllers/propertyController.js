@@ -226,6 +226,19 @@ const getPropertyById = async (req, res) => {
         message: "Property not found",
       });
     }
+  const isOwner =
+  req.user &&
+  property.owner.toString() === req.user.id;
+
+if (
+  (!property.isApproved || !property.isActive) &&
+  !isOwner
+) {
+  return res.status(404).json({
+    success: false,
+    message: "Property not found",
+  });
+}
 
     res.status(200).json({
       success: true,
@@ -251,6 +264,18 @@ const updateProperty = async (req, res) => {
         message: "Property not found",
       });
     }
+
+    // Hide inactive/unapproved properties from everyone except the owner
+if (
+  (!property.isApproved || !property.isActive) &&
+  property.owner.toString() !== req.user?.id
+) {
+  return res.status(404).json({
+    success: false,
+    message: "Property not found",
+  });
+}
+
 if (property.owner.toString() !== req.user.id) {
   return res.status(403).json({
     success: false,
@@ -409,7 +434,14 @@ const togglePropertyStatus = async (req, res) => {
       });
     }
 
-    property.isActive = !property.isActive;
+    if (property.isActive) {
+      property.isActive = false;
+      property.deactivationReason =
+        req.body.deactivationReason;
+    } else {
+      property.isActive = true;
+      property.deactivationReason = "";
+    }
 
     await property.save();
 
@@ -473,7 +505,10 @@ const incrementViews = async (req, res) => {
 
 const filterProperties = async (req, res) => {
   try {
-    const filters = {};
+   const filters = {
+  isApproved: true,
+  isActive: true,
+};
 
     if (req.query.city) {
       filters.city = {

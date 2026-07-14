@@ -233,8 +233,11 @@ const loadReviews = async () => {
     const fetchProperty = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/properties/${id}`
-        );
+           `http://localhost:5000/api/properties/${id}`,
+  {
+    credentials: "include",
+  }
+);
 
         const data = await response.json();
 
@@ -253,6 +256,7 @@ const loadReviews = async () => {
             `http://localhost:5000/api/properties/${id}/view`,
             {
               method: "PUT",
+              credentials: "include",
             }
           );
 

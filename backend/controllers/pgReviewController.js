@@ -360,6 +360,14 @@ const deleteReply = async (req, res) => {
       });
     }
 
+    // Prevent owner from reviewing their own PG
+      if (pg.owner.toString() === userId) {
+        return res.status(403).json({
+          success: false,
+          message: "You cannot review your own PG.",
+        });
+      }
+
     if (
       pg.owner.toString() !==
       req.user.id

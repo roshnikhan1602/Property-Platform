@@ -133,6 +133,11 @@ const propertySchema = new mongoose.Schema(
       default: 0,
     },
 
+    deactivationReason: {
+      type: String,
+      default: "",
+    },
+
     totalReviews: {
       type: Number,
       default: 0,
