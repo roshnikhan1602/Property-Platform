@@ -27,6 +27,12 @@ function MyProperties() {
   const [selectedPropertyId, setSelectedPropertyId] =
     useState(null);
 
+  const [showDeactivateModal, setShowDeactivateModal] =
+  useState(false);
+
+const [deactivationReason, setDeactivationReason] =
+  useState("Property Sold");
+
   const navigate = useNavigate();
 
  
@@ -142,7 +148,13 @@ function MyProperties() {
       `http://localhost:5000/api/properties/${id}/toggle-status`,
       {
         method: "PUT",
-        credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            deactivationReason,
+          }),
       }
     );
 
@@ -281,9 +293,14 @@ function MyProperties() {
                 <div className="flex gap-2 mt-5">
 
                   <button
-                      onClick={() =>
-                        handleToggleStatus(property._id)
-                      }
+                      onClick={() => {
+                        if (property.isActive) {
+                          setSelectedPropertyId(property._id);
+                          setShowDeactivateModal(true);
+                        } else {
+                          handleToggleStatus(property._id);
+                        }
+                      }}
                       className={`flex-1 py-2 rounded-lg text-sm transition cursor-pointer ${
                         property.isActive
                           ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
@@ -372,6 +389,62 @@ function MyProperties() {
           </div>
         </div>
       )}
+
+      {showDeactivateModal && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md">
+
+      <h2 className="text-2xl font-bold text-gray-800">
+        Deactivate Property
+      </h2>
+
+      <p className="text-gray-600 mt-2">
+        Please tell us why you're deactivating this property.
+      </p>
+
+      <select
+        value={deactivationReason}
+        onChange={(e) =>
+          setDeactivationReason(e.target.value)
+        }
+        className="w-full mt-5 border rounded-lg p-3"
+      >
+        <option>Property Sold</option>
+        <option>Property Rented</option>
+        <option>Temporarily Unavailable</option>
+        <option>Under Renovation</option>
+        <option>Owner Not Interested</option>
+        <option>Other</option>
+      </select>
+
+      <div className="flex justify-end gap-3 mt-6">
+
+        <button
+          onClick={() => {
+            setShowDeactivateModal(false);
+            setSelectedPropertyId(null);
+          }}
+          className="px-5 py-2 border rounded-lg hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={() => {
+            handleToggleStatus(selectedPropertyId);
+            setShowDeactivateModal(false);
+            setSelectedPropertyId(null);
+          }}
+          className="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+        >
+          Deactivate
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+)}
       <Footer />
     </>
   );

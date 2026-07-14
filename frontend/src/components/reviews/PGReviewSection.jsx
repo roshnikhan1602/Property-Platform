@@ -15,6 +15,7 @@ function PGReviewSection({
   handleReply,
   handleDeleteReply,
   canReply,
+  isOwner,
   loadReviews,
 }) {
   return (
@@ -37,9 +38,7 @@ function PGReviewSection({
                   review.userProfileImage ? (
                     <img
                       key={review._id}
-                      src={
-                        review.userProfileImage
-                      }
+                      src={review.userProfileImage}
                       alt={review.userName}
                       className="w-10 h-10 rounded-full border-2 border-white object-cover"
                     />
@@ -48,9 +47,7 @@ function PGReviewSection({
                       key={review._id}
                       className="w-10 h-10 rounded-full border-2 border-white bg-white text-blue-600 font-bold flex items-center justify-center"
                     >
-                      {review.userName?.charAt(
-                        0
-                      )}
+                      {review.userName?.charAt(0)}
                     </div>
                   )
                 )}
@@ -59,16 +56,12 @@ function PGReviewSection({
 
           <div className="text-center">
             <h1 className="text-5xl font-bold">
-              {pg.averageRating?.toFixed(
-                1
-              ) || "0.0"}
+              {pg.averageRating?.toFixed(1) || "0.0"}
             </h1>
 
             <div className="flex justify-center mt-2">
               <PGRatingStars
-                rating={
-                  pg.averageRating || 0
-                }
+                rating={pg.averageRating || 0}
                 readonly
               />
             </div>
@@ -79,14 +72,14 @@ function PGReviewSection({
                 {pg.totalReviews || 0}
               </span>{" "}
               review
-              {pg.totalReviews !== 1 &&
-                "s"}
+              {pg.totalReviews !== 1 && "s"}
             </p>
           </div>
         </div>
       </div>
 
-      {user && (
+      {/* Review Form */}
+      {user && !isOwner && (
         <div className="mt-6">
           <PGReviewForm
             onSubmit={handleAddReview}
@@ -94,6 +87,19 @@ function PGReviewSection({
           />
         </div>
       )}
+
+      {/* Owner Message
+      {user && isOwner && (
+        <div className="mt-6 bg-yellow-50 border border-yellow-300 rounded-xl p-5">
+          <h3 className="font-semibold text-yellow-800">
+            You cannot review your own PG.
+          </h3>
+
+          <p className="text-sm text-yellow-700 mt-1">
+            Reviews can only be submitted by other users.
+          </p>
+        </div>
+      )} */}
 
       <div className="mt-10">
         <div className="flex justify-between items-center mb-5">
@@ -104,8 +110,7 @@ function PGReviewSection({
 
             <p className="text-sm text-gray-500">
               {reviews.length} Review
-              {reviews.length !== 1 &&
-                "s"}
+              {reviews.length !== 1 && "s"}
             </p>
           </div>
         </div>
@@ -125,8 +130,7 @@ function PGReviewSection({
             </h3>
 
             <p className="text-gray-500 mt-2">
-              Be the first to share your
-              experience.
+              Be the first to share your experience.
             </p>
           </div>
         ) : (

@@ -138,7 +138,7 @@ if (data.success) {
     };
   }, []);
 
- const handleLogout = async () => {
+const handleLogout = async () => {
   try {
     await fetch(
       "http://localhost:5000/api/auth/logout",
@@ -151,8 +151,20 @@ if (data.success) {
     console.error(error);
   }
 
+  // Clear all locally stored session data
+  localStorage.removeItem("user");
+  localStorage.removeItem("token");
+
+  // OR, if your app stores only app-related data in localStorage,
+  // you can simply use:
+  // localStorage.clear();
+
+  sessionStorage.clear();
+
   setUser(null);
+  setSubscription(null);
   setShowDropdown(false);
+
   navigate("/");
 };
 
