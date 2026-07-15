@@ -252,10 +252,11 @@ if (isDowngrade) {
         </div>
 
         <button
-          disabled={
-            isCurrentPlan ||
-            loading
-          }
+         disabled={
+  (isCurrentPlan &&
+    currentPlan?.status !== "Expired") ||
+  loading
+}
           onClick={
             handlePayment
           }
@@ -265,14 +266,18 @@ if (isDowngrade) {
               : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
           }`}
         >
-          {loading
-            ? "Processing..."
-            : isCurrentPlan
-            ? "Current Plan"
-            : plan.price ===
-              0
-            ? "Free Plan"
-            : "Buy Now"}
+         {loading
+  ? "Processing..."
+  : isCurrentPlan
+  ? currentPlan?.status === "Expired"
+    ? "Renew Plan"
+    : "Current Plan"
+  : plan.price === 0
+  ? "Free Plan"
+  : currentPlan?.status === "Expired" &&
+    currentPlan?.plan === plan.name
+  ? "Renew Now"
+  : "Buy Now"}
         </button>
       </div>
     </>

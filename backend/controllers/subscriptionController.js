@@ -53,7 +53,7 @@ const getCurrentSubscription = async (
   res
 ) => {
   try {
-    // Find the latest subscription
+// Find the latest subscription
 let subscription =
   await Subscription.findOne({
     user: req.user.id,
@@ -70,6 +70,16 @@ if (!subscription) {
       pgLimit: 1,
       status: "Active",
     });
+}
+
+// Automatically expire subscription
+if (
+  subscription.status === "Active" &&
+  subscription.endDate &&
+  new Date(subscription.endDate) < new Date()
+) {
+  subscription.status = "Expired";
+  await subscription.save();
 }
 
     res.json({

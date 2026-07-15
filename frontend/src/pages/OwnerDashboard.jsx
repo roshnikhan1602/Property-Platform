@@ -22,6 +22,8 @@ function OwnerDashboard() {
   const [totalProperties, setTotalProperties] = useState(0);
   const [totalPGs, setTotalPGs] = useState(0);
   const [totalViews, setTotalViews] = useState(0);
+  const [subscription, setSubscription] =
+  useState(null);
 useEffect(() => {
   const fetchUser = async () => {
     try {
@@ -48,7 +50,11 @@ useEffect(() => {
 
  const fetchDashboardData = async () => {
     try {
-      const [propertyResponse, pgResponse] = await Promise.all([
+      const [
+  propertyResponse,
+  pgResponse,
+  subscriptionResponse,
+] = await Promise.all([
   fetch(
     "http://localhost:5000/api/properties/my-properties",
     {
@@ -61,9 +67,23 @@ useEffect(() => {
       credentials: "include",
     }
   ),
+  fetch(
+  "http://localhost:5000/api/subscriptions/current",
+  {
+    credentials: "include",
+  }
+),
 ]);
       const propertyData = await propertyResponse.json();
       const pgData = await pgResponse.json();
+      const subscriptionData =
+  await subscriptionResponse.json();
+
+if (subscriptionData.success) {
+  setSubscription(
+    subscriptionData.subscription
+  );
+}
 
       let properties = [];
       let pgs = [];
@@ -216,6 +236,52 @@ useEffect(() => {
         <p className="text-gray-500 mb-10">
           Manage your properties and PG listings in one place.
         </p>
+
+{subscription && (
+  <>
+    {subscription.status === "Active" &&
+      subscription.endDate &&
+      Math.ceil(
+        (new Date(subscription.endDate) -
+          new Date()) /
+          (1000 * 60 * 60 * 24)
+      ) <= 7 && (
+        <div className="mb-8 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-xl p-4 flex justify-between items-center">
+          <span>
+            ⚠️ Your subscription expires on{" "}
+            <strong>
+              {new Date(
+                subscription.endDate
+              ).toLocaleDateString()}
+            </strong>
+            . Please renew to avoid restrictions.
+          </span>
+
+          <Link
+            to="/subscription"
+            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-medium"
+          >
+            Renew Now
+          </Link>
+        </div>
+      )}
+
+    {subscription.status === "Expired" && (
+      <div className="mb-8 bg-red-100 border border-red-300 text-red-700 rounded-xl p-4 flex justify-between items-center">
+        <span>
+          🚫 Your subscription has expired. Renew your plan to continue adding new Properties and PGs and restore owner contact visibility.
+        </span>
+
+        <Link
+          to="/subscription"
+          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium"
+        >
+          Renew Plan
+        </Link>
+      </div>
+    )}
+  </>
+)}
 
         {/* Dashboard Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
