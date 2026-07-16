@@ -40,26 +40,49 @@ const addPG = async (req, res) => {
       }
     }
 
-// Check subscription limits
-const subscription =
+// Get user's latest subscription
+const latestSubscription =
   await Subscription.findOne({
     user: req.user.id,
-    status: "Active",
-  });
+  }).sort({ createdAt: -1 });
 
 const pgCount =
   await PG.countDocuments({
     owner: req.user.id,
   });
 
+// Default Free plan limits
+let pgLimit = 1;
+let planName = "Free";
+
+// If subscription is active, use its limits
 if (
-  subscription &&
-  subscription.pgLimit !== -1 &&
-  pgCount >= subscription.pgLimit
+  latestSubscription &&
+  latestSubscription.status === "Active"
+) {
+  pgLimit = latestSubscription.pgLimit;
+  planName = latestSubscription.plan;
+}
+
+// If subscription is expired, treat as Free
+if (
+  latestSubscription &&
+  latestSubscription.status === "Expired"
+) {
+  pgLimit = 1;
+  planName = "Free";
+}
+
+// Check limit
+if (
+  pgLimit !== -1 &&
+  pgCount >= pgLimit
 ) {
   return res.status(403).json({
     success: false,
-    message: `Your ${subscription.plan} plan allows only ${subscription.pgLimit} PG listings. Upgrade your subscription to add more.`,
+    message: `Your ${planName} plan allows only ${pgLimit} PG listing${
+      pgLimit > 1 ? "s" : ""
+    }. Please upgrade your subscription to add more PG listings.`,
   });
 }
 
@@ -88,7 +111,7 @@ for (const admin of admins) {
       title: "PG Submitted",
       message:
         "Your PG has been submitted successfully and is awaiting admin approval.",
-      type: "pg",
+      type: "general",
     });
 
 const user = await User.findById(
@@ -190,9 +213,7 @@ const getMyPGs = async (req, res) => {
 
 const getPGById = async (req, res) => {
   try {
-    const pg = await PG.findById(
-      req.params.id
-    );
+    const pg = await PG.findById(req.params.id);
 
     if (!pg) {
       return res.status(404).json({
@@ -201,9 +222,31 @@ const getPGById = async (req, res) => {
       });
     }
 
+    // Clone PG object
+    const pgData = pg.toObject();
+
+    // Get owner's latest subscription
+    const latestSubscription =
+      await Subscription.findOne({
+        user: pg.owner,
+      }).sort({ createdAt: -1 });
+
+    let contactAvailable = true;
+
+    if (
+      latestSubscription &&
+      latestSubscription.status === "Expired"
+    ) {
+      contactAvailable = false;
+
+      pgData.ownerPhone = "";
+      pgData.ownerEmail = "";
+    }
+
     res.status(200).json({
       success: true,
-      pg,
+      contactAvailable,
+      pg: pgData,
     });
   } catch (error) {
     res.status(500).json({
@@ -284,7 +327,7 @@ if (req.files && req.files.length > 0) {
         user: req.user.id,
         title: "PG Updated",
         message: `"${updatedPG.title}" has been updated successfully.`,
-        type: "pg",
+        type: "general",
       });
     res.status(200).json({
       success: true,

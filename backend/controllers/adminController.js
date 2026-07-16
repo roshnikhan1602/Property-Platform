@@ -503,33 +503,52 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
-const getAllSubscriptions =
-  async (req, res) => {
-    try {
-      const subscriptions =
-        await Subscription.find()
-          .populate(
-            "user",
-            "name mobileNumber email role"
-          )
-          .sort({
-            createdAt: -1,
-          });
+const getAllSubscriptions = async (req, res) => {
+  try {
+    const today = new Date();
 
-      res.status(200).json({
-        success: true,
-        subscriptions,
-      });
-    } catch (error) {
-      console.error(error);
+    const expiredSubscriptions =
+  await Subscription.find({
+    endDate: {
+      $ne: null,
+      $lt: today,
+    },
+    status: "Active",
+  });
 
-      res.status(500).json({
-        success: false,
-        message:
-          "Failed to fetch subscriptions.",
-      });
-    }
-  };
+for (const subscription of expiredSubscriptions) {
+  const previousPlan =
+    subscription.plan;
+
+ subscription.status = "Expired";
+
+await subscription.save();
+}
+
+    const subscriptions =
+      await Subscription.find()
+        .populate(
+          "user",
+          "name mobileNumber email role"
+        )
+        .sort({
+          createdAt: -1,
+        });
+
+    res.status(200).json({
+      success: true,
+      subscriptions,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message:
+        "Failed to fetch subscriptions.",
+    });
+  }
+};
 module.exports = {
   getAllUsers,
   getUserById,

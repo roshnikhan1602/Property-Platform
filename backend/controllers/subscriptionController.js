@@ -53,23 +53,34 @@ const getCurrentSubscription = async (
   res
 ) => {
   try {
-    let subscription =
-      await Subscription.findOne({
-        user: req.user.id,
-        status: "Active",
-      });
+// Find the latest subscription
+let subscription =
+  await Subscription.findOne({
+    user: req.user.id,
+  }).sort({ createdAt: -1 });
 
-    if (!subscription) {
-      subscription =
-        await Subscription.create({
-          user: req.user.id,
-          plan: "Free",
-          amount: 0,
-          propertyLimit: 2,
-          pgLimit: 1,
-          status: "Active",
-        });
-    }
+// Brand new user -> create Free subscription
+if (!subscription) {
+  subscription =
+    await Subscription.create({
+      user: req.user.id,
+      plan: "Free",
+      amount: 0,
+      propertyLimit: 2,
+      pgLimit: 1,
+      status: "Active",
+    });
+}
+
+// Automatically expire subscription
+if (
+  subscription.status === "Active" &&
+  subscription.endDate &&
+  new Date(subscription.endDate) < new Date()
+) {
+  subscription.status = "Expired";
+  await subscription.save();
+}
 
     res.json({
       success: true,

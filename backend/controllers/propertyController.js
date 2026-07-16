@@ -43,27 +43,50 @@ const addProperty = async (req, res) => {
       }
     }
 
-// Check subscription limits
-const subscription =
+// Get user's latest subscription
+const latestSubscription =
   await Subscription.findOne({
     user: req.user.id,
-    status: "Active",
-  });
+  }).sort({ createdAt: -1 });
 
 const propertyCount =
   await Property.countDocuments({
     owner: req.user.id,
   });
 
+// Default Free plan limits
+let propertyLimit = 2;
+let planName = "Free";
+
+// If subscription is active, use its limits
 if (
-  subscription &&
-  subscription.propertyLimit !== -1 &&
-  propertyCount >=
-    subscription.propertyLimit
+  latestSubscription &&
+  latestSubscription.status === "Active"
+) {
+  propertyLimit =
+    latestSubscription.propertyLimit;
+
+  planName =
+    latestSubscription.plan;
+}
+
+// If subscription is expired, treat as Free
+if (
+  latestSubscription &&
+  latestSubscription.status === "Expired"
+) {
+  propertyLimit = 2;
+  planName = "Free";
+}
+
+// Check limit
+if (
+  propertyLimit !== -1 &&
+  propertyCount >= propertyLimit
 ) {
   return res.status(403).json({
     success: false,
-    message: `Your ${subscription.plan} plan allows only ${subscription.propertyLimit} properties. Upgrade your subscription to add more.`,
+    message: `Your ${planName} plan allows only ${propertyLimit} properties. Please upgrade your subscription to add more properties.`,
   });
 }
 
@@ -240,11 +263,35 @@ if (
   });
 }
 
+  // Clone property so we don't modify DB data
+const propertyData = property.toObject();
+
+// Get the owner's latest subscription
+const latestSubscription =
+  await Subscription.findOne({
+    user: property.owner,
+  }).sort({ createdAt: -1 });
+
+let contactAvailable = true;
+
+if (
+  latestSubscription &&
+  latestSubscription.status === "Expired"
+) {
+  contactAvailable = false;
+
+  propertyData.ownerPhone = "";
+  propertyData.ownerEmail = "";
+}
+
     res.status(200).json({
       success: true,
-      property,
+      contactAvailable,
+      property: propertyData,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
       success: false,
       message: error.message,

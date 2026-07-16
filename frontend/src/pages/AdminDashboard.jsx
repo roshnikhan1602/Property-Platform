@@ -53,6 +53,19 @@ function AdminDashboard() {
 
   const [activeTab, setActiveTab] =
     useState("");
+
+    const [subscriptionSearch, setSubscriptionSearch] =
+  useState("");
+
+  const [subscriptionPlan, setSubscriptionPlan] =
+  useState("All");
+
+  const [subscriptionStatus, setSubscriptionStatus] =
+  useState("All");
+
+  const [subscriptionSort, setSubscriptionSort] =
+  useState("Newest");
+
   const [propertyView, setPropertyView] =
     useState("properties");
 
@@ -287,14 +300,75 @@ const paginatedSupport =
       ROWS_PER_PAGE
   );
 
-  const subscriptionTotalPages =
+const filteredSubscriptions = subscriptions
+  .filter((subscription) => {
+    const matchesSearch =
+      (subscription.user?.name || "")
+        .toLowerCase()
+        .includes(
+          subscriptionSearch.toLowerCase()
+        );
+
+    const matchesPlan =
+      subscriptionPlan === "All" ||
+      subscription.plan === subscriptionPlan;
+
+    const matchesStatus =
+      subscriptionStatus === "All" ||
+      subscription.status ===
+        subscriptionStatus;
+
+    return (
+      matchesSearch &&
+      matchesPlan &&
+      matchesStatus
+    );
+  })
+  .sort((a, b) => {
+    switch (subscriptionSort) {
+      case "Newest":
+        return (
+          new Date(b.startDate) -
+          new Date(a.startDate)
+        );
+
+      case "Oldest":
+        return (
+          new Date(a.startDate) -
+          new Date(b.startDate)
+        );
+
+      case "Highest Amount":
+        return b.amount - a.amount;
+
+      case "Lowest Amount":
+        return a.amount - b.amount;
+
+      case "Expiry Soon":
+        return (
+          new Date(a.endDate) -
+          new Date(b.endDate)
+        );
+
+      case "Latest Expiry":
+        return (
+          new Date(b.endDate) -
+          new Date(a.endDate)
+        );
+
+      default:
+        return 0;
+    }
+  });
+
+const subscriptionTotalPages =
   Math.ceil(
-    subscriptions.length /
+    filteredSubscriptions.length /
       ROWS_PER_PAGE
   ) || 1;
 
 const paginatedSubscriptions =
-  subscriptions.slice(
+  filteredSubscriptions.slice(
     (subscriptionPage - 1) *
       ROWS_PER_PAGE,
     subscriptionPage *
@@ -777,20 +851,20 @@ useEffect(() => {
 )}
 
 {activeTab === "subscriptions" && (
-  <SubscriptionsTable
-    subscriptions={
-      paginatedSubscriptions
-    }
-    subscriptionPage={
-      subscriptionPage
-    }
-    subscriptionTotalPages={
-      subscriptionTotalPages
-    }
-    setSubscriptionPage={
-      setSubscriptionPage
-    }
-  />
+<SubscriptionsTable
+  subscriptions={paginatedSubscriptions}
+  subscriptionPage={subscriptionPage}
+  subscriptionTotalPages={subscriptionTotalPages}
+  setSubscriptionPage={setSubscriptionPage}
+  subscriptionSearch={subscriptionSearch}
+  setSubscriptionSearch={setSubscriptionSearch}
+  subscriptionPlan={subscriptionPlan}
+  setSubscriptionPlan={setSubscriptionPlan}
+  subscriptionStatus={subscriptionStatus}
+  setSubscriptionStatus={setSubscriptionStatus}
+  subscriptionSort={subscriptionSort}
+setSubscriptionSort={setSubscriptionSort}
+/>
 )}
       </section>
 
