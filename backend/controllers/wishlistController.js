@@ -1,4 +1,5 @@
 const Wishlist = require("../models/wishlistModel");
+const Subscription = require("../models/Subscription");
 
 const addToWishlist = async (req, res) => {
   try {
@@ -44,6 +45,24 @@ const getWishlist = async (req, res) => {
     const wishlist = await Wishlist.find({
       userId: req.user.id,
     }).populate("itemId");
+
+    for (const item of wishlist) {
+      if (!item.itemId) continue;
+
+      const owner =
+        item.itemType === "Property"
+          ? item.itemId.owner
+          : item.itemId.owner;
+
+      const subscription =
+        await Subscription.findOne({
+          user: owner,
+        }).sort({ createdAt: -1 });
+
+      item.itemId.listingAvailable =
+        !subscription ||
+        subscription.status !== "Expired";
+    }
 
     res.status(200).json({
       success: true,

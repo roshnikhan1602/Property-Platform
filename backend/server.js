@@ -14,10 +14,9 @@ const chatRoutes = require("./routes/chatRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
-
-// NEW
 const shareRoutes = require("./routes/shareRoutes");
 
+require("./jobs/subscriptionReminder");
 connectDB();
 
 const app = express();

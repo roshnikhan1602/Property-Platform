@@ -37,6 +37,8 @@ const location = useLocation();
   const [pg, setPg] = useState(null);
   const [contactAvailable, setContactAvailable] =
   useState(true);
+  const [listingAvailable, setListingAvailable] =
+  useState(true);
   const [selectedImage, setSelectedImage] =
     useState("");
 
@@ -286,6 +288,9 @@ setContactAvailable(
   data.contactAvailable
 );
 
+setListingAvailable(
+  data.listingAvailable
+);
           loadReviews();
 
           if (
@@ -323,6 +328,46 @@ fetchPG();
       </>
     );
   }
+
+  if (
+  pg &&
+  !listingAvailable
+) {
+  return (
+    <>
+      <Navbar
+        setShowLoginModal={
+          setShowLoginModal
+        }
+      />
+
+      <div className="max-w-3xl mx-auto py-24 px-6">
+        <div className="bg-white rounded-2xl shadow-lg border text-center p-10">
+          <div className="text-6xl mb-5">
+            🔒
+          </div>
+
+          <h2 className="text-3xl font-bold">
+            Listing Temporarily Unavailable
+          </h2>
+
+          <p className="text-gray-600 mt-4">
+            This PG listing is currently unavailable because the owner's subscription has expired.
+          </p>
+
+          <button
+            onClick={() => navigate(-1)}
+            className="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+          >
+            Back to PG Listings
+          </button>
+        </div>
+      </div>
+
+      <Footer />
+    </>
+  );
+}
 
   if (!pg) {
     return (

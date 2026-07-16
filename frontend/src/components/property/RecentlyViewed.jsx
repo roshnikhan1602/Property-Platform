@@ -8,46 +8,44 @@ import {
 
 function RecentlyViewed() {
   const navigate = useNavigate();
-
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    const loadRecentlyViewed = async () => {
-      const recentlyViewed =
-        JSON.parse(
-          localStorage.getItem(
-            "recentlyViewed"
-          )
-        ) || [];
+   const loadRecentlyViewed = async () => {
+  const recentlyViewed =
+    JSON.parse(
+      localStorage.getItem("recentlyViewed")
+    ) || [];
 
-      const validItems = [];
+  const validItems = [];
 
-      for (const item of recentlyViewed) {
-        try {
-          const url =
-            item.itemType === "pg"
-              ? `http://localhost:5000/api/pgs/${item._id}`
-              : `http://localhost:5000/api/properties/${item._id}`;
+  for (const item of recentlyViewed) {
+    try {
+      const url =
+        item.itemType === "pg"
+          ? `http://localhost:5000/api/pgs/${item._id}`
+          : `http://localhost:5000/api/properties/${item._id}`;
 
-          const response = await fetch(url, {
-            credentials: "include",
-          });
+     const response = await fetch(url, {
+  credentials: "include",
+});
 
-          if (response.ok) {
-            validItems.push(item);
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      }
+const data = await response.json();
 
-      localStorage.setItem(
-        "recentlyViewed",
-        JSON.stringify(validItems)
-      );
+if (response.ok) {
+  validItems.push({
+    ...item,
+    listingAvailable:
+      data.listingAvailable !== false,
+  });
+}
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
-      setItems(validItems);
-    };
+  setItems(validItems);
+};
 
     loadRecentlyViewed();
   }, []);
@@ -120,18 +118,25 @@ function RecentlyViewed() {
                 )?.toLocaleString()}
               </p>
 
-              <button
-                onClick={() =>
-                  navigate(
-                    item.itemType === "pg"
-                      ? `/pgs/${item._id}`
-                      : `/properties/${item._id}`
-                  )
-                }
-                className="mt-3 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer"
-              >
-                View
-              </button>
+             <button
+  disabled={!item.listingAvailable}
+  onClick={() =>
+    navigate(
+      item.itemType === "pg"
+        ? `/pgs/${item._id}`
+        : `/properties/${item._id}`
+    )
+  }
+ className={`mt-3 w-full py-2 rounded-lg transition ${
+  item.listingAvailable
+    ? "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+    : "bg-gray-300 text-gray-600 cursor-not-allowed"
+}`}
+>
+  {item.listingAvailable
+  ? "View"
+  : "Unavailable"}
+</button>
             </div>
           </div>
         ))}

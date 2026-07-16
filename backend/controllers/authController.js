@@ -1,9 +1,12 @@
 const User = require("../models/User");
+const Subscription = require("../models/Subscription");
 const OTP = require("../models/OTP");
 const bcrypt = require("bcrypt");
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
 const jwt = require("jsonwebtoken");
+const sendEmail = require("../utils/sendEmail");
+const welcomeUserEmail = require("../templates/welcomeUserEmail");
 
 const sendOTPController = async (req, res) => {
   try {
@@ -266,9 +269,9 @@ const resetPassword = async (req, res) => {
 
 const signup = async (req, res) => {
   try {
-    const { name, mobileNumber, password } = req.body;
+    const { name, email, mobileNumber, password } = req.body;
 
-    if (!name || !mobileNumber || !password) {
+if (!name || !email || !mobileNumber || !password) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -302,12 +305,39 @@ const signup = async (req, res) => {
       10
     );
 
-    const user = await User.create({
-      name,
-      mobileNumber,
-      password: hashedPassword,
-      isVerified: true,
-    });
+   const user = await User.create({
+  name,
+  email,
+  mobileNumber,
+  password: hashedPassword,
+  isVerified: true,
+});
+
+
+    const startDate = new Date();
+
+const endDate = new Date();
+endDate.setMinutes(endDate.getMinutes() + 5);
+
+await Subscription.create({
+  user: user._id,
+  plan: "Free",
+  amount: 0,
+  propertyLimit: 2,
+  pgLimit: 1,
+  status: "Active",
+  startDate,
+  endDate,
+});
+
+// Send welcome email
+if (user.email) {
+  await sendEmail(
+  user.email,
+  "Welcome to PropertyHub 🏠",
+  welcomeUserEmail(user.name)
+);
+}
 
     await OTP.deleteOne({
       mobileNumber,

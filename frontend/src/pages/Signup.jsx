@@ -16,6 +16,7 @@ function Signup() {
 
   const [formData, setFormData] = useState({
     name: "",
+    email: "",
     mobileNumber: "",
     password: "",
   });
@@ -65,14 +66,14 @@ function Signup() {
     try {
       setSendingOTP(true);
 
-     const response = await sendOTP(mobileNumber);
+      const response = await sendOTP(mobileNumber);
 
-if (response.success) {
-  setOtpSent(true);
-  showToast(response.message);
-} else {
-  showToast(response.message, "error");
-}
+      if (response.success) {
+        setOtpSent(true);
+        showToast(response.message);
+      } else {
+        showToast(response.message, "error");
+      }
     } catch (error) {
       console.error(error);
       showToast(error.message || "Failed to send OTP.", "error");
@@ -81,38 +82,38 @@ if (response.success) {
     }
   };
 
- const handleVerifyOTP = async () => {
-  if (!otp.trim()) {
-    return showToast("Enter OTP.", "error");
-  }
-
-  try {
-    setVerifyingOTP(true);
-
-    const response = await verifyOTP(
-      formData.mobileNumber,
-      otp
-    );
-
-    if (response.success) {
-      setOtpVerified(true);
-      showToast("Mobile number verified successfully.");
-    } else {
-      showToast(response.message, "error");
+  const handleVerifyOTP = async () => {
+    if (!otp.trim()) {
+      return showToast("Enter OTP.", "error");
     }
-  } catch (error) {
-    console.error(error);
-    showToast("Invalid OTP.", "error");
-  } finally {
-    setVerifyingOTP(false);
-  }
-};
+
+    try {
+      setVerifyingOTP(true);
+
+      const response = await verifyOTP(
+        formData.mobileNumber,
+        otp
+      );
+
+      if (response.success) {
+        setOtpVerified(true);
+        showToast("Mobile number verified successfully.");
+      } else {
+        showToast(response.message, "error");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast("Invalid OTP.", "error");
+    } finally {
+      setVerifyingOTP(false);
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { name, mobileNumber, password } = formData;
+    const { name, email, mobileNumber, password } = formData;
 
-    if (!name || !mobileNumber || !password) {
+    if (!name || !email || !mobileNumber || !password) {
       return showToast("Please fill all fields.", "error");
     }
 
@@ -125,6 +126,7 @@ if (response.success) {
 
       const response = await signup({
         name,
+        email,
         mobileNumber,
         password,
       });
@@ -172,6 +174,21 @@ if (response.success) {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your name"
+                className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Email
+              </label>
+
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
                 className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>

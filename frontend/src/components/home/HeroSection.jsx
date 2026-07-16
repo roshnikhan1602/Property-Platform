@@ -30,47 +30,105 @@ function HeroSection({ setShowLoginModal }) {
     fetchStats();
   }, []);
 
-  const handlePostProperty = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/auth/me",
-        {
-          credentials: "include",
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.success) {
-        navigate("/add-property");
-      } else {
-        setShowLoginModal(true);
+const handlePostProperty = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/auth/me",
+      {
+        credentials: "include",
       }
-    } catch {
+    );
+
+    const data = await response.json();
+
+    if (!data.success) {
       setShowLoginModal(true);
+      return;
     }
-  };
 
-  const handlePostPG = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/auth/me",
-        {
-          credentials: "include",
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.success) {
-        navigate("/add-pg");
-      } else {
-        setShowLoginModal(true);
+    const subscriptionResponse = await fetch(
+      "http://localhost:5000/api/subscriptions/current",
+      {
+        credentials: "include",
       }
-    } catch {
+    );
+
+    const subscriptionData =
+      await subscriptionResponse.json();
+
+    if (
+  subscriptionData.success &&
+  subscriptionData.subscription.status === "Expired"
+) {
+  navigate("/subscription", {
+    state: {
+      message:
+        subscriptionData.subscription.plan === "Free"
+          ? "Your free trial has ended. Purchase Premium or Elite plan to continue posting."
+          : "Your subscription has expired. Renew your plan to continue posting.",
+    },
+  });
+
+  return;
+}
+
+    navigate("/add-property");
+
+  } catch (error) {
+    console.error(error);
+    setShowLoginModal(true);
+  }
+};
+
+ const handlePostPG = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/auth/me",
+      {
+        credentials: "include",
+      }
+    );
+
+    const data = await response.json();
+
+    if (!data.success) {
       setShowLoginModal(true);
+      return;
     }
-  };
+
+    const subscriptionResponse = await fetch(
+      "http://localhost:5000/api/subscriptions/current",
+      {
+        credentials: "include",
+      }
+    );
+
+    const subscriptionData =
+      await subscriptionResponse.json();
+
+    if (
+  subscriptionData.success &&
+  subscriptionData.subscription.status === "Expired"
+) {
+  navigate("/subscription", {
+    state: {
+      message:
+        subscriptionData.subscription.plan === "Free"
+          ? "Your free trial has ended. Purchase Premium or Elite plan to continue posting."
+          : "Your subscription has expired. Renew your plan to continue posting.",
+    },
+  });
+
+  return;
+}
+
+    navigate("/add-pg");
+
+  } catch (error) {
+    console.error(error);
+    setShowLoginModal(true);
+  }
+};
 
   return (
     <section

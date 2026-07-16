@@ -4,6 +4,8 @@ const Subscription = require("../models/Subscription");
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
 const Notification = require("../models/Notification");
+const sendEmail = require("../utils/sendEmail");
+const welcomeOwnerEmail = require("../templates/welcomeOwnerEmail");
 
 const addPG = async (req, res) => {
   try {
@@ -64,13 +66,18 @@ if (
   planName = latestSubscription.plan;
 }
 
-// If subscription is expired, treat as Free
+// If subscription is expired, don't allow adding PGs
 if (
   latestSubscription &&
   latestSubscription.status === "Expired"
 ) {
-  pgLimit = 1;
-  planName = "Free";
+  return res.status(403).json({
+    success: false,
+    message:
+      latestSubscription.plan === "Free"
+        ? "Your free trial has ended. Upgrade to Premium or Elite to continue adding PG listings."
+        : `Your ${latestSubscription.plan} subscription has expired. Please renew your subscription to continue adding PG listings.`,
+  });
 }
 
 // Check limit
@@ -118,10 +125,20 @@ const user = await User.findById(
   req.user.id
 );
 
-    if (user && user.role === "user") {
-      user.role = "owner";
-      await user.save();
-    }
+   if (user && user.role === "user") {
+  user.role = "owner";
+  await user.save();
+
+
+  // Send owner welcome email
+  if (user.email) {
+    await sendEmail(
+      user.email,
+      "Welcome to PropertyHub as an Owner 🚀",
+      welcomeOwnerEmail(user.name)
+    );
+  }
+}
 
     res.status(201).json({
       success: true,
@@ -169,17 +186,35 @@ const getAllPGs = async (req, res) => {
       filters.sharingType = sharingType;
     }
 
-    const totalPGs =
-      await PG.countDocuments(filters);
+    let pgs = await PG.find(filters)
+  .sort({ views: -1 })
+  .skip(skip)
+  .limit(limit);
 
-    const pgs = await PG.find(filters)
-      .sort({ views: -1 })
-      .skip(skip)
-      .limit(limit);
+const filteredPGs = [];
+
+for (const pg of pgs) {
+  const subscription =
+    await Subscription.findOne({
+      user: pg.owner,
+    }).sort({ createdAt: -1 });
+
+  if (
+    subscription &&
+    subscription.status === "Expired"
+  ) {
+    continue;
+  }
+
+  filteredPGs.push(pg);
+}
+
+const totalPGs =
+  filteredPGs.length;
 
     res.status(200).json({
       success: true,
-      pgs,
+      pgs: filteredPGs,
       currentPage: page,
       totalPages: Math.ceil(
         totalPGs / limit
@@ -232,22 +267,25 @@ const getPGById = async (req, res) => {
       }).sort({ createdAt: -1 });
 
     let contactAvailable = true;
+let listingAvailable = true;
 
-    if (
-      latestSubscription &&
-      latestSubscription.status === "Expired"
-    ) {
-      contactAvailable = false;
+  if (
+  latestSubscription &&
+  latestSubscription.status === "Expired"
+) {
+  contactAvailable = false;
+  listingAvailable = false;
 
-      pgData.ownerPhone = "";
-      pgData.ownerEmail = "";
-    }
+  pgData.ownerPhone = "";
+  pgData.ownerEmail = "";
+}
 
-    res.status(200).json({
-      success: true,
-      contactAvailable,
-      pg: pgData,
-    });
+   res.status(200).json({
+  success: true,
+  contactAvailable,
+  listingAvailable,
+  pg: pgData,
+});
   } catch (error) {
     res.status(500).json({
       success: false,

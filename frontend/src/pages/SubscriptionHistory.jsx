@@ -58,6 +58,50 @@ function SubscriptionHistory() {
     }
   };
 
+  const downloadInvoice = async (historyId) => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/subscriptions/invoice/${historyId}`,
+      {
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Invoice download failed");
+    }
+
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(
+      blob
+    );
+
+    const link = document.createElement("a");
+
+    link.href = url;
+
+    link.download = "PropertyHub-Invoice.pdf";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    window.URL.revokeObjectURL(url);
+
+  } catch (error) {
+    console.error(error);
+
+    setToast({
+      show: true,
+      message: "Failed to download invoice.",
+      type: "error",
+    });
+  }
+};
+
   return (
     <>
       <Navbar />
@@ -254,17 +298,31 @@ function SubscriptionHistory() {
 
                   <div>
 
-                    <p className="text-sm text-gray-500">
-                      Payment Method
-                    </p>
+                   <div>
 
-                    <p className="font-semibold text-gray-800 mt-1">
+  <p className="text-sm text-gray-500">
+    Payment Method
+  </p>
 
-                      {item.payment
-                        ? "Online Payment"
-                        : "No Payment"}
+  <p className="font-semibold text-gray-800 mt-1">
 
-                    </p>
+    {item.payment
+      ? "Online Payment"
+      : "No Payment"}
+
+  </p>
+
+
+  <button
+    onClick={() =>
+      downloadInvoice(item._id)
+    }
+    className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition"
+  >
+    Download Invoice
+  </button>
+
+</div>
 
                   </div>
 
