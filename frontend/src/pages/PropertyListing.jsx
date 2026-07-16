@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import BackButton from "../components/common/BackButton";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
@@ -11,20 +12,19 @@ function PropertyListing({
 }) {
   const [properties, setProperties] = useState([]);
   const [totalProperties, setTotalProperties] =
-  useState(0);
+    useState(0);
   const [totalPages, setTotalPages] =
-  useState(1);
+    useState(1);
   const [loading, setLoading] = useState(true);
   const [wishlistIds, setWishlistIds] =
-  useState([]);
+    useState([]);
 
-const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const city = searchParams.get("city");
 
   const locality =
-   searchParams.get("locality");
+    searchParams.get("locality");
 
   const propertyType =
     searchParams.get("propertyType") ||
@@ -40,40 +40,40 @@ const [searchParams, setSearchParams] = useSearchParams();
     searchParams.get("maxPrice");
 
   const page =
-  Number(searchParams.get("page")) || 1;
+    Number(searchParams.get("page")) || 1;
 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
         setLoading(true);
 
-      const params = new URLSearchParams();
+        const params = new URLSearchParams();
 
-params.append("page", page);
-params.append("limit", 9);
+        params.append("page", page);
+        params.append("limit", 9);
 
-if (city) params.append("city", city);
-if (locality)
-  params.append("locality", locality);
-if (propertyType)
-  params.append("propertyType", propertyType);
-if (listingType)
-  params.append("listingType", listingType);
-if (minPrice)
-  params.append("minPrice", minPrice);
-if (maxPrice)
-  params.append("maxPrice", maxPrice);
+        if (city) params.append("city", city);
+        if (locality)
+          params.append("locality", locality);
+        if (propertyType)
+          params.append("propertyType", propertyType);
+        if (listingType)
+          params.append("listingType", listingType);
+        if (minPrice)
+          params.append("minPrice", minPrice);
+        if (maxPrice)
+          params.append("maxPrice", maxPrice);
 
-const response = await fetch(
-  `http://localhost:5000/api/properties?${params.toString()}`
-);
+        const response = await fetch(
+          `http://localhost:5000/api/properties?${params.toString()}`
+        );
 
-const data = await response.json();
+        const data = await response.json();
 
-if (data.success) {
-  setProperties(data.properties);
-   setTotalProperties(data.totalProperties);
-  setTotalPages(data.totalPages);
+        if (data.success) {
+          setProperties(data.properties);
+          setTotalProperties(data.totalProperties);
+          setTotalPages(data.totalPages);
         }
       } catch (error) {
         console.error(
@@ -86,58 +86,55 @@ if (data.success) {
     };
 
     const fetchWishlist = async () => {
-  try {
-    const response = await fetch(
-      "http://localhost:5000/api/wishlist",
-      {
-        credentials: "include",
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/wishlist",
+          {
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        if (data.success) {
+          setWishlistIds(
+            data.wishlist.map(
+              (item) => item.itemId?._id
+            )
+          );
+        }
+      } catch (error) {
+        console.error(error);
       }
-    );
+    };
 
-    if (!response.ok) return;
-
-    const data = await response.json();
-
-    if (data.success) {
-      setWishlistIds(
-        data.wishlist.map(
-          (item) => item.itemId?._id
-        )
-      );
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-fetchProperties();
-fetchWishlist();
-  },[
-  city,
-  locality,
-  propertyType,
-  listingType,
-  minPrice,
-  maxPrice,
-  page,
-]);
+    fetchProperties();
+    fetchWishlist();
+  }, [
+    city,
+    locality,
+    propertyType,
+    listingType,
+    minPrice,
+    maxPrice,
+    page,
+  ]);
 
   return (
     <>
-    <Navbar
-  setShowLoginModal={
-    setShowLoginModal
-  }
-/>
+      <Navbar
+        setShowLoginModal={
+          setShowLoginModal
+        }
+      />
 
       <section className="max-w-7xl mx-auto px-6 py-10">
 
-        <button
-          onClick={() => navigate(-1)}
-          className="mb-6 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg font-medium transition"
-        >
-          ← Back
-        </button>
+        <div className="mb-6">
+          <BackButton />
+        </div>
 
         <h1 className="text-4xl font-bold">
           All Properties
@@ -155,49 +152,47 @@ fetchWishlist();
           listingType ||
           minPrice ||
           maxPrice) && (
-          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
 
-            {city && (
-              <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full">
-                📍 {city}
-              </span>
-            )}
+              {city && (
+                <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full">
+                  📍 {city}
+                </span>
+              )}
 
-            {locality && (
-              <span className="bg-orange-100 text-orange-700 px-4 py-2 rounded-full">
-                🏘️ {locality}
-              </span>
-            )}
+              {locality && (
+                <span className="bg-orange-100 text-orange-700 px-4 py-2 rounded-full">
+                  🏘️ {locality}
+                </span>
+              )}
 
-            {propertyType && (
-              <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full">
-                🏠 {propertyType}
-              </span>
-            )}
+              {propertyType && (
+                <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full">
+                  🏠 {propertyType}
+                </span>
+              )}
 
-            {listingType && (
-              <span className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full">
-                📋 {listingType}
-              </span>
-            )}
+              {listingType && (
+                <span className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full">
+                  📋 {listingType}
+                </span>
+              )}
 
-            {(minPrice || maxPrice) && (
-              <span className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full">
-                💰 Price Filter Applied
-              </span>
-            )}
+              {(minPrice || maxPrice) && (
+                <span className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full">
+                  💰 Price Filter Applied
+                </span>
+              )}
 
-            <button
-              onClick={() =>
-                navigate("/properties")
-              }
-              className="bg-red-100 text-red-600 px-4 py-2 rounded-full hover:bg-red-200 transition"
-            >
-              Clear Filters
-            </button>
+              <button
+                onClick={() => setSearchParams({})}
+                className="bg-red-100 text-red-600 px-4 py-2 rounded-full hover:bg-red-200 transition"
+              >
+                Clear Filters
+              </button>
 
-          </div>
-        )}
+            </div>
+          )}
 
         {loading ? (
           <p className="mt-10 text-center text-gray-500">
@@ -222,54 +217,54 @@ fetchWishlist();
         ) : (
           <>
             <p className="mt-6 text-gray-600 font-medium">
-  Showing {properties.length} of {totalProperties} Properties
-</p>
+              Showing {properties.length} of {totalProperties} Properties
+            </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
 
-  {properties.map((property) => (
-  <PropertyCard
-  key={property._id}
-  property={property}
-  wishlistIds={wishlistIds}
-/>
-  ))}
+              {properties.map((property) => (
+                <PropertyCard
+                  key={property._id}
+                  property={property}
+                  wishlistIds={wishlistIds}
+                />
+              ))}
 
-</div>
+            </div>
 
-<div className="flex justify-center items-center gap-3 mt-10">
+            <div className="flex justify-center items-center gap-3 mt-10">
 
-  <button
-    disabled={page === 1}
-    onClick={() => {
-      const params = new URLSearchParams(searchParams);
-      params.set("page", page - 1);
-      setSearchParams(params);
-    }}
-    className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 cursor-pointer"
-  >
-    Previous
-  </button>
+              <button
+                disabled={page === 1}
+                onClick={() => {
+                  const params = new URLSearchParams(searchParams);
+                  params.set("page", page - 1);
+                  setSearchParams(params);
+                }}
+                className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 cursor-pointer"
+              >
+                Previous
+              </button>
 
-  <span className="font-medium">
-    Page {page} of {totalPages}
-  </span>
+              <span className="font-medium">
+                Page {page} of {totalPages}
+              </span>
 
-  <button
-    disabled={page === totalPages}
-    onClick={() => {
-      const params = new URLSearchParams(searchParams);
-      params.set("page", page + 1);
-      setSearchParams(params);
-    }}
-    className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
-  >
-    Next
-  </button>
+              <button
+                disabled={page === totalPages}
+                onClick={() => {
+                  const params = new URLSearchParams(searchParams);
+                  params.set("page", page + 1);
+                  setSearchParams(params);
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
+              >
+                Next
+              </button>
 
-</div>
+            </div>
 
-</>
+          </>
         )}
 
       </section>
