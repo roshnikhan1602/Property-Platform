@@ -7,6 +7,7 @@ const {
   getCurrentSubscription,
   downgradeSubscription,
   getSubscriptionHistory,
+  downloadInvoice,
 } = require("../controllers/subscriptionController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -31,4 +32,9 @@ router.put(
   downgradeSubscription
 );
 
+router.get(
+  "/invoice/:historyId",
+  authMiddleware,
+  downloadInvoice
+);
 module.exports = router;

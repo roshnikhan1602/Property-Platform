@@ -2,6 +2,9 @@ const Subscription = require("../models/Subscription");
 const SubscriptionHistory = require("../models/SubscriptionHistory");
 const Property = require("../models/Property");
 const PG = require("../models/PG");
+const PDFDocument = require("pdfkit");
+const User = require("../models/User");
+const path = require("path");
 
 const plans = [
   {
@@ -103,6 +106,26 @@ const downgradeSubscription = async (
 ) => {
   try {
     const { plan } = req.body;
+
+    // Prevent paid users from switching to Free plan
+const currentSubscription =
+  await Subscription.findOne({
+    user: req.user.id,
+    status: "Active",
+  });
+
+
+if (
+  currentSubscription &&
+  currentSubscription.plan !== "Free" &&
+  plan === "Free"
+) {
+  return res.status(400).json({
+    success: false,
+    message:
+      "Paid subscriptions cannot be downgraded to Free plan.",
+  });
+}
 
     const selectedPlan = plans.find(
       (p) => p.name === plan
@@ -227,9 +250,419 @@ const getSubscriptionHistory =
     }
   };
 
+const downloadInvoice = async (req, res) => {
+  try {
+    const history =
+      await SubscriptionHistory.findOne({
+        _id: req.params.historyId,
+        user: req.user.id,
+      }).populate("payment");
+
+    if (!history) {
+      return res.status(404).json({
+        success: false,
+        message: "Invoice not found",
+      });
+    }
+
+    const user = await User.findById(req.user.id);
+
+    const invoiceId = "INV-" + Date.now();
+
+    res.setHeader(
+      "Content-Type",
+      "application/pdf"
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=${invoiceId}.pdf`
+    );
+
+
+    const doc = new PDFDocument({
+      size: "A4",
+      margin: 50,
+    });
+
+
+    doc.pipe(res);
+
+
+    const logoPath = path.join(
+      __dirname,
+      "../assets/propertyhub-logo.png"
+    );
+
+
+    // ================= HEADER =================
+
+    doc.image(
+      logoPath,
+      50,
+      45,
+      {
+        width: 150,
+      }
+    );
+
+
+    doc
+      .fontSize(11)
+      .font("Helvetica-Bold")
+      .text(
+        "PropertyHub Technologies",
+        350,
+        55,
+        {
+          width:200,
+          align:"right",
+        }
+      );
+
+
+    doc
+      .fontSize(9)
+      .font("Helvetica")
+      .text(
+        "Bangalore, Karnataka, India",
+        350,
+        72,
+        {
+          width:200,
+          align:"right",
+        }
+      )
+      .text(
+        "support@propertyhub.com",
+        350,
+        87,
+        {
+          width:200,
+          align:"right",
+        }
+      )
+      .text(
+        "+91 8310714096",
+        350,
+        102,
+        {
+          width:200,
+          align:"right",
+        }
+      );
+
+
+
+    // ================= TITLE =================
+
+
+    doc
+      .fontSize(24)
+      .font("Helvetica-Bold")
+      .text(
+        "INVOICE",
+        50,
+        160,
+        {
+          width:500,
+          align:"center",
+        }
+      );
+
+
+
+    // ================= INVOICE INFO =================
+
+
+    doc
+      .fontSize(10)
+      .font("Helvetica")
+      .text(
+        `Invoice Number : ${invoiceId}`,
+        50,
+        210
+      )
+      .text(
+        `Invoice Date : ${
+          new Date(
+            history.createdAt
+          ).toLocaleDateString("en-IN")
+        }`,
+        50,
+        225
+      );
+
+
+
+    // ================= BILL TO =================
+
+
+    doc
+      .fontSize(13)
+      .font("Helvetica-Bold")
+      .text(
+        "BILL TO",
+        50,
+        260
+      );
+
+
+    doc
+      .fontSize(10)
+      .font("Helvetica")
+      .text(
+        `Name : ${user.name || "Customer"}`,
+        50,
+        285
+      )
+      .text(
+        `Email : ${
+          user.email || "Not Available"
+        }`,
+        50,
+        300
+      )
+      .text(
+        `Mobile : ${
+          user.mobileNumber || "Not Available"
+        }`,
+        50,
+        315
+      );
+
+
+
+    // ================= SUBSCRIPTION TABLE =================
+
+
+    const tableY = 350;
+
+
+    doc
+      .fontSize(13)
+      .font("Helvetica-Bold")
+      .text(
+        "SUBSCRIPTION DETAILS",
+        50,
+        330
+      );
+
+
+    doc
+      .rect(
+        50,
+        tableY,
+        500,
+        30
+      )
+      .stroke();
+
+
+    doc
+      .fontSize(10)
+      .font("Helvetica-Bold")
+      .text(
+        "Description",
+        60,
+        tableY + 10
+      )
+      .text(
+        "Plan",
+        280,
+        tableY + 10
+      )
+      .text(
+        "Amount",
+        450,
+        tableY + 10
+      );
+
+
+    doc
+      .moveTo(
+        50,
+        tableY + 30
+      )
+      .lineTo(
+        550,
+        tableY + 30
+      )
+      .stroke();
+
+
+    doc
+      .font("Helvetica")
+      .text(
+        "PropertyHub Subscription",
+        60,
+        tableY + 45
+      )
+      .text(
+        history.newPlan,
+        280,
+        tableY + 45
+      )
+      .text(
+        `₹${Number(
+          history.amount
+        ).toLocaleString("en-IN")}`,
+        450,
+        tableY + 45
+      );
+
+
+
+    // ================= TOTAL =================
+
+
+    doc
+      .fontSize(11)
+      .font("Helvetica")
+      .text(
+        "Sub Total:",
+        360,
+        450
+      )
+      .text(
+        `₹${Number(
+          history.amount
+        ).toLocaleString("en-IN")}`,
+        480,
+        450
+      );
+
+
+    doc
+      .text(
+        "GST:",
+        360,
+        470
+      )
+      .text(
+        "₹0",
+        480,
+        470
+      );
+
+
+    doc
+      .fontSize(13)
+      .font("Helvetica-Bold")
+      .text(
+        "TOTAL:",
+        360,
+        500
+      )
+      .text(
+        `₹${Number(
+          history.amount
+        ).toLocaleString("en-IN")}`,
+        480,
+        500
+      );
+
+
+
+    // ================= PAYMENT DETAILS =================
+
+
+    doc
+      .fontSize(13)
+      .font("Helvetica-Bold")
+      .text(
+        "PAYMENT DETAILS",
+        50,
+        560
+      );
+
+
+    doc
+      .fontSize(10)
+      .font("Helvetica")
+      .text(
+        `Payment ID : ${
+          history.payment?.razorpayPaymentId || "N/A"
+        }`,
+        50,
+        585
+      )
+      .text(
+        `Payment Status : ${
+          history.payment?.status || "Success"
+        }`,
+        50,
+        600
+      )
+      .text(
+        "Payment Method : Razorpay Online Payment",
+        50,
+        615
+      )
+      .text(
+        `Payment Date : ${
+          history.payment
+          ? new Date(
+              history.payment.createdAt
+            ).toLocaleDateString("en-IN")
+          : "-"
+        }`,
+        50,
+        630
+      );
+
+
+
+    // ================= FOOTER =================
+
+
+    doc
+      .fontSize(11)
+      .font("Helvetica-Bold")
+      .text(
+        "Thank you for choosing PropertyHub",
+        50,
+        750,
+        {
+          width:500,
+          align:"center",
+        }
+      );
+
+
+    doc
+      .fontSize(9)
+      .font("Helvetica")
+      .text(
+        "This is a computer generated invoice and does not require signature.",
+        50,
+        765,
+        {
+          width:500,
+          align:"center",
+        }
+      );
+
+
+    doc.end();
+
+
+  } catch(error){
+
+    console.error(error);
+
+    res.status(500).json({
+      success:false,
+      message:"Failed to generate invoice",
+    });
+
+  }
+};
+
 module.exports = {
   getPlans,
   getCurrentSubscription,
   downgradeSubscription,
   getSubscriptionHistory,
+  downloadInvoice,
 };

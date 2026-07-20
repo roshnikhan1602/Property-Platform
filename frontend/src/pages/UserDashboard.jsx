@@ -5,6 +5,7 @@ import {
   FaHistory,
   FaBuilding,
   FaUserCircle,
+  FaCrown,
 } from "react-icons/fa";
 
 import Navbar from "../components/layout/Navbar";

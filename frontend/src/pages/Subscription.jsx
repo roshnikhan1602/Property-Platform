@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
@@ -6,7 +7,9 @@ import PlanCard from "../components/subscription/PlanCard";
 import Toast from "../components/common/Toast";
 
 function Subscription() {
+  const location = useLocation();
   const [plans, setPlans] = useState([]);
+
   const [currentPlan, setCurrentPlan] =
     useState(null);
 
@@ -21,9 +24,19 @@ function Subscription() {
     });
 
   useEffect(() => {
-    fetchPlans();
-    fetchCurrentPlan();
-  }, []);
+  fetchPlans();
+  fetchCurrentPlan();
+
+  if (location.state?.message) {
+    setToast({
+      show: true,
+      message: location.state.message,
+      type: "error",
+    });
+
+    window.history.replaceState({}, document.title);
+  }
+}, []);
 
   const fetchPlans = async () => {
     try {

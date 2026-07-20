@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   FaBars,
@@ -15,6 +15,7 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
 function OwnerDashboard() {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -110,6 +111,40 @@ if (subscriptionData.success) {
     }
   };
 
+  const handleAddProperty = () => {
+  if (subscription?.status === "Expired") {
+    navigate("/subscription", {
+      state: {
+        message:
+          subscription.plan === "Free"
+            ? "Your free trial has ended. Purchase Premium or Elite plan to continue posting."
+            : "Your subscription has expired. Renew your plan to continue posting.",
+      },
+    });
+
+    return;
+  }
+
+  navigate("/add-property");
+};
+
+
+const handleAddPG = () => {
+  if (subscription?.status === "Expired") {
+    navigate("/subscription", {
+      state: {
+        message:
+          subscription.plan === "Free"
+            ? "Your free trial has ended. Purchase Premium or Elite plan to continue posting."
+            : "Your subscription has expired. Renew your plan to continue posting.",
+      },
+    });
+
+    return;
+  }
+
+  navigate("/add-pg");
+};
   return (
     <>
       <Navbar sidebarOpen={sidebarOpen} />
@@ -160,10 +195,10 @@ if (subscriptionData.success) {
             </span>
           </Link>
 
-          <Link
-            to="/add-property"
-            className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-green-100 hover:text-green-600 transition-all"
-          >
+         <button
+  onClick={handleAddProperty}
+  className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-green-100 hover:text-green-600 transition-all w-full"
+>
             <FaPlusCircle className="min-w-[22px]" />
 
             <span
@@ -173,12 +208,12 @@ if (subscriptionData.success) {
             >
               Add Property
             </span>
-          </Link>
+         </button>
 
-          <Link
-            to="/add-pg"
-            className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-indigo-100 hover:text-indigo-600 transition-all"
-          >
+          <button
+  onClick={handleAddPG}
+  className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-indigo-100 hover:text-indigo-600 transition-all w-full"
+>
             <FaPlusCircle className="min-w-[22px]" />
 
             <span
@@ -188,7 +223,7 @@ if (subscriptionData.success) {
             >
               Add PG
             </span>
-          </Link>
+         </button>
 
           <Link
             to="/wishlist"
@@ -267,19 +302,29 @@ if (subscriptionData.success) {
       )}
 
     {subscription.status === "Expired" && (
-      <div className="mb-8 bg-red-100 border border-red-300 text-red-700 rounded-xl p-4 flex justify-between items-center">
-        <span>
-          🚫 Your subscription has expired. Renew your plan to continue adding new Properties and PGs and restore owner contact visibility.
-        </span>
+  <div className="mb-8 bg-red-100 border border-red-300 text-red-700 rounded-xl p-4 flex justify-between items-center">
+    <span>
+      {subscription.plan === "Free" ? (
+        <>
+          🚫 Your free trial has ended. Upgrade to <strong>Premium</strong> or <strong>Elite</strong> to continue adding Properties & PGs and unlock owner contact details.
+        </>
+      ) : (
+        <>
+          🚫 Your <strong>{subscription.plan}</strong> subscription has expired. Renew your plan to continue adding Properties & PGs and restore owner contact visibility.
+        </>
+      )}
+    </span>
 
-        <Link
-          to="/subscription"
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium"
-        >
-          Renew Plan
-        </Link>
-      </div>
-    )}
+    <Link
+      to="/subscription"
+      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium"
+    >
+      {subscription.plan === "Free"
+        ? "Upgrade Now"
+        : "Renew Plan"}
+    </Link>
+  </div>
+)}
   </>
 )}
 

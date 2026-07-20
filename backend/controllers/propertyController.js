@@ -1,6 +1,7 @@
 const Property = require("../models/Property");
 const User = require("../models/User");
-
+const sendEmail = require("../utils/sendEmail");
+const welcomeOwnerEmail = require("../templates/welcomeOwnerEmail");
 const Notification = require("../models/Notification");
 
 const Subscription = require("../models/Subscription");
@@ -122,9 +123,19 @@ for (const admin of admins) {
       );
 
     if (user && user.role === "user") {
-      user.role = "owner";
-      await user.save();
-    }
+  user.role = "owner";
+  await user.save();
+
+
+  // Send owner welcome email
+  if (user.email) {
+    await sendEmail(
+      user.email,
+      "Welcome to PropertyHub as an Owner 🚀",
+      welcomeOwnerEmail(user.name)
+    );
+  }
+}
 
     res.status(201).json({
       success: true,
@@ -196,9 +207,7 @@ const getAllProperties = async (req, res) => {
       }
     }
 
-    const totalProperties = await Property.countDocuments(filters);
-
-    const properties = await Property.find(filters)
+let properties = await Property.find(filters)
   .sort({
     createdAt: -1,
     _id: -1,
@@ -206,9 +215,28 @@ const getAllProperties = async (req, res) => {
   .skip(skip)
   .limit(limit);
 
+const filteredProperties = [];
+
+for (const property of properties) {
+  const subscription =
+    await Subscription.findOne({
+      user: property.owner,
+    }).sort({ createdAt: -1 });
+
+  if (
+    subscription &&
+    subscription.status === "Expired"
+  ) {
+    continue;
+  }
+
+  filteredProperties.push(property);
+}
+
+const totalProperties = filteredProperties.length;
     res.status(200).json({
       success: true,
-      properties,
+      properties: filteredProperties,
       currentPage: page,
       totalPages: Math.ceil(totalProperties / limit),
       totalProperties,
@@ -273,22 +301,25 @@ const latestSubscription =
   }).sort({ createdAt: -1 });
 
 let contactAvailable = true;
+let listingAvailable = true;
 
 if (
   latestSubscription &&
   latestSubscription.status === "Expired"
 ) {
   contactAvailable = false;
+  listingAvailable = false;
 
   propertyData.ownerPhone = "";
   propertyData.ownerEmail = "";
 }
 
-    res.status(200).json({
-      success: true,
-      contactAvailable,
-      property: propertyData,
-    });
+   res.status(200).json({
+  success: true,
+  contactAvailable,
+  listingAvailable,
+  property: propertyData,
+});
   } catch (error) {
     console.error(error);
 

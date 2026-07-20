@@ -51,6 +51,7 @@ function PropertyDetails({
   const location = useLocation();
   const [property, setProperty] = useState(null);
   const [contactAvailable, setContactAvailable] = useState(true);
+  const [listingAvailable, setListingAvailable] = useState(true);
   const [selectedImage, setSelectedImage] = useState("");
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
@@ -266,6 +267,7 @@ function PropertyDetails({
 
         const data = await response.json();
 
+<<<<<<< HEAD
         if (data.success) {
           setProperty(data.property);
 
@@ -279,6 +281,16 @@ function PropertyDetails({
           setContactAvailable(
             data.contactAvailable ?? true
           );
+=======
+      if (data.success) {
+  setProperty(data.property);
+  setContactAvailable(
+  data.contactAvailable ?? true
+);
+setListingAvailable(
+  data.listingAvailable ?? true
+);
+>>>>>>> d349d888879405c0e6aed6a472f92e5ec597a491
           if (
             data.property.images &&
             data.property.images.length > 0
@@ -354,6 +366,53 @@ function PropertyDetails({
       </>
     );
   }
+
+if (
+  property &&
+  !listingAvailable
+) {
+  return (
+    <>
+      <Navbar
+        setShowLoginModal={
+          setShowLoginModal
+        }
+      />
+
+      <div className="max-w-3xl mx-auto py-24 px-6">
+        <div className="bg-white rounded-2xl shadow-lg border text-center p-10">
+          <div className="text-6xl mb-5">
+            🔒
+          </div>
+
+          <h2 className="text-3xl font-bold text-gray-800">
+            Listing Temporarily Unavailable
+          </h2>
+
+          <p className="text-gray-600 mt-5">
+            This property is currently
+            unavailable because the owner's
+            subscription has expired.
+          </p>
+
+          <p className="text-gray-600 mt-2">
+            Please check back once the owner
+            renews the subscription.
+          </p>
+
+          <button
+            onClick={() => navigate(-1)}
+            className="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+          >
+            Back to Properties
+          </button>
+        </div>
+      </div>
+
+      <Footer />
+    </>
+  );
+}
 
   if (!property) {
     return (

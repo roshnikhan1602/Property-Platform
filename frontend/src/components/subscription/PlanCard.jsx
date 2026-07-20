@@ -34,6 +34,25 @@ const isDowngrade =
   planPrices[plan.name] <
     planPrices[currentPlan.plan];
 
+    const isExpired =
+  currentPlan?.status === "Expired";
+
+const disableFreePlan =
+  currentPlan &&
+  currentPlan.plan !== "Free" &&
+  plan.name === "Free";
+
+const disableExpiredFree =
+  isExpired &&
+  currentPlan?.plan === "Free" &&
+  plan.name === "Free";
+
+const disableButton =
+  loading ||
+  (isCurrentPlan && !isExpired) ||
+  disableFreePlan ||
+  disableExpiredFree;
+
 const handlePayment = async () => {
   try {
     setLoading(true);
@@ -251,32 +270,25 @@ if (isDowngrade) {
           )}
         </div>
 
-        <button
-         disabled={
-  (isCurrentPlan &&
-    currentPlan?.status !== "Expired") ||
-  loading
-}
-          onClick={
-            handlePayment
-          }
-          className={`w-full mt-10 py-3 rounded-xl font-semibold transition ${
-            isCurrentPlan
-              ? "bg-gray-300 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
-          }`}
-        >
-         {loading
+      <button
+  disabled={disableButton}
+  onClick={handlePayment}
+  className={`w-full mt-10 py-3 rounded-xl font-semibold transition ${
+    disableButton
+      ? "bg-gray-300 cursor-not-allowed"
+      : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+  }`}
+>
+       {loading
   ? "Processing..."
+  : disableExpiredFree
+  ? "Free Trial Ended"
+  : disableFreePlan
+  ? "Not Available"
   : isCurrentPlan
-  ? currentPlan?.status === "Expired"
+  ? isExpired
     ? "Renew Plan"
     : "Current Plan"
-  : plan.price === 0
-  ? "Free Plan"
-  : currentPlan?.status === "Expired" &&
-    currentPlan?.plan === plan.name
-  ? "Renew Now"
   : "Buy Now"}
         </button>
       </div>

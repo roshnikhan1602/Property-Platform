@@ -4,6 +4,9 @@ const razorpay = require("../config/razorpay");
 const Payment = require("../models/Payment");
 const Subscription = require("../models/Subscription");
 const SubscriptionHistory = require("../models/SubscriptionHistory");
+const User = require("../models/User");
+const sendEmail = require("../utils/sendEmail");
+const subscriptionSuccessEmail = require("../templates/subscriptionSuccessEmail");
 
 const createOrder = async (req, res) => {
   try {
@@ -152,6 +155,24 @@ const previousPlan =
   payment: payment._id,
 });
 
+// Send subscription activation email
+
+const user = await User.findById(
+  req.user.id
+);
+
+if (user.email) {
+  await sendEmail(
+    user.email,
+    `Your PropertyHub ${plan} Plan is Activated 🎉`,
+    subscriptionSuccessEmail(
+      user.name,
+      plan,
+      amount,
+      endDate
+    )
+  );
+}
     res.json({
       success: true,
       message:

@@ -119,10 +119,11 @@ function Wishlist() {
               return (
                 <div
                   key={item._id}
-                  className={`bg-white rounded-2xl shadow-md overflow-hidden transition duration-300 ${listing.isActive
-                      ? "hover:shadow-xl"
-                      : "border-2 border-red-200 opacity-90"
-                    }`}
+                 className={`bg-white rounded-2xl shadow-md overflow-hidden transition duration-300 ${
+  listing.isActive && listing.listingAvailable
+    ? "hover:shadow-xl"
+    : "border-2 border-red-200 opacity-90"
+}`}
                 >
 
                   <div className="h-56 overflow-hidden">
@@ -164,7 +165,8 @@ function Wishlist() {
                     </p>
 
                     <div className="mt-3 h-24">
-                      {listing.isActive ? (
+                      {listing.isActive &&
+listing.listingAvailable ? (
                         <div className="bg-green-50 border border-green-200 rounded-lg p-3 h-full">
                           <p className="text-green-600 font-semibold">
                             🟢 Available
@@ -176,13 +178,15 @@ function Wishlist() {
                         </div>
                       ) : (
                         <div className="bg-red-50 border border-red-200 rounded-lg p-3 h-full">
-                          <p className="text-red-600 font-semibold">
-                            🔴 Currently Unavailable
-                          </p>
+                         <p className="text-red-600 font-semibold">
+  🔒 Listing Unavailable
+</p>
 
-                          <p className="text-sm text-gray-600 mt-1">
-                            Reason: {listing.deactivationReason}
-                          </p>
+<p className="text-sm text-gray-600 mt-1">
+  {listing.listingAvailable
+    ? `Reason: ${listing.deactivationReason}`
+    : "Owner subscription has expired. The listing will become available once the subscription is renewed."}
+</p>
                         </div>
                       )}
                     </div>
@@ -199,25 +203,32 @@ function Wishlist() {
 
                     <div className="grid grid-cols-2 gap-3 mt-6">
 
-                      <button
-                        disabled={!listing.isActive}
-                        onClick={() =>
-                          listing.isActive &&
-                          navigate(
-                            item.itemType === "Property"
-                              ? `/properties/${listing._id}`
-                              : `/pgs/${listing._id}`
-                          )
-                        }
-                        className={`py-3 rounded-xl transition ${listing.isActive
-                            ? "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
-                            : "bg-gray-300 text-gray-600 cursor-not-allowed"
-                          }`}
-                      >
-                        {listing.isActive
-                          ? "View"
-                          : "Unavailable"}
-                      </button>
+                     <button
+  disabled={
+    !listing.isActive ||
+    !listing.listingAvailable
+  }
+  onClick={() =>
+    listing.isActive &&
+    listing.listingAvailable &&
+    navigate(
+      item.itemType === "Property"
+        ? `/properties/${listing._id}`
+        : `/pgs/${listing._id}`
+    )
+  }
+  className={`py-3 rounded-xl transition ${
+    listing.isActive &&
+    listing.listingAvailable
+      ? "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
+      : "bg-gray-300 text-gray-600 cursor-not-allowed"
+  }`}
+>
+  {listing.isActive &&
+  listing.listingAvailable
+    ? "View"
+    : "Unavailable"}
+</button>
 
                       <button
                         onClick={() =>
