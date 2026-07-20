@@ -1,4 +1,5 @@
 const Wishlist = require("../models/wishlistModel");
+const User = require("../models/User");
 
 const addToWishlist = async (req, res) => {
   try {
@@ -111,8 +112,54 @@ const removeFromWishlist = async (req, res) => {
   }
 };
 
+const getInterestedUsers = async (req, res) => {
+  try {
+    const { propertyId } = req.params;
+
+    const wishlist = await Wishlist.find({
+      itemId: propertyId,
+      itemType: "Property",
+    }).sort({ createdAt: -1 });
+
+    const users = await Promise.all(
+      wishlist.map(async (item) => {
+        const user = await User.findById(item.userId).select(
+          "name email mobileNumber profileImage"
+        );
+
+        if (!user) return null;
+
+        return {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          mobileNumber: user.mobileNumber,
+          profileImage: user.profileImage,
+          wishlistedAt: item.createdAt,
+        };
+      })
+    );
+
+    const filteredUsers = users.filter(Boolean);
+
+    res.status(200).json({
+      success: true,
+      count: filteredUsers.length,
+      users: filteredUsers,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
 module.exports = {
   addToWishlist,
   getWishlist,
   removeFromWishlist,
+  getInterestedUsers,
 };

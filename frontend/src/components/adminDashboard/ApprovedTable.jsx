@@ -1,6 +1,9 @@
+import { useMemo, useState } from "react";
+
 function ApprovedTable({
   approvedView,
   setApprovedView,
+  approvedData,
   paginatedApproved,
   approvedPage,
   approvedTotalPages,
@@ -12,6 +15,86 @@ function ApprovedTable({
   handleDelete,
   handleDeletePG,
 }) {
+  const [search, setSearch] = useState("");
+  const [cityFilter, setCityFilter] =
+    useState("All");
+  const [sortBy, setSortBy] =
+    useState("Newest");
+
+  const cities = useMemo(() => {
+    const cityList = [
+      ...new Set(
+        approvedData
+          .map((item) => item.city)
+          .filter(Boolean)
+      ),
+    ];
+
+    return cityList.sort();
+  }, [approvedData]);
+
+  const filteredApproved = useMemo(() => {
+    let data = [...approvedData];
+
+    if (search.trim()) {
+      data = data.filter((item) =>
+        item.title
+          ?.toLowerCase()
+          .includes(search.toLowerCase())
+      );
+    }
+
+    if (cityFilter !== "All") {
+      data = data.filter(
+        (item) => item.city === cityFilter
+      );
+    }
+
+    switch (sortBy) {
+      case "Newest":
+        data.sort(
+          (a, b) =>
+            new Date(b.createdAt) -
+            new Date(a.createdAt)
+        );
+        break;
+
+      case "Oldest":
+        data.sort(
+          (a, b) =>
+            new Date(a.createdAt) -
+            new Date(b.createdAt)
+        );
+        break;
+
+      case "Most Views":
+        data.sort(
+          (a, b) =>
+            (b.views || 0) -
+            (a.views || 0)
+        );
+        break;
+
+      case "Least Views":
+        data.sort(
+          (a, b) =>
+            (a.views || 0) -
+            (b.views || 0)
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    return data;
+  }, [
+    paginatedApproved,
+    search,
+    cityFilter,
+    sortBy,
+  ]);
+
   return (
     <>
       <div className="flex gap-3 mb-5">
@@ -19,11 +102,10 @@ function ApprovedTable({
           onClick={() =>
             setApprovedView("properties")
           }
-          className={`px-5 py-2 rounded-lg font-medium ${
-            approvedView === "properties"
-              ? "bg-purple-600 text-white"
-              : "bg-gray-200"
-          }`}
+          className={`px-5 py-2 rounded-lg font-medium ${approvedView === "properties"
+            ? "bg-purple-600 text-white"
+            : "bg-gray-200"
+            }`}
         >
           Properties
         </button>
@@ -32,11 +114,10 @@ function ApprovedTable({
           onClick={() =>
             setApprovedView("pgs")
           }
-          className={`px-5 py-2 rounded-lg font-medium ${
-            approvedView === "pgs"
-              ? "bg-purple-600 text-white"
-              : "bg-gray-200"
-          }`}
+          className={`px-5 py-2 rounded-lg font-medium ${approvedView === "pgs"
+            ? "bg-purple-600 text-white"
+            : "bg-gray-200"
+            }`}
         >
           PGs
         </button>
@@ -49,6 +130,69 @@ function ApprovedTable({
               ? "Approved Properties"
               : "Approved PGs"}
           </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <input
+              type="text"
+              placeholder={`Search ${approvedView ===
+                "properties"
+                ? "Property"
+                : "PG"
+                }`}
+              value={search}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
+              className="border rounded-lg px-4 py-2"
+            />
+
+            <select
+              value={cityFilter}
+              onChange={(e) =>
+                setCityFilter(
+                  e.target.value
+                )
+              }
+              className="border rounded-lg px-4 py-2"
+            >
+              <option value="All">
+                All Cities
+              </option>
+
+              {cities.map((city) => (
+                <option
+                  key={city}
+                  value={city}
+                >
+                  {city}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={sortBy}
+              onChange={(e) =>
+                setSortBy(e.target.value)
+              }
+              className="border rounded-lg px-4 py-2"
+            >
+              <option>
+                Newest
+              </option>
+
+              <option>
+                Oldest
+              </option>
+
+              <option>
+                Most Views
+              </option>
+
+              <option>
+                Least Views
+              </option>
+            </select>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -56,7 +200,8 @@ function ApprovedTable({
             <thead className="bg-gray-50">
               <tr>
                 <th className="text-left px-6 py-4">
-                  {approvedView === "properties"
+                  {approvedView ===
+                    "properties"
                     ? "Property"
                     : "PG"}
                 </th>
@@ -76,82 +221,95 @@ function ApprovedTable({
             </thead>
 
             <tbody>
-              {paginatedApproved.map((item) => (
-                <tr
-                  key={item._id}
-                  className="border-t hover:bg-gray-50"
-                >
-                  <td className="px-6 py-4 font-semibold">
-                    {item.title}
-                  </td>
+              {filteredApproved.map(
+                (item) => (
+                  <tr
+                    key={item._id}
+                    className="border-t hover:bg-gray-50"
+                  >
+                    <td className="px-6 py-4 font-semibold">
+                      {item.title}
+                    </td>
 
-                  <td className="px-6 py-4">
-                    {item.city}
-                  </td>
+                    <td className="px-6 py-4">
+                      {item.city}
+                    </td>
 
-                  <td className="px-6 py-4">
-                    {item.views || 0}
-                  </td>
+                    <td className="px-6 py-4">
+                      {item.views || 0}
+                    </td>
 
-                  <td className="px-6 py-4">
-                    <div className="flex justify-center gap-2">
-                      <button
-                        onClick={() =>
-                          navigate(
+                    <td className="px-6 py-4">
+                      <div className="flex justify-center gap-2">
+                        <button
+                          onClick={() =>
+                            navigate(
+                              approvedView ===
+                                "properties"
+                                ? `/properties/${item._id}`
+                                : `/pgs/${item._id}`,
+                              {
+                                state: {
+                                  fromAdmin: true,
+                                  activeTab,
+                                  approvedView,
+                                  page: approvedPage,
+                                },
+                              }
+                            )
+                          }
+                          className="bg-blue-600 text-white px-3 py-2 rounded-lg"
+                        >
+                          View
+                        </button>
+
+                        <button
+                          onClick={() =>
                             approvedView ===
                               "properties"
-                              ? `/properties/${item._id}`
-                              : `/pgs/${item._id}`,
-                            {
-                              state: {
-                                fromAdmin: true,
-                                activeTab,
-                                approvedView,
-                                page: approvedPage,
-                              },
-                            }
-                          )
-                        }
-                        className="bg-blue-600 text-white px-3 py-2 rounded-lg"
-                      >
-                        View
-                      </button>
+                              ? handleDisapprove(
+                                item._id
+                              )
+                              : handleDisapprovePG(
+                                item._id
+                              )
+                          }
+                          className="bg-yellow-500 text-white px-3 py-2 rounded-lg"
+                        >
+                          Disapprove
+                        </button>
 
-                      <button
-                        onClick={() =>
-                          approvedView ===
-                          "properties"
-                            ? handleDisapprove(
+                        <button
+                          onClick={() =>
+                            approvedView ===
+                              "properties"
+                              ? handleDelete(
                                 item._id
                               )
-                            : handleDisapprovePG(
+                              : handleDeletePG(
                                 item._id
                               )
-                        }
-                        className="bg-yellow-500 text-white px-3 py-2 rounded-lg"
-                      >
-                        Disapprove
-                      </button>
+                          }
+                          className="bg-red-600 text-white px-3 py-2 rounded-lg"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              )}
 
-                      <button
-                        onClick={() =>
-                          approvedView ===
-                          "properties"
-                            ? handleDelete(
-                                item._id
-                              )
-                            : handleDeletePG(
-                                item._id
-                              )
-                        }
-                        className="bg-red-600 text-white px-3 py-2 rounded-lg"
-                      >
-                        Delete
-                      </button>
-                    </div>
+              {filteredApproved.length === 0 && (
+                <tr>
+                  <td
+                    colSpan="4"
+                    className="text-center py-8 text-gray-500"
+                  >
+                    No records found.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

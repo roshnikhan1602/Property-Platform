@@ -7,6 +7,11 @@ import {
   FaTrash,
   FaEdit,
   FaExternalLinkAlt,
+  FaHeart,
+  FaUsers,
+  FaPhone,
+  FaEnvelope,
+  FaCalendarAlt,
 } from "react-icons/fa";
 
 import Navbar from "../components/layout/Navbar";
@@ -28,23 +33,32 @@ function MyProperties() {
     useState(null);
 
   const [showDeactivateModal, setShowDeactivateModal] =
-  useState(false);
+    useState(false);
 
-const [deactivationReason, setDeactivationReason] =
-  useState("Property Sold");
+  const [deactivationReason, setDeactivationReason] =
+    useState("Property Sold");
+
+  const [showInterestedModal, setShowInterestedModal] =
+    useState(false);
+
+  const [interestedUsers, setInterestedUsers] =
+    useState([]);
+
+  const [loadingInterestedUsers, setLoadingInterestedUsers] =
+    useState(false);
 
   const navigate = useNavigate();
 
- 
+
 
   const fetchMyProperties = async () => {
     try {
-    const response = await fetch(
-  "http://localhost:5000/api/properties/my-properties",
-  {
-    credentials: "include",
-  }
-);
+      const response = await fetch(
+        "http://localhost:5000/api/properties/my-properties",
+        {
+          credentials: "include",
+        }
+      );
 
       const data = await response.json();
 
@@ -62,20 +76,20 @@ const [deactivationReason, setDeactivationReason] =
   };
 
   useEffect(() => {
-  fetchMyProperties();
-}, []);
+    fetchMyProperties();
+  }, []);
 
   const handleDelete = async (id) => {
     setShowDeleteModal(false);
 
     try {
       const response = await fetch(
-  `http://localhost:5000/api/properties/${id}`,
-  {
-    method: "DELETE",
-    credentials: "include",
-  }
-);
+        `http://localhost:5000/api/properties/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
 
 
       const data = await response.json();
@@ -99,15 +113,15 @@ const [deactivationReason, setDeactivationReason] =
           setSuccessMessage("");
         }, 3000);
 
-        
+
 
         // Fetch remaining PGs
         const pgResponse = await fetch(
-  "http://localhost:5000/api/pgs/my-pgs",
-  {
-    credentials: "include",
-  }
-);
+          "http://localhost:5000/api/pgs/my-pgs",
+          {
+            credentials: "include",
+          }
+        );
 
         const pgData =
           await pgResponse.json();
@@ -118,15 +132,15 @@ const [deactivationReason, setDeactivationReason] =
             : 0;
 
         // Downgrade owner only when BOTH properties and PGs are zero
-       if (
-  updatedProperties.length === 0 &&
-  totalPGs === 0
-) {
-  setTimeout(() => {
-    navigate("/user-dashboard");
-    window.location.reload();
-  }, 1000);
-}
+        if (
+          updatedProperties.length === 0 &&
+          totalPGs === 0
+        ) {
+          setTimeout(() => {
+            navigate("/user-dashboard");
+            window.location.reload();
+          }, 1000);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -143,11 +157,11 @@ const [deactivationReason, setDeactivationReason] =
     }
   };
   const handleToggleStatus = async (id) => {
-  try {
-    const response = await fetch(
-      `http://localhost:5000/api/properties/${id}/toggle-status`,
-      {
-        method: "PUT",
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/properties/${id}/toggle-status`,
+        {
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
@@ -155,44 +169,67 @@ const [deactivationReason, setDeactivationReason] =
           body: JSON.stringify({
             deactivationReason,
           }),
-      }
-    );
-
-    const data = await response.json();
-
-    if (data.success) {
-      setProperties((prev) =>
-        prev.map((property) =>
-          property._id === id
-            ? data.property
-            : property
-        )
+        }
       );
 
-      setSuccessMessage(
-        `Property ${
-          data.property.isActive
+      const data = await response.json();
+
+      if (data.success) {
+        setProperties((prev) =>
+          prev.map((property) =>
+            property._id === id
+              ? data.property
+              : property
+          )
+        );
+
+        setSuccessMessage(
+          `Property ${data.property.isActive
             ? "Activated"
             : "Deactivated"
-        } Successfully`
+          } Successfully`
+        );
+
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 3000);
+      }
+    } catch (error) {
+      console.error(error);
+
+      setErrorMessage(
+        "Failed to update property status."
       );
 
       setTimeout(() => {
-        setSuccessMessage("");
+        setErrorMessage("");
       }, 3000);
     }
-  } catch (error) {
-    console.error(error);
+  };
 
-    setErrorMessage(
-      "Failed to update property status."
-    );
+  const fetchInterestedUsers = async (propertyId) => {
+    try {
+      setLoadingInterestedUsers(true);
 
-    setTimeout(() => {
-      setErrorMessage("");
-    }, 3000);
-  }
-};
+      const response = await fetch(
+        `http://localhost:5000/api/wishlist/interested-users/${propertyId}`,
+        {
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setInterestedUsers(data.users);
+        setShowInterestedModal(true);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingInterestedUsers(false);
+    }
+  };
 
   return (
     <>
@@ -288,29 +325,41 @@ const [deactivationReason, setDeactivationReason] =
                     {property.views || 0} Views
                   </p>
 
+                  <p className="text-sm text-pink-600 mt-2 flex items-center gap-2 font-medium">
+                    <FaHeart />
+                    {property.interestedCount || 0} Interested
+                  </p>
+
                 </div>
+
+                <button
+                  onClick={() => fetchInterestedUsers(property._id)}
+                  className="w-full mb-4 bg-pink-100 text-pink-700 py-2 rounded-lg hover:bg-pink-200 transition flex items-center justify-center gap-2"
+                >
+                  <FaUsers />
+                  View Interested Users
+                </button>
 
                 <div className="flex gap-2 mt-5">
 
                   <button
-                      onClick={() => {
-                        if (property.isActive) {
-                          setSelectedPropertyId(property._id);
-                          setShowDeactivateModal(true);
-                        } else {
-                          handleToggleStatus(property._id);
-                        }
-                      }}
-                      className={`flex-1 py-2 rounded-lg text-sm transition cursor-pointer ${
-                        property.isActive
-                          ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
-                          : "bg-green-100 text-green-700 hover:bg-green-200"
+                    onClick={() => {
+                      if (property.isActive) {
+                        setSelectedPropertyId(property._id);
+                        setShowDeactivateModal(true);
+                      } else {
+                        handleToggleStatus(property._id);
+                      }
+                    }}
+                    className={`flex-1 py-2 rounded-lg text-sm transition cursor-pointer ${property.isActive
+                      ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+                      : "bg-green-100 text-green-700 hover:bg-green-200"
                       }`}
-                    >
-                      {property.isActive
-                        ? "Deactivate"
-                        : "Activate"}
-                    </button>
+                  >
+                    {property.isActive
+                      ? "Deactivate"
+                      : "Activate"}
+                  </button>
 
                   <Link
                     to={`/properties/${property._id}`}
@@ -391,60 +440,60 @@ const [deactivationReason, setDeactivationReason] =
       )}
 
       {showDeactivateModal && (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md">
 
-      <h2 className="text-2xl font-bold text-gray-800">
-        Deactivate Property
-      </h2>
+            <h2 className="text-2xl font-bold text-gray-800">
+              Deactivate Property
+            </h2>
 
-      <p className="text-gray-600 mt-2">
-        Please tell us why you're deactivating this property.
-      </p>
+            <p className="text-gray-600 mt-2">
+              Please tell us why you're deactivating this property.
+            </p>
 
-      <select
-        value={deactivationReason}
-        onChange={(e) =>
-          setDeactivationReason(e.target.value)
-        }
-        className="w-full mt-5 border rounded-lg p-3"
-      >
-        <option>Property Sold</option>
-        <option>Property Rented</option>
-        <option>Temporarily Unavailable</option>
-        <option>Under Renovation</option>
-        <option>Owner Not Interested</option>
-        <option>Other</option>
-      </select>
+            <select
+              value={deactivationReason}
+              onChange={(e) =>
+                setDeactivationReason(e.target.value)
+              }
+              className="w-full mt-5 border rounded-lg p-3"
+            >
+              <option>Property Sold</option>
+              <option>Property Rented</option>
+              <option>Temporarily Unavailable</option>
+              <option>Under Renovation</option>
+              <option>Owner Not Interested</option>
+              <option>Other</option>
+            </select>
 
-      <div className="flex justify-end gap-3 mt-6">
+            <div className="flex justify-end gap-3 mt-6">
 
-        <button
-          onClick={() => {
-            setShowDeactivateModal(false);
-            setSelectedPropertyId(null);
-          }}
-          className="px-5 py-2 border rounded-lg hover:bg-gray-100"
-        >
-          Cancel
-        </button>
+              <button
+                onClick={() => {
+                  setShowDeactivateModal(false);
+                  setSelectedPropertyId(null);
+                }}
+                className="px-5 py-2 border rounded-lg hover:bg-gray-100"
+              >
+                Cancel
+              </button>
 
-        <button
-          onClick={() => {
-            handleToggleStatus(selectedPropertyId);
-            setShowDeactivateModal(false);
-            setSelectedPropertyId(null);
-          }}
-          className="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-        >
-          Deactivate
-        </button>
+              <button
+                onClick={() => {
+                  handleToggleStatus(selectedPropertyId);
+                  setShowDeactivateModal(false);
+                  setSelectedPropertyId(null);
+                }}
+                className="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              >
+                Deactivate
+              </button>
 
-      </div>
+            </div>
 
-    </div>
-  </div>
-)}
+          </div>
+        </div>
+      )}
       <Footer />
     </>
   );

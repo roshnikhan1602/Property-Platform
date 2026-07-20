@@ -94,6 +94,50 @@ const propertySchema = new mongoose.Schema(
       lowercase: true,
     },
 
+        highlights: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+
+    facing: {
+      type: String,
+      default: "",
+    },
+
+    parking: {
+      type: String,
+      default: "",
+    },
+
+    availableFrom: {
+      type: String,
+      default: "",
+    },
+
+    floor: {
+      type: Number,
+      default: 0,
+    },
+
+    totalFloors: {
+      type: Number,
+      default: 0,
+    },
+
+    ageOfProperty: {
+      type: String,
+      default: "",
+    },
+
+    amenities: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+
     images: [
       {
         type: String,
