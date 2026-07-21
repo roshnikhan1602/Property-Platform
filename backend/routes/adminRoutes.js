@@ -19,6 +19,9 @@ const {
 
   getDashboardStats,
   getAllSubscriptions,
+
+  exportUsersToExcel,
+  exportPropertiesToExcel,
 } = require("../controllers/adminController");
 
 router.get(
@@ -35,12 +38,22 @@ router.get(
 // User Routes
 router.get("/users", getAllUsers);
 
+router.get(
+  "/export/users",
+  exportUsersToExcel
+);
+
 router.get("/user/:id", getUserById);
 
 router.delete("/user/:id", deleteUser);
 
 // Property Routes
 router.get("/properties", getAllProperties);
+
+router.get(
+  "/export/properties",
+  exportPropertiesToExcel
+);
 
 router.get(
   "/approved-properties",

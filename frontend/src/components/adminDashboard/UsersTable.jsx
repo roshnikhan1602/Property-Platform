@@ -5,6 +5,7 @@ function UsersTable({
   setUserPage,
   handleViewUser,
   handleDeleteUser,
+  handleExportUsers,
 
   userSearch,
   setUserSearch,
@@ -17,11 +18,18 @@ function UsersTable({
 }) {
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-      <div className="p-6 border-b">
-        <h2 className="text-2xl font-bold">
-          All Users
-        </h2>
-      </div>
+     <div className="p-6 border-b flex items-center justify-between">
+  <h2 className="text-2xl font-bold">
+    All Users
+  </h2>
+
+  <button
+    onClick={handleExportUsers}
+    className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-medium transition cursor-pointer"
+  >
+    Export Excel
+  </button>
+</div>
 
       {/* Filters */}
 

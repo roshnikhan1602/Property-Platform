@@ -43,6 +43,18 @@ const subscriptionSchema = new mongoose.Schema(
       enum: ["Active", "Expired"],
       default: "Active",
     },
+
+    // Tracks whether the 7-day reminder email has been sent
+    expiryReminderSent: {
+      type: Boolean,
+      default: false,
+    },
+
+    // Tracks whether the expired subscription email has been sent
+    expiredEmailSent: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

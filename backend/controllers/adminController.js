@@ -5,6 +5,7 @@ const Notification = require("../models/Notification");
 const Subscription = require("../models/Subscription");
 const Payment = require("../models/Payment");
 const SubscriptionHistory = require("../models/SubscriptionHistory");
+const XLSX = require("xlsx");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -549,6 +550,141 @@ await subscription.save();
     });
   }
 };
+
+const exportUsersToExcel = async (req, res) => {
+  try {
+    const users = await User.find().lean();
+
+    const usersWithSubscription = await Promise.all(
+      users.map(async (user) => {
+        const subscription = await Subscription.findOne({
+          user: user._id,
+          status: "Active",
+        });
+
+        return {
+          Name: user.name,
+          Email: user.email || "-",
+          Mobile: user.mobileNumber,
+          Role: user.role,
+          Subscription: subscription
+            ? subscription.plan
+            : "Free",
+          Status: user.isVerified
+            ? "Verified"
+            : "Not Verified",
+          "Joined Date": new Date(
+            user.createdAt
+          ).toLocaleDateString("en-IN"),
+        };
+      })
+    );
+
+    const workbook =
+      XLSX.utils.book_new();
+
+    const worksheet =
+      XLSX.utils.json_to_sheet(
+        usersWithSubscription
+      );
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Users"
+    );
+
+    const buffer = XLSX.write(
+      workbook,
+      {
+        type: "buffer",
+        bookType: "xlsx",
+      }
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="PropertyHub_Users.xlsx"'
+    );
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    res.send(buffer);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message:
+        "Failed to export users.",
+    });
+  }
+};
+
+const exportPropertiesToExcel = async (req, res) => {
+  try {
+    const properties = await Property.find()
+      .populate("owner", "name email mobileNumber")
+      .lean();
+
+    const propertyData = properties.map((property) => ({
+      Title: property.title,
+      Owner: property.owner?.name || "-",
+      Email: property.owner?.email || "-",
+      Mobile: property.owner?.mobileNumber || "-",
+      City: property.city,
+      State: property.state,
+      Type: property.propertyType,
+      Listing: property.listingType,
+      Price: property.price,
+      Status: property.isApproved ? "Approved" : "Pending",
+      Views: property.views || 0,
+      Rating: property.averageRating || 0,
+      "Created On": new Date(
+        property.createdAt
+      ).toLocaleDateString("en-IN"),
+    }));
+
+    const workbook = XLSX.utils.book_new();
+
+    const worksheet =
+      XLSX.utils.json_to_sheet(propertyData);
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Properties"
+    );
+
+    const buffer = XLSX.write(workbook, {
+      type: "buffer",
+      bookType: "xlsx",
+    });
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="PropertyHub_Properties.xlsx"'
+    );
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    res.send(buffer);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to export properties.",
+    });
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -567,4 +703,7 @@ module.exports = {
 
   getDashboardStats,
   getAllSubscriptions,
+
+  exportUsersToExcel,
+exportPropertiesToExcel,
 };

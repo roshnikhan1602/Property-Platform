@@ -11,54 +11,30 @@ const subscriptionExpiryReminderEmail =
 const subscriptionExpiredEmail =
   require("../templates/subscriptionExpiredEmail");
 
-
-// Testing: runs every minute
-// Later change to: "0 9 * * *"
+// Runs every day at 9:00 AM
+// For testing you can temporarily use "* * * * *"
 cron.schedule("0 9 * * *", async () => {
-
   try {
+    console.log("Checking subscription expiry...");
 
-    console.log(
-      "Checking subscription expiry..."
-    );
-
-
-    const subscriptions =
-      await Subscription.find({
-        plan: {
-          $in: ["Premium", "Elite"],
-        },
-      });
-
+    const subscriptions = await Subscription.find({
+      plan: {
+        $in: ["Premium", "Elite"],
+      },
+    });
 
     for (const subscription of subscriptions) {
+      const user = await User.findById(subscription.user);
 
-
-      const user =
-        await User.findById(
-          subscription.user
-        );
-
-
-      if (!user || !user.email) {
-        continue;
-      }
-
+      if (!user || !user.email) continue;
 
       const today = new Date();
+      const expiryDate = new Date(subscription.endDate);
 
-      const expiryDate =
-        new Date(
-          subscription.endDate
-        );
-
-
-      const diff =
-        Math.ceil(
-          (expiryDate - today) /
+      const diff = Math.ceil(
+        (expiryDate - today) /
           (1000 * 60 * 60 * 24)
-        );
-
+      );
 
       console.log(
         user.email,
@@ -69,17 +45,15 @@ cron.schedule("0 9 * * *", async () => {
         subscription.status
       );
 
-
-
       // ==============================
       // 7 DAYS EXPIRY REMINDER
       // ==============================
 
       if (
         diff === 7 &&
-        subscription.status === "Active"
+        subscription.status === "Active" &&
+        !subscription.expiryReminderSent
       ) {
-
         await sendEmail(
           user.email,
           "Your PropertyHub subscription expires soon ⏳",
@@ -90,58 +64,50 @@ cron.schedule("0 9 * * *", async () => {
           )
         );
 
+        subscription.expiryReminderSent = true;
+        await subscription.save();
 
         console.log(
           "Expiry reminder sent:",
           user.email
         );
-
       }
-
-
 
       // ==============================
       // EXPIRED SUBSCRIPTION
       // ==============================
 
-if (diff <= 0) {
+      if (
+        diff <= 0 &&
+        !subscription.expiredEmailSent
+      ) {
+        if (subscription.status !== "Expired") {
+          subscription.status = "Expired";
+        }
 
-  if (subscription.status !== "Expired") {
+        await sendEmail(
+          user.email,
+          "Your PropertyHub subscription has expired",
+          subscriptionExpiredEmail(
+            user.name,
+            subscription.plan
+          )
+        );
 
-    subscription.status = "Expired";
+        subscription.expiredEmailSent = true;
 
-    await subscription.save();
+        await subscription.save();
 
-  }
-
-
-  await sendEmail(
-    user.email,
-    "Your PropertyHub subscription has expired",
-    subscriptionExpiredEmail(
-      user.name,
-      subscription.plan
-    )
-  );
-
-
-  console.log(
-    "Expired email sent:",
-    user.email
-  );
-
-}
-
+        console.log(
+          "Expired email sent:",
+          user.email
+        );
+      }
     }
-
-
-  } catch(error){
-
+  } catch (error) {
     console.log(
       "Subscription cron error:",
       error.message
     );
-
   }
-
 });

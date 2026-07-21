@@ -194,6 +194,105 @@ function AdminDashboard() {
       });
   };
 
+  const handleExportUsers = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/admin/export/users",
+      {
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Export failed");
+    }
+
+    const blob = await response.blob();
+
+    const url =
+      window.URL.createObjectURL(blob);
+
+    const link =
+      document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+      "PropertyHub_Users.xlsx";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    window.URL.revokeObjectURL(url);
+
+    setToast({
+      show: true,
+      message:
+        "Users exported successfully.",
+      type: "success",
+    });
+  } catch (error) {
+    console.error(error);
+
+    setToast({
+      show: true,
+      message:
+        "Failed to export users.",
+      type: "error",
+    });
+  }
+};
+
+const handleExportProperties = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/admin/export/properties",
+      {
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Export failed");
+    }
+
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+
+    link.download = "PropertyHub_Properties.xlsx";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    window.URL.revokeObjectURL(url);
+
+    setToast({
+      show: true,
+      message: "Properties exported successfully.",
+      type: "success",
+    });
+  } catch (error) {
+    console.error(error);
+
+    setToast({
+      show: true,
+      message: "Failed to export properties.",
+      type: "error",
+    });
+  }
+};
+
   useEffect(() => {
     fetchData();
 
@@ -980,7 +1079,7 @@ function AdminDashboard() {
         className={`transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-16"
           }`}
       >
-        <section className="max-w-7xl mx-auto px-6 pt-12 pb-10">
+       <section className="w-full px-8 pt-12 pb-10">
 
 
           {/* Analytics Cards */}
@@ -997,23 +1096,24 @@ function AdminDashboard() {
           )}
 
           {activeTab === "users" && (
-            <UsersTable
-              paginatedUsers={paginatedUsers}
-              userPage={userPage}
-              userTotalPages={userTotalPages}
-              setUserPage={setUserPage}
-              handleViewUser={handleViewUser}
-              handleDeleteUser={handleDeleteUser}
+           <UsersTable
+  paginatedUsers={paginatedUsers}
+  userPage={userPage}
+  userTotalPages={userTotalPages}
+  setUserPage={setUserPage}
+  handleViewUser={handleViewUser}
+  handleDeleteUser={handleDeleteUser}
+  handleExportUsers={handleExportUsers}
 
-              userSearch={userSearch}
-              setUserSearch={setUserSearch}
+  userSearch={userSearch}
+  setUserSearch={setUserSearch}
 
-              userRole={userRole}
-              setUserRole={setUserRole}
+  userRole={userRole}
+  setUserRole={setUserRole}
 
-              userSort={userSort}
-              setUserSort={setUserSort}
-            />
+  userSort={userSort}
+  setUserSort={setUserSort}
+/>
           )}
 
           {activeTab === "properties" && (
@@ -1028,6 +1128,7 @@ function AdminDashboard() {
               activeTab={activeTab}
               handleDelete={handleDelete}
               handleDeletePG={handleDeletePG}
+              handleExportProperties={handleExportProperties}
               propertySearch={propertySearch}
               setPropertySearch={setPropertySearch}
               propertyCity={propertyCity}

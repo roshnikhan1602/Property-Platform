@@ -18,9 +18,7 @@ const createOrder = async (req, res) => {
       receipt: `receipt_${Date.now()}`,
     };
 
-    const order = await razorpay.orders.create(
-      options
-    );
+    const order = await razorpay.orders.create(options);
 
     res.json({
       success: true,
@@ -91,16 +89,15 @@ const verifyPayment = async (req, res) => {
     );
 
     let subscription =
-  await Subscription.findOne({
-    user: req.user.id,
-    status: "Active",
-  });
+      await Subscription.findOne({
+        user: req.user.id,
+        status: "Active",
+      });
 
-// Save current plan before updating
-const previousPlan =
-  subscription
-    ? subscription.plan
-    : "Free";
+    const previousPlan =
+      subscription
+        ? subscription.plan
+        : "Free";
 
     if (subscription) {
       subscription.plan = plan;
@@ -112,6 +109,11 @@ const previousPlan =
       subscription.startDate =
         startDate;
       subscription.endDate = endDate;
+
+      // Reset reminder flags for new subscription
+      subscription.status = "Active";
+      subscription.expiryReminderSent = false;
+      subscription.expiredEmailSent = false;
 
       await subscription.save();
     } else {
@@ -127,52 +129,56 @@ const previousPlan =
           startDate,
           endDate,
           status: "Active",
+
+          // Initialize flags
+          expiryReminderSent: false,
+          expiredEmailSent: false,
         });
     }
 
-   const payment =
-  await Payment.create({
-    user: req.user.id,
-    subscription:
-      subscription._id,
-    plan,
-    amount,
-    razorpayOrderId:
-      razorpay_order_id,
-    razorpayPaymentId:
-      razorpay_payment_id,
-    razorpaySignature:
-      razorpay_signature,
-    status: "Success",
-  });
+    const payment =
+      await Payment.create({
+        user: req.user.id,
+        subscription:
+          subscription._id,
+        plan,
+        amount,
+        razorpayOrderId:
+          razorpay_order_id,
+        razorpayPaymentId:
+          razorpay_payment_id,
+        razorpaySignature:
+          razorpay_signature,
+        status: "Success",
+      });
 
-  await SubscriptionHistory.create({
-  user: req.user.id,
-  previousPlan,
-  newPlan: plan,
-  action: "Upgrade",
-  amount,
-  payment: payment._id,
-});
-
-// Send subscription activation email
-
-const user = await User.findById(
-  req.user.id
-);
-
-if (user.email) {
-  await sendEmail(
-    user.email,
-    `Your PropertyHub ${plan} Plan is Activated 🎉`,
-    subscriptionSuccessEmail(
-      user.name,
-      plan,
+    await SubscriptionHistory.create({
+      user: req.user.id,
+      previousPlan,
+      newPlan: plan,
+      action: "Upgrade",
       amount,
-      endDate
-    )
-  );
-}
+      payment: payment._id,
+    });
+
+    const user =
+      await User.findById(
+        req.user.id
+      );
+
+    if (user.email) {
+      await sendEmail(
+        user.email,
+        `Your PropertyHub ${plan} Plan is Activated 🎉`,
+        subscriptionSuccessEmail(
+          user.name,
+          plan,
+          amount,
+          endDate
+        )
+      );
+    }
+
     res.json({
       success: true,
       message:

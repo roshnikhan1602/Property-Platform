@@ -12,7 +12,7 @@ function AnalyticsCards({
         Admin Dashboard
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Row 1 */}
 
         <div className="bg-white rounded-2xl shadow-lg p-6">
