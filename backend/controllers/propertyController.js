@@ -3,6 +3,7 @@ const User = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
 const welcomeOwnerEmail = require("../templates/welcomeOwnerEmail");
 const Notification = require("../models/Notification");
+const Wishlist = require("../models/wishlistModel");
 
 const Subscription = require("../models/Subscription");
 
@@ -44,98 +45,98 @@ const addProperty = async (req, res) => {
       }
     }
 
-// Get user's latest subscription
-const latestSubscription =
-  await Subscription.findOne({
-    user: req.user.id,
-  }).sort({ createdAt: -1 });
+    // Get user's latest subscription
+    const latestSubscription =
+      await Subscription.findOne({
+        user: req.user.id,
+      }).sort({ createdAt: -1 });
 
-const propertyCount =
-  await Property.countDocuments({
-    owner: req.user.id,
-  });
+    const propertyCount =
+      await Property.countDocuments({
+        owner: req.user.id,
+      });
 
-// Default Free plan limits
-let propertyLimit = 2;
-let planName = "Free";
+    // Default Free plan limits
+    let propertyLimit = 2;
+    let planName = "Free";
 
-// If subscription is active, use its limits
-if (
-  latestSubscription &&
-  latestSubscription.status === "Active"
-) {
-  propertyLimit =
-    latestSubscription.propertyLimit;
+    // If subscription is active, use its limits
+    if (
+      latestSubscription &&
+      latestSubscription.status === "Active"
+    ) {
+      propertyLimit =
+        latestSubscription.propertyLimit;
 
-  planName =
-    latestSubscription.plan;
-}
+      planName =
+        latestSubscription.plan;
+    }
 
-// If subscription is expired, treat as Free
-if (
-  latestSubscription &&
-  latestSubscription.status === "Expired"
-) {
-  propertyLimit = 2;
-  planName = "Free";
-}
+    // If subscription is expired, treat as Free
+    if (
+      latestSubscription &&
+      latestSubscription.status === "Expired"
+    ) {
+      propertyLimit = 2;
+      planName = "Free";
+    }
 
-// Check limit
-if (
-  propertyLimit !== -1 &&
-  propertyCount >= propertyLimit
-) {
-  return res.status(403).json({
-    success: false,
-    message: `Your ${planName} plan allows only ${propertyLimit} properties. Please upgrade your subscription to add more properties.`,
-  });
-}
+    // Check limit
+    if (
+      propertyLimit !== -1 &&
+      propertyCount >= propertyLimit
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: `Your ${planName} plan allows only ${propertyLimit} properties. Please upgrade your subscription to add more properties.`,
+      });
+    }
 
     const property = await Property.create({
-        ...req.body,
-        owner: req.user.id,
-        images: imageUrls,
-      });
-      const admins = await User.find({
-  role: "admin",
-});
+      ...req.body,
+      owner: req.user.id,
+      images: imageUrls,
+    });
+    const admins = await User.find({
+      role: "admin",
+    });
 
-for (const admin of admins) {
-  await Notification.create({
-    user: admin._id,
-    title: "New Property Submitted",
-    message: `"${property.title}" has been submitted and is awaiting approval.`,
-    type: "general",
-    referenceId: property._id,
-    referenceType: "Property",
-  });
-}
+    for (const admin of admins) {
       await Notification.create({
-        user: req.user.id,
-        title: "Property Submitted",
-        message:
-          "Your property has been submitted successfully and is awaiting admin approval.",
+        user: admin._id,
+        title: "New Property Submitted",
+        message: `"${property.title}" has been submitted and is awaiting approval.`,
         type: "general",
+        referenceId: property._id,
+        referenceType: "Property",
       });
+    }
+    await Notification.create({
+      user: req.user.id,
+      title: "Property Submitted",
+      message:
+        "Your property has been submitted successfully and is awaiting admin approval.",
+      type: "general",
+    });
 
-      const user = await User.findById(
-        req.user.id
-      );
+    const user = await User.findById(
+      req.user.id
+    );
 
     if (user && user.role === "user") {
-  user.role = "owner";
-  await user.save();
+      user.role = "owner";
+      await user.save();
 
 
-  // Send owner welcome email
-  if (user.email) {
-    await sendEmail(
-      user.email,
-      "Welcome to PropertyHub as an Owner 🚀",
-      welcomeOwnerEmail(user.name)
-    );
-  }
-}
+      // Send owner welcome email
+      if (user.email) {
+        await sendEmail(
+          user.email,
+          "Welcome to PropertyHub as an Owner 🚀",
+          welcomeOwnerEmail(user.name)
+        );
+      }
+    }
 
     res.status(201).json({
       success: true,
@@ -168,10 +169,10 @@ const getAllProperties = async (req, res) => {
     const limit = parseInt(req.query.limit) || 9;
     const skip = (page - 1) * limit;
 
-   const filters = {
-  isApproved: true,
-  isActive: true,
-};
+    const filters = {
+      isApproved: true,
+      isActive: true,
+    };
 
     if (city) {
       filters.city = {
@@ -207,33 +208,33 @@ const getAllProperties = async (req, res) => {
       }
     }
 
-let properties = await Property.find(filters)
-  .sort({
-    createdAt: -1,
-    _id: -1,
-  })
-  .skip(skip)
-  .limit(limit);
+    let properties = await Property.find(filters)
+      .sort({
+        createdAt: -1,
+        _id: -1,
+      })
+      .skip(skip)
+      .limit(limit);
 
-const filteredProperties = [];
+    const filteredProperties = [];
 
-for (const property of properties) {
-  const subscription =
-    await Subscription.findOne({
-      user: property.owner,
-    }).sort({ createdAt: -1 });
+    for (const property of properties) {
+      const subscription =
+        await Subscription.findOne({
+          user: property.owner,
+        }).sort({ createdAt: -1 });
 
-  if (
-    subscription &&
-    subscription.status === "Expired"
-  ) {
-    continue;
-  }
+      if (
+        subscription &&
+        subscription.status === "Expired"
+      ) {
+        continue;
+      }
 
-  filteredProperties.push(property);
-}
+      filteredProperties.push(property);
+    }
 
-const totalProperties = filteredProperties.length;
+    const totalProperties = filteredProperties.length;
     res.status(200).json({
       success: true,
       properties: filteredProperties,
@@ -250,16 +251,35 @@ const totalProperties = filteredProperties.length;
 };
 const getMyProperties = async (req, res) => {
   try {
-   const properties = await Property.find({
-  owner: req.user.id,
-});
+    const properties = await Property.find({
+      owner: req.user.id,
+    });
+
+    const propertiesWithInterest =
+      await Promise.all(
+        properties.map(async (property) => {
+          const interestedCount =
+            await Wishlist.countDocuments({
+              itemId: property._id,
+              itemType: "Property",
+            });
+
+          return {
+            ...property.toObject(),
+            interestedCount,
+          };
+        })
+      );
 
     res.status(200).json({
       success: true,
-      properties,
+      properties: propertiesWithInterest,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
@@ -277,49 +297,49 @@ const getPropertyById = async (req, res) => {
         message: "Property not found",
       });
     }
-  const isOwner =
-  req.user &&
-  property.owner.toString() === req.user.id;
+    const isOwner =
+      req.user &&
+      property.owner.toString() === req.user.id;
 
-if (
-  (!property.isApproved || !property.isActive) &&
-  !isOwner
-) {
-  return res.status(404).json({
-    success: false,
-    message: "Property not found",
-  });
-}
+    if (
+      (!property.isApproved || !property.isActive) &&
+      !isOwner
+    ) {
+      return res.status(404).json({
+        success: false,
+        message: "Property not found",
+      });
+    }
 
-  // Clone property so we don't modify DB data
-const propertyData = property.toObject();
+    // Clone property so we don't modify DB data
+    const propertyData = property.toObject();
 
-// Get the owner's latest subscription
-const latestSubscription =
-  await Subscription.findOne({
-    user: property.owner,
-  }).sort({ createdAt: -1 });
+    // Get the owner's latest subscription
+    const latestSubscription =
+      await Subscription.findOne({
+        user: property.owner,
+      }).sort({ createdAt: -1 });
 
-let contactAvailable = true;
-let listingAvailable = true;
+    let contactAvailable = true;
+    let listingAvailable = true;
 
-if (
-  latestSubscription &&
-  latestSubscription.status === "Expired"
-) {
-  contactAvailable = false;
-  listingAvailable = false;
+    if (
+      latestSubscription &&
+      latestSubscription.status === "Expired"
+    ) {
+      contactAvailable = false;
+      listingAvailable = false;
 
-  propertyData.ownerPhone = "";
-  propertyData.ownerEmail = "";
-}
+      propertyData.ownerPhone = "";
+      propertyData.ownerEmail = "";
+    }
 
-   res.status(200).json({
-  success: true,
-  contactAvailable,
-  listingAvailable,
-  property: propertyData,
-});
+    res.status(200).json({
+      success: true,
+      contactAvailable,
+      listingAvailable,
+      property: propertyData,
+    });
   } catch (error) {
     console.error(error);
 
@@ -344,22 +364,22 @@ const updateProperty = async (req, res) => {
     }
 
     // Hide inactive/unapproved properties from everyone except the owner
-if (
-  (!property.isApproved || !property.isActive) &&
-  property.owner.toString() !== req.user?.id
-) {
-  return res.status(404).json({
-    success: false,
-    message: "Property not found",
-  });
-}
+    if (
+      (!property.isApproved || !property.isActive) &&
+      property.owner.toString() !== req.user?.id
+    ) {
+      return res.status(404).json({
+        success: false,
+        message: "Property not found",
+      });
+    }
 
-if (property.owner.toString() !== req.user.id) {
-  return res.status(403).json({
-    success: false,
-    message: "You are not authorized to update this property",
-  });
-}
+    if (property.owner.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this property",
+      });
+    }
     let imageUrls = property.images;
 
     if (req.files && req.files.length > 0) {
@@ -411,13 +431,13 @@ if (property.owner.toString() !== req.user.id) {
       );
 
     await Notification.create({
-  user: req.user.id,
-  title: "Property Updated",
-  message: `"${updatedProperty.title}" has been updated successfully.`,
-  type: "general",
-  referenceId: updatedProperty._id,
-  referenceType: "Property",
-});
+      user: req.user.id,
+      title: "Property Updated",
+      message: `"${updatedProperty.title}" has been updated successfully.`,
+      type: "general",
+      referenceId: updatedProperty._id,
+      referenceType: "Property",
+    });
 
     res.status(200).json({
       success: true,
@@ -436,32 +456,32 @@ if (property.owner.toString() !== req.user.id) {
 };
 const deleteProperty = async (req, res) => {
   try {
-   const property = await Property.findById(
-  req.params.id
-);
+    const property = await Property.findById(
+      req.params.id
+    );
 
-if (!property) {
-  return res.status(404).json({
-    success: false,
-    message: "Property not found",
-  });
-}
+    if (!property) {
+      return res.status(404).json({
+        success: false,
+        message: "Property not found",
+      });
+    }
 
-if (property.owner.toString() !== req.user.id) {
-  return res.status(403).json({
-    success: false,
-    message: "You are not authorized to delete this property",
-  });
-}
+    if (property.owner.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this property",
+      });
+    }
 
-await Notification.create({
-  user: req.user.id,
-  title: "Property Deleted",
-  message: `"${property.title}" has been deleted successfully.`,
-  type: "general",
-});
+    await Notification.create({
+      user: req.user.id,
+      title: "Property Deleted",
+      message: `"${property.title}" has been deleted successfully.`,
+      type: "general",
+    });
 
-await property.deleteOne();
+    await property.deleteOne();
 
     const remainingProperties =
       await Property.countDocuments({
@@ -528,9 +548,8 @@ const togglePropertyStatus = async (req, res) => {
       title: property.isActive
         ? "Property Activated"
         : "Property Deactivated",
-      message: `"${property.title}" has been ${
-        property.isActive ? "activated" : "deactivated"
-      }.`,
+      message: `"${property.title}" has been ${property.isActive ? "activated" : "deactivated"
+        }.`,
       type: "general",
       referenceId: property._id,
       referenceType: "Property",
@@ -538,9 +557,8 @@ const togglePropertyStatus = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: `Property ${
-        property.isActive ? "activated" : "deactivated"
-      } successfully.`,
+      message: `Property ${property.isActive ? "activated" : "deactivated"
+        } successfully.`,
       property,
     });
   } catch (error) {
@@ -583,10 +601,10 @@ const incrementViews = async (req, res) => {
 
 const filterProperties = async (req, res) => {
   try {
-   const filters = {
-  isApproved: true,
-  isActive: true,
-};
+    const filters = {
+      isApproved: true,
+      isActive: true,
+    };
 
     if (req.query.city) {
       filters.city = {

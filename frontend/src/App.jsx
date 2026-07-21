@@ -37,6 +37,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 
 import Notifications from "./pages/Notifications";
+import PropertyAI from "./pages/PropertyAI";
 
 // ✅ NEW IMPORT
 import GuestSessionManager from "./components/common/GuestSessionManager";
@@ -162,6 +163,8 @@ function App() {
           }
         />
 
+
+
         <Route
           path="/owner-profile"
           element={
@@ -243,6 +246,10 @@ function App() {
               <AdminDashboard />
             </AdminRoute>
           }
+        />
+        <Route
+          path="/property-ai/:id"
+          element={<PropertyAI />}
         />
       </Routes>
     </BrowserRouter>

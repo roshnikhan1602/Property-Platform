@@ -1,6 +1,13 @@
 const Wishlist = require("../models/wishlistModel");
+
 const User = require("../models/User");
+
 const Subscription = require("../models/Subscription");
+
+const Property = require("../models/Property");
+const Notification = require("../models/Notification");
+
+
 
 const addToWishlist = async (req, res) => {
   try {
@@ -27,6 +34,31 @@ const addToWishlist = async (req, res) => {
       itemType,
     });
 
+    // Notify owner when a Property is wishlisted
+if (itemType === "Property") {
+  const property = await Property.findById(itemId);
+
+  if (property) {
+    const user = await User.findById(userId);
+
+    // Don't notify if owner wishlists their own property
+    if (
+      user &&
+      property.owner.toString() !== userId
+    ) {
+      await Notification.create({
+        user: property.owner,
+        title: "❤️ New Interested Buyer",
+        message: `${user.name} added your property "${property.title}" to their wishlist.`,
+        type: "general",
+        referenceId: property._id,
+        referenceType: "Property",
+      });
+    }
+  }
+}
+
+    
     res.status(201).json({
       success: true,
       wishlist,

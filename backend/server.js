@@ -15,6 +15,7 @@ const notificationRoutes = require("./routes/notificationRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const shareRoutes = require("./routes/shareRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 require("./jobs/subscriptionReminder");
 connectDB();
@@ -78,6 +79,8 @@ app.use(
   "/api/chatbot",
   chatRoutes
 );
+
+app.use("/api/ai", aiRoutes);
 
 app.use(
   "/api/stats",

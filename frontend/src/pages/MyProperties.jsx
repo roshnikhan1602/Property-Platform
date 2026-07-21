@@ -212,12 +212,11 @@ function MyProperties() {
       setLoadingInterestedUsers(true);
 
       const response = await fetch(
-        `http://localhost:5000/api/wishlist/interested-users/${propertyId}`,
+        `http://localhost:5000/api/wishlist/property/${propertyId}/interested-users`,
         {
           credentials: "include",
         }
       );
-
       const data = await response.json();
 
       if (data.success) {
@@ -490,6 +489,89 @@ function MyProperties() {
               </button>
 
             </div>
+
+          </div>
+        </div>
+      )}
+
+      {showInterestedModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-xl w-[90%] max-w-2xl max-h-[80vh] overflow-y-auto p-6">
+
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">
+                Interested Users
+              </h2>
+
+              <button
+                onClick={() => setShowInterestedModal(false)}
+                className="text-gray-500 hover:text-black text-2xl"
+              >
+                ×
+              </button>
+            </div>
+
+            {loadingInterestedUsers ? (
+              <p className="text-center py-10">
+                Loading...
+              </p>
+            ) : interestedUsers.length === 0 ? (
+              <div className="text-center py-10">
+                <FaHeart className="mx-auto text-4xl text-pink-400 mb-3" />
+                <p className="text-gray-500">
+                  No users have wishlisted this property yet.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {interestedUsers.map((user) => (
+                  <div
+                    key={user._id}
+                    className="border rounded-xl p-4 shadow-sm hover:shadow-md transition"
+                  >
+                    <div className="flex items-center gap-4">
+
+                      <img
+                        src={
+                          user.profileImage ||
+                          "https://ui-avatars.com/api/?name=" +
+                          encodeURIComponent(user.name)
+                        }
+                        alt={user.name}
+                        className="w-16 h-16 rounded-full object-cover border"
+                      />
+
+                      <div className="flex-1">
+
+                        <h3 className="text-lg font-semibold">
+                          {user.name}
+                        </h3>
+
+                        <p className="flex items-center gap-2 text-gray-600 mt-1">
+                          <FaPhone />
+                          {user.mobileNumber}
+                        </p>
+
+                        {user.email && (
+                          <p className="flex items-center gap-2 text-gray-600 mt-1">
+                            <FaEnvelope />
+                            {user.email}
+                          </p>
+                        )}
+
+                        <p className="flex items-center gap-2 text-gray-500 text-sm mt-2">
+                          <FaCalendarAlt />
+                          Wishlisted on{" "}
+                          {new Date(user.wishlistedAt).toLocaleDateString()}
+                        </p>
+
+                      </div>
+
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
           </div>
         </div>
