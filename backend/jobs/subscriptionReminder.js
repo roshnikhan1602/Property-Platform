@@ -14,7 +14,7 @@ const subscriptionExpiredEmail =
 
 // Testing: runs every minute
 // Later change to: "0 9 * * *"
-cron.schedule("* * * * *", async () => {
+cron.schedule("0 9 * * *", async () => {
 
   try {
 

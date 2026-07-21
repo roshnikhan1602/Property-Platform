@@ -9,6 +9,7 @@ import ShareModal from "../share/ShareModal";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ReviewSection from "../components/reviews/ReviewSection";
+import ElevatePropertyModal from "../components/ai/ElevatePropertyModal";
 import {
   addReview,
   getPropertyReviews,
@@ -56,6 +57,7 @@ function PropertyDetails({
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
   const [loadingReviews, setLoadingReviews] = useState(false);
+  const [showElevateModal, setShowElevateModal] = useState(false);
   const [user, setUser] = useState(null);
   const [showShareModal, setShowShareModal] =
     useState(false);
@@ -267,7 +269,6 @@ function PropertyDetails({
 
         const data = await response.json();
 
-<<<<<<< HEAD
         if (data.success) {
           setProperty(data.property);
 
@@ -278,19 +279,10 @@ function PropertyDetails({
             data.contactAvailable ?? true
           );
 
-          setContactAvailable(
-            data.contactAvailable ?? true
+          setListingAvailable(
+            data.listingAvailable ?? true
           );
-=======
-      if (data.success) {
-  setProperty(data.property);
-  setContactAvailable(
-  data.contactAvailable ?? true
-);
-setListingAvailable(
-  data.listingAvailable ?? true
-);
->>>>>>> d349d888879405c0e6aed6a472f92e5ec597a491
+
           if (
             data.property.images &&
             data.property.images.length > 0
@@ -367,52 +359,52 @@ setListingAvailable(
     );
   }
 
-if (
-  property &&
-  !listingAvailable
-) {
-  return (
-    <>
-      <Navbar
-        setShowLoginModal={
-          setShowLoginModal
-        }
-      />
+  if (
+    property &&
+    !listingAvailable
+  ) {
+    return (
+      <>
+        <Navbar
+          setShowLoginModal={
+            setShowLoginModal
+          }
+        />
 
-      <div className="max-w-3xl mx-auto py-24 px-6">
-        <div className="bg-white rounded-2xl shadow-lg border text-center p-10">
-          <div className="text-6xl mb-5">
-            🔒
+        <div className="max-w-3xl mx-auto py-24 px-6">
+          <div className="bg-white rounded-2xl shadow-lg border text-center p-10">
+            <div className="text-6xl mb-5">
+              🔒
+            </div>
+
+            <h2 className="text-3xl font-bold text-gray-800">
+              Listing Temporarily Unavailable
+            </h2>
+
+            <p className="text-gray-600 mt-5">
+              This property is currently
+              unavailable because the owner's
+              subscription has expired.
+            </p>
+
+            <p className="text-gray-600 mt-2">
+              Please check back once the owner
+              renews the subscription.
+            </p>
+
+            <button
+              onClick={() => navigate(-1)}
+              className="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+            >
+              Back to Properties
+            </button>
           </div>
-
-          <h2 className="text-3xl font-bold text-gray-800">
-            Listing Temporarily Unavailable
-          </h2>
-
-          <p className="text-gray-600 mt-5">
-            This property is currently
-            unavailable because the owner's
-            subscription has expired.
-          </p>
-
-          <p className="text-gray-600 mt-2">
-            Please check back once the owner
-            renews the subscription.
-          </p>
-
-          <button
-            onClick={() => navigate(-1)}
-            className="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
-          >
-            Back to Properties
-          </button>
         </div>
-      </div>
 
-      <Footer />
-    </>
-  );
-}
+        <Footer />
+      </>
+    );
+  }
 
   if (!property) {
     return (
@@ -900,7 +892,9 @@ if (
         </div>
 
         {/* Similar Properties + Share */}
-        <div className="mt-10 flex flex-col md:flex-row justify-center gap-4">
+
+        {/* Property Actions */}
+        <div className="mt-10 flex flex-wrap justify-center gap-4">
 
           <button
             onClick={() =>
@@ -920,7 +914,17 @@ if (
             🔗 Share Property
           </button>
 
+          <button
+            onClick={() => navigate(`/property-ai/${property._id}`)}
+            className="bg-purple-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-purple-700 transition"
+          >
+            ✨ Elevate This Property
+          </button>
+
         </div>
+
+
+
         <ReviewSection
           property={property}
           user={user}
@@ -965,6 +969,13 @@ if (
         location={`${property.locality}, ${property.city}, ${property.state}`}
         price={property.price}
         url={window.location.href}
+      />
+      <ElevatePropertyModal
+        isOpen={showElevateModal}
+        onClose={() =>
+          setShowElevateModal(false)
+        }
+        propertyImage={selectedImage}
       />
       <Footer />
     </>

@@ -1,9 +1,6 @@
 const Wishlist = require("../models/wishlistModel");
-<<<<<<< HEAD
 const User = require("../models/User");
-=======
 const Subscription = require("../models/Subscription");
->>>>>>> d349d888879405c0e6aed6a472f92e5ec597a491
 
 const addToWishlist = async (req, res) => {
   try {
