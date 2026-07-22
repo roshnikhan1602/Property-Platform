@@ -12,7 +12,7 @@ const {
   getPGById,
   updatePG,
   deletePG,
-  // togglePGStatus,
+  togglePGStatus,
   incrementPGViews,
 } = require("../controllers/pgController");
 
@@ -37,11 +37,12 @@ router.put(
   updatePG
 );
 
-// router.put(
-//   "/:id/status",
-//   authMiddleware,
-//   togglePGStatus
-// );
+// Activate / Deactivate PG
+router.put(
+  "/:id/status",
+  authMiddleware,
+  togglePGStatus
+);
 
 router.delete(
   "/:id",

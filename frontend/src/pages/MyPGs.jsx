@@ -28,19 +28,27 @@ function MyPGs() {
   const [selectedPGId, setSelectedPGId] =
     useState(null);
 
+  const [interestedUsers, setInterestedUsers] = useState([]);
+  const [showInterestedModal, setShowInterestedModal] = useState(false);
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [statusLoading, setStatusLoading] = useState(null);
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+  const [deactivationReason, setDeactivationReason] = useState("");
+  const [selectedDeactivatePG, setSelectedDeactivatePG] = useState(null);
+
   const fetchMyPGs = async () => {
     try {
-     const response = await fetch(
-  "http://localhost:5000/api/pgs/my-pgs",
-  {
-    credentials: "include",
-  }
-);
+      const response = await fetch(
+        "http://localhost:5000/api/pgs/my-pgs",
+        {
+          credentials: "include",
+        }
+      );
 
       const data = await response.json();
 
       if (data.success) {
-        
+
         setPgs(data.pgs);
       }
     } catch (error) {
@@ -54,20 +62,117 @@ function MyPGs() {
     }
   };
 
-useEffect(() => {
-  fetchMyPGs();
-}, []);
+  useEffect(() => {
+    fetchMyPGs();
+  }, []);
+
+  const fetchInterestedUsers = async (pgId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/wishlist/pg/${pgId}/interested-users`,
+        {
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setInterestedUsers(data.users);
+        setWishlistCount(data.count);
+        setShowInterestedModal(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const togglePGStatus = async (pgId) => {
+    const pg = pgs.find((item) => item._id === pgId);
+
+    // If active, open reason modal
+    if (pg.isActive) {
+      setSelectedDeactivatePG(pgId);
+      setShowDeactivateModal(true);
+      return;
+    }
+
+    // If inactive, activate immediately
+    try {
+      setStatusLoading(pgId);
+
+      const response = await fetch(
+        `http://localhost:5000/api/pgs/${pgId}/status`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({}),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        fetchMyPGs();
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setStatusLoading(null);
+    }
+  };
+
+  const handleDeactivatePG = async () => {
+    try {
+      setStatusLoading(selectedDeactivatePG);
+
+      const response = await fetch(
+        `http://localhost:5000/api/pgs/${selectedDeactivatePG}/status`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            reason: deactivationReason,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setShowDeactivateModal(false);
+        setSelectedDeactivatePG(null);
+        setDeactivationReason("");
+        fetchMyPGs();
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setStatusLoading(null);
+    }
+  };
 
   const handleDelete = async (id) => {
     setShowDeleteModal(false);
     try {
       const response = await fetch(
-  `http://localhost:5000/api/pgs/${id}`,
-  {
-    method: "DELETE",
-    credentials: "include",
-  }
-);
+        `http://localhost:5000/api/pgs/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
 
       const data = await response.json();
 
@@ -88,12 +193,12 @@ useEffect(() => {
         }, 3000);
 
         // Check remaining properties
-       const propertyResponse = await fetch(
-  "http://localhost:5000/api/properties/my-properties",
-  {
-    credentials: "include",
-  }
-);
+        const propertyResponse = await fetch(
+          "http://localhost:5000/api/properties/my-properties",
+          {
+            credentials: "include",
+          }
+        );
 
         const propertyData =
           await propertyResponse.json();
@@ -105,13 +210,13 @@ useEffect(() => {
 
         // Downgrade only if NO PGs and NO Properties
         if (
-  updatedPGs.length === 0 &&
-  totalProperties === 0
-) {
-  setTimeout(() => {
-    window.location.href = "/user-dashboard";
-  }, 1000);
-}
+          updatedPGs.length === 0 &&
+          totalProperties === 0
+        ) {
+          setTimeout(() => {
+            window.location.href = "/user-dashboard";
+          }, 1000);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -225,31 +330,67 @@ useEffect(() => {
                     <FaEye />
                     {pg.views || 0} Views
                   </p>
+                  <p className="text-sm text-pink-600 mt-2">
+                    ❤️ {pg.wishlistCount || 0} Users Wishlisted
+                  </p>
 
                 </div>
 
-                <div className="flex gap-2 mt-5">
+                {/* Interested Users Button */}
+                <button
+                  onClick={() => fetchInterestedUsers(pg._id)}
+                  className="w-full mt-4 mb-4 bg-pink-100 text-pink-700 py-3 rounded-xl hover:bg-pink-200 transition flex items-center justify-center gap-2 font-medium"
+                >
+                  👥 View Interested Users
+                </button>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
 
                   <Link
                     to={`/pgs/${pg._id}`}
-                    className="flex-1 bg-blue-600 text-white text-center py-2 rounded-lg text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2"
+                    className="bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-2"
                   >
                     <FaExternalLinkAlt />
                     View
                   </Link>
+
                   <Link
                     to={`/edit-pg/${pg._id}`}
-                    className="flex-1 bg-yellow-500 text-white py-2 rounded-lg text-sm hover:bg-yellow-600 transition flex items-center justify-center gap-2"
+                    className="bg-yellow-100 text-yellow-700 py-3 rounded-xl hover:bg-yellow-200 transition flex items-center justify-center gap-2"
                   >
                     <FaEdit />
                     Edit
                   </Link>
+
+                  <button
+                    onClick={() => {
+                      if (pg.isActive) {
+                        setSelectedDeactivatePG(pg._id);
+                        setShowDeactivateModal(true);
+                      } else {
+                        togglePGStatus(pg._id);
+                      }
+                    }}
+                    disabled={statusLoading === pg._id}
+                    className={`py-3 rounded-xl transition flex items-center justify-center gap-2 font-medium ${pg.isActive
+                      ? "bg-orange-100 text-orange-700 hover:bg-orange-200"
+                      : "bg-green-100 text-green-700 hover:bg-green-200"
+                      }`}
+                  >
+                    {statusLoading === pg._id
+                      ? "Updating..."
+                      : pg.isActive
+                        ? "Deactivate"
+                        : "Activate"}
+                  </button>
+
                   <button
                     onClick={() => {
                       setSelectedPGId(pg._id);
                       setShowDeleteModal(true);
                     }}
-                    className="flex-1 bg-red-100 text-red-600 py-2 rounded-lg text-sm hover:bg-red-200 transition flex items-center justify-center gap-2 cursor-pointer"
+                    className="bg-red-100 text-red-600 py-3 rounded-xl hover:bg-red-200 transition flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <FaTrash />
                     Delete
@@ -266,6 +407,51 @@ useEffect(() => {
       </section>
 
       <Footer />
+      {showDeactivateModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-lg">
+            <h2 className="text-2xl font-bold mb-3">
+              Deactivate PG
+            </h2>
+
+            <p className="text-gray-600 mb-4">
+              Please provide a reason. This will be shown only to users who have
+              wishlisted this PG.
+            </p>
+
+            <textarea
+              rows={4}
+              value={deactivationReason}
+              onChange={(e) =>
+                setDeactivationReason(e.target.value)
+              }
+              placeholder="Example: PG is fully occupied, Renovation work, Temporarily unavailable..."
+              className="w-full border rounded-lg p-3 resize-none focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => {
+                  setShowDeactivateModal(false);
+                  setSelectedDeactivatePG(null);
+                  setDeactivationReason("");
+                }}
+                className="px-5 py-2 border rounded-lg"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleDeactivatePG}
+                disabled={!deactivationReason.trim()}
+                className="px-5 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50"
+              >
+                Deactivate
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -302,6 +488,81 @@ useEffect(() => {
               </button>
 
             </div>
+
+          </div>
+        </div>
+      )}
+      {showInterestedModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-xl w-[90%] max-w-2xl p-6 max-h-[80vh] overflow-y-auto">
+
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="text-2xl font-bold">
+                Interested Users ({wishlistCount})
+              </h2>
+
+              <button
+                onClick={() => setShowInterestedModal(false)}
+                className="text-2xl font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {interestedUsers.length === 0 ? (
+              <p className="text-gray-500">
+                No users have wishlisted this PG yet.
+              </p>
+            ) : (
+              <div className="space-y-4">
+                {interestedUsers.map((user) => (
+                  <div
+                    key={user._id}
+                    className="border rounded-xl p-4 flex justify-between items-center"
+                  >
+                    <div className="flex items-center gap-4">
+
+                      <img
+                        src={
+                          user.profileImage ||
+                          `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`
+                        }
+                        alt={user.name}
+                        className="w-14 h-14 rounded-full object-cover"
+                      />
+
+                      <div>
+                        <h3 className="font-semibold">
+                          {user.name}
+                        </h3>
+
+                        <p className="text-sm text-gray-600">
+                          {user.email}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                          {user.mobileNumber}
+                        </p>
+
+                        <p className="text-xs text-gray-400 mt-1">
+                          Wishlisted on{" "}
+                          {new Date(user.wishlistedAt).toLocaleDateString()}
+                        </p>
+                      </div>
+
+                    </div>
+
+                    <a
+                      href={`tel:${user.mobileNumber}`}
+                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+                    >
+                      Contact
+                    </a>
+
+                  </div>
+                ))}
+              </div>
+            )}
 
           </div>
         </div>

@@ -150,6 +150,11 @@ const pgSchema = new mongoose.Schema(
       default: true,
     },
 
+    deactivationReason: {
+      type: String,
+      default: "",
+    },
+
     views: {
       type: Number,
       default: 0,

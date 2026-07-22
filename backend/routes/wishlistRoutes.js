@@ -9,6 +9,8 @@ const {
   getWishlist,
   removeFromWishlist,
   getInterestedUsers,
+  getInterestedUsersForPG,
+  checkWishlistStatus,
 } = require("../controllers/wishlistController");
 
 // Add to Wishlist
@@ -44,6 +46,20 @@ router.get(
   "/property/:propertyId/interested-users",
   authMiddleware,
   getInterestedUsers
+);
+
+// Check Wishlist Status
+router.get(
+  "/status",
+  authMiddleware,
+  checkWishlistStatus
+);
+
+// Get Interested Users for a PG
+router.get(
+  "/pg/:pgId/interested-users",
+  authMiddleware,
+  getInterestedUsersForPG
 );
 
 module.exports = router;

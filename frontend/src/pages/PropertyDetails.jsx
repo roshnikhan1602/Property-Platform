@@ -29,6 +29,15 @@ import {
   FaTree,
   FaHome,
 } from "react-icons/fa";
+
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import {
+  addToWishlist,
+  removeFromWishlist,
+  checkWishlistStatus,
+} from "../services/wishlistService";
+
+
 import { MdElevator } from "react-icons/md";
 import { FaShieldAlt } from "react-icons/fa";
 
@@ -59,8 +68,9 @@ function PropertyDetails({
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [showElevateModal, setShowElevateModal] = useState(false);
   const [user, setUser] = useState(null);
-  const [showShareModal, setShowShareModal] =
-    useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -97,6 +107,47 @@ function PropertyDetails({
 
   const handleShare = () => {
     setShowShareModal(true);
+  };
+
+  const handleWishlist = async () => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    try {
+      setWishlistLoading(true);
+
+      let response;
+
+      if (isWishlisted) {
+        response = await removeFromWishlist(
+          property._id,
+          "Property"
+        );
+      } else {
+        response = await addToWishlist(
+          property._id,
+          "Property"
+        );
+      }
+
+      if (response.success) {
+        setIsWishlisted(!isWishlisted);
+
+        setToast({
+          show: true,
+          message: isWishlisted
+            ? "Removed from wishlist"
+            : "Added to wishlist",
+          type: "success",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setWishlistLoading(false);
+    }
   };
   const loadReviews = async () => {
     try {
@@ -271,7 +322,6 @@ function PropertyDetails({
 
         if (data.success) {
           setProperty(data.property);
-
           console.log(data.property.amenities);
           console.log(data.property.highlights);
 
@@ -335,9 +385,25 @@ function PropertyDetails({
       }
     };
 
+    const loadWishlistStatus = async () => {
+      try {
+        const data = await checkWishlistStatus(
+          id,
+          "Property"
+        );
+
+        if (data.success) {
+          setIsWishlisted(data.isWishlisted);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     fetchUser();
     fetchProperty();
     loadReviews();
+    loadWishlistStatus();
   }, [id]);
 
   if (loading) {
@@ -452,6 +518,17 @@ function PropertyDetails({
           <div className="relative h-[650px] rounded-2xl overflow-hidden shadow-lg">
             {selectedImage ? (
               <>
+                <button
+                  onClick={handleWishlist}
+                  disabled={wishlistLoading}
+                  className="absolute top-5 right-5 z-20 w-14 h-14 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-110 transition cursor-pointer"
+                >
+                  {isWishlisted ? (
+                    <FaHeart className="text-red-500 text-2xl" />
+                  ) : (
+                    <FaRegHeart className="text-gray-600 text-2xl" />
+                  )}
+                </button>
                 <img
                   src={selectedImage}
                   alt={property.title}
@@ -922,8 +999,6 @@ function PropertyDetails({
           </button>
 
         </div>
-
-
 
         <ReviewSection
           property={property}

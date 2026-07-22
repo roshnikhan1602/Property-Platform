@@ -6,6 +6,7 @@ const streamifier = require("streamifier");
 const Notification = require("../models/Notification");
 const sendEmail = require("../utils/sendEmail");
 const welcomeOwnerEmail = require("../templates/welcomeOwnerEmail");
+const Wishlist = require("../models/wishlistModel");
 
 const addPG = async (req, res) => {
   try {
@@ -42,56 +43,55 @@ const addPG = async (req, res) => {
       }
     }
 
-// Get user's latest subscription
-const latestSubscription =
-  await Subscription.findOne({
-    user: req.user.id,
-  }).sort({ createdAt: -1 });
+    // Get user's latest subscription
+    const latestSubscription =
+      await Subscription.findOne({
+        user: req.user.id,
+      }).sort({ createdAt: -1 });
 
-const pgCount =
-  await PG.countDocuments({
-    owner: req.user.id,
-  });
+    const pgCount =
+      await PG.countDocuments({
+        owner: req.user.id,
+      });
 
-// Default Free plan limits
-let pgLimit = 1;
-let planName = "Free";
+    // Default Free plan limits
+    let pgLimit = 1;
+    let planName = "Free";
 
-// If subscription is active, use its limits
-if (
-  latestSubscription &&
-  latestSubscription.status === "Active"
-) {
-  pgLimit = latestSubscription.pgLimit;
-  planName = latestSubscription.plan;
-}
+    // If subscription is active, use its limits
+    if (
+      latestSubscription &&
+      latestSubscription.status === "Active"
+    ) {
+      pgLimit = latestSubscription.pgLimit;
+      planName = latestSubscription.plan;
+    }
 
-// If subscription is expired, don't allow adding PGs
-if (
-  latestSubscription &&
-  latestSubscription.status === "Expired"
-) {
-  return res.status(403).json({
-    success: false,
-    message:
-      latestSubscription.plan === "Free"
-        ? "Your free trial has ended. Upgrade to Premium or Elite to continue adding PG listings."
-        : `Your ${latestSubscription.plan} subscription has expired. Please renew your subscription to continue adding PG listings.`,
-  });
-}
+    // If subscription is expired, don't allow adding PGs
+    if (
+      latestSubscription &&
+      latestSubscription.status === "Expired"
+    ) {
+      return res.status(403).json({
+        success: false,
+        message:
+          latestSubscription.plan === "Free"
+            ? "Your free trial has ended. Upgrade to Premium or Elite to continue adding PG listings."
+            : `Your ${latestSubscription.plan} subscription has expired. Please renew your subscription to continue adding PG listings.`,
+      });
+    }
 
-// Check limit
-if (
-  pgLimit !== -1 &&
-  pgCount >= pgLimit
-) {
-  return res.status(403).json({
-    success: false,
-    message: `Your ${planName} plan allows only ${pgLimit} PG listing${
-      pgLimit > 1 ? "s" : ""
-    }. Please upgrade your subscription to add more PG listings.`,
-  });
-}
+    // Check limit
+    if (
+      pgLimit !== -1 &&
+      pgCount >= pgLimit
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: `Your ${planName} plan allows only ${pgLimit} PG listing${pgLimit > 1 ? "s" : ""
+          }. Please upgrade your subscription to add more PG listings.`,
+      });
+    }
 
     const pg = await PG.create({
       ...req.body,
@@ -99,19 +99,19 @@ if (
       images: imageUrls,
     });
     const admins = await User.find({
-  role: "admin",
-});
+      role: "admin",
+    });
 
-for (const admin of admins) {
-  await Notification.create({
-    user: admin._id,
-    title: "New PG Submitted",
-    message: `"${pg.title}" has been submitted and is awaiting approval.`,
-    type: "general",
-    referenceId: pg._id,
-    referenceType: "PG",
-  });
-}
+    for (const admin of admins) {
+      await Notification.create({
+        user: admin._id,
+        title: "New PG Submitted",
+        message: `"${pg.title}" has been submitted and is awaiting approval.`,
+        type: "general",
+        referenceId: pg._id,
+        referenceType: "PG",
+      });
+    }
 
     await Notification.create({
       user: req.user.id,
@@ -121,24 +121,24 @@ for (const admin of admins) {
       type: "general",
     });
 
-const user = await User.findById(
-  req.user.id
-);
-
-   if (user && user.role === "user") {
-  user.role = "owner";
-  await user.save();
-
-
-  // Send owner welcome email
-  if (user.email) {
-    await sendEmail(
-      user.email,
-      "Welcome to PropertyHub as an Owner 🚀",
-      welcomeOwnerEmail(user.name)
+    const user = await User.findById(
+      req.user.id
     );
-  }
-}
+
+    if (user && user.role === "user") {
+      user.role = "owner";
+      await user.save();
+
+
+      // Send owner welcome email
+      if (user.email) {
+        await sendEmail(
+          user.email,
+          "Welcome to PropertyHub as an Owner 🚀",
+          welcomeOwnerEmail(user.name)
+        );
+      }
+    }
 
     res.status(201).json({
       success: true,
@@ -169,6 +169,7 @@ const getAllPGs = async (req, res) => {
 
     const filters = {
       isApproved: true,
+      isActive: true,
     };
 
     if (city) {
@@ -187,30 +188,30 @@ const getAllPGs = async (req, res) => {
     }
 
     let pgs = await PG.find(filters)
-  .sort({ views: -1 })
-  .skip(skip)
-  .limit(limit);
+      .sort({ views: -1 })
+      .skip(skip)
+      .limit(limit);
 
-const filteredPGs = [];
+    const filteredPGs = [];
 
-for (const pg of pgs) {
-  const subscription =
-    await Subscription.findOne({
-      user: pg.owner,
-    }).sort({ createdAt: -1 });
+    for (const pg of pgs) {
+      const subscription =
+        await Subscription.findOne({
+          user: pg.owner,
+        }).sort({ createdAt: -1 });
 
-  if (
-    subscription &&
-    subscription.status === "Expired"
-  ) {
-    continue;
-  }
+      if (
+        subscription &&
+        subscription.status === "Expired"
+      ) {
+        continue;
+      }
 
-  filteredPGs.push(pg);
-}
+      filteredPGs.push(pg);
+    }
 
-const totalPGs =
-  filteredPGs.length;
+    const totalPGs =
+      filteredPGs.length;
 
     res.status(200).json({
       success: true,
@@ -230,13 +231,28 @@ const totalPGs =
 };
 const getMyPGs = async (req, res) => {
   try {
- const pgs = await PG.find({
-  owner: req.user.id,
-});
+    const pgs = await PG.find({
+      owner: req.user.id,
+    });
+
+    const updatedPGs = await Promise.all(
+      pgs.map(async (pg) => {
+        const wishlistCount =
+          await Wishlist.countDocuments({
+            itemId: pg._id,
+            itemType: "PG",
+          });
+
+        return {
+          ...pg.toObject(),
+          wishlistCount,
+        };
+      })
+    );
 
     res.status(200).json({
       success: true,
-      pgs,
+      pgs: updatedPGs,
     });
   } catch (error) {
     res.status(500).json({
@@ -267,25 +283,25 @@ const getPGById = async (req, res) => {
       }).sort({ createdAt: -1 });
 
     let contactAvailable = true;
-let listingAvailable = true;
+    let listingAvailable = true;
 
-  if (
-  latestSubscription &&
-  latestSubscription.status === "Expired"
-) {
-  contactAvailable = false;
-  listingAvailable = false;
+    if (
+      latestSubscription &&
+      latestSubscription.status === "Expired"
+    ) {
+      contactAvailable = false;
+      listingAvailable = false;
 
-  pgData.ownerPhone = "";
-  pgData.ownerEmail = "";
-}
+      pgData.ownerPhone = "";
+      pgData.ownerEmail = "";
+    }
 
-   res.status(200).json({
-  success: true,
-  contactAvailable,
-  listingAvailable,
-  pg: pgData,
-});
+    res.status(200).json({
+      success: true,
+      contactAvailable,
+      listingAvailable,
+      pg: pgData,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -306,20 +322,20 @@ const updatePG = async (req, res) => {
         message: "PG not found",
       });
     }
-if (pg.owner.toString() !== req.user.id) {
-  return res.status(403).json({
-    success: false,
-    message: "You are not authorized to update this PG",
-  });
-}
-   let imageUrls = [];
+    if (pg.owner.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this PG",
+      });
+    }
+    let imageUrls = [];
 
-if (req.body.existingImages) {
-  imageUrls = JSON.parse(req.body.existingImages);
-}
+    if (req.body.existingImages) {
+      imageUrls = JSON.parse(req.body.existingImages);
+    }
 
-if (req.files && req.files.length > 0) {
-  for (const file of req.files) {
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
         const uploadedImage =
           await new Promise(
             (resolve, reject) => {
@@ -361,12 +377,12 @@ if (req.files && req.files.length > 0) {
         }
       );
 
-      await Notification.create({
-        user: req.user.id,
-        title: "PG Updated",
-        message: `"${updatedPG.title}" has been updated successfully.`,
-        type: "general",
-      });
+    await Notification.create({
+      user: req.user.id,
+      title: "PG Updated",
+      message: `"${updatedPG.title}" has been updated successfully.`,
+      type: "general",
+    });
     res.status(200).json({
       success: true,
       message:
@@ -383,84 +399,100 @@ if (req.files && req.files.length > 0) {
   }
 };
 
-// const togglePGStatus = async (req, res) => {
-//   try {
-//     const pg = await PG.findById(req.params.id);
+const togglePGStatus = async (req, res) => {
+  try {
+    const pg = await PG.findById(req.params.id);
 
-//     if (!pg) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "PG not found",
-//       });
-//     }
+    if (!pg) {
+      return res.status(404).json({
+        success: false,
+        message: "PG not found",
+      });
+    }
 
-//     if (pg.owner.toString() !== req.user.id) {
-//       return res.status(403).json({
-//         success: false,
-//         message: "You are not authorized to update this PG",
-//       });
-//     }
+    if (pg.owner.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this PG",
+      });
+    }
 
-//     pg.isActive = !pg.isActive;
+    // Deactivating
+    if (pg.isActive) {
+      if (!req.body.reason || req.body.reason.trim() === "") {
+        return res.status(400).json({
+          success: false,
+          message: "Please provide a reason for deactivation.",
+        });
+      }
 
-//     await pg.save();
+      pg.isActive = false;
+      pg.deactivationReason = req.body.reason.trim();
+    }
+    // Activating
+    else {
+      pg.isActive = true;
+      pg.deactivationReason = "";
+    }
 
-//     await Notification.create({
-//       user: req.user.id,
-//       title: pg.isActive
-//         ? "PG Activated"
-//         : "PG Deactivated",
-//       message: `"${pg.title}" has been ${
-//         pg.isActive ? "activated" : "deactivated"
-//       }.`,
-//       type: "general",
-//       referenceId: pg._id,
-//       referenceType: "PG",
-//     });
+    await pg.save();
 
-//     res.status(200).json({
-//       success: true,
-//       message: `PG ${
-//         pg.isActive ? "activated" : "deactivated"
-//       } successfully.`,
-//       pg,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
+    await Notification.create({
+      user: req.user.id,
+      title: pg.isActive
+        ? "PG Activated"
+        : "PG Deactivated",
+      message: pg.isActive
+        ? `"${pg.title}" has been activated.`
+        : `"${pg.title}" has been deactivated.`,
+      type: "general",
+      referenceId: pg._id,
+      referenceType: "PG",
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `PG ${
+        pg.isActive ? "activated" : "deactivated"
+      } successfully.`,
+      pg,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 const deletePG = async (req, res) => {
   try {
- const pg = await PG.findById(
-  req.params.id
-);
+    const pg = await PG.findById(
+      req.params.id
+    );
 
-if (!pg) {
-  return res.status(404).json({
-    success: false,
-    message: "PG not found",
-  });
-}
+    if (!pg) {
+      return res.status(404).json({
+        success: false,
+        message: "PG not found",
+      });
+    }
 
-if (pg.owner.toString() !== req.user.id) {
-  return res.status(403).json({
-    success: false,
-    message: "You are not authorized to delete this PG",
-  });
-}
+    if (pg.owner.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this PG",
+      });
+    }
 
-await Notification.create({
-  user: req.user.id,
-  title: "PG Deleted",
-  message: `"${pg.title}" has been deleted successfully.`,
-  type: "general",
-});
+    await Notification.create({
+      user: req.user.id,
+      title: "PG Deleted",
+      message: `"${pg.title}" has been deleted successfully.`,
+      type: "general",
+    });
 
-await pg.deleteOne();
+    await pg.deleteOne();
 
     const remainingPGs =
       await PG.countDocuments({
@@ -534,7 +566,7 @@ module.exports = {
   getMyPGs,
   getPGById,
   updatePG,
-  // togglePGStatus,
+  togglePGStatus,
   deletePG,
   incrementPGViews,
 };
