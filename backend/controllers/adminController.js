@@ -685,6 +685,137 @@ const exportPropertiesToExcel = async (req, res) => {
   }
 };
 
+const exportPGsToExcel = async (req, res) => {
+  try {
+    const pgs = await PG.find()
+      .populate("owner", "name email mobileNumber")
+      .lean();
+
+    const pgData = pgs.map((pg) => ({
+      Title: pg.title,
+      Owner: pg.owner?.name || "-",
+      Email: pg.owner?.email || "-",
+      Mobile: pg.owner?.mobileNumber || "-",
+      City: pg.city,
+      State: pg.state,
+      Rent: pg.rent,
+      Sharing: pg.sharingType,
+      Gender: pg.genderPreference,
+      Status: pg.isApproved ? "Approved" : "Pending",
+      Rating: pg.averageRating || 0,
+      "Created On": new Date(
+        pg.createdAt
+      ).toLocaleDateString("en-IN"),
+    }));
+
+    const workbook = XLSX.utils.book_new();
+
+    const worksheet =
+      XLSX.utils.json_to_sheet(pgData);
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "PGs"
+    );
+
+    const buffer = XLSX.write(workbook, {
+      type: "buffer",
+      bookType: "xlsx",
+    });
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="PropertyHub_PGs.xlsx"'
+    );
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    res.send(buffer);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to export PGs.",
+    });
+  }
+};
+
+const exportSubscriptionsToExcel = async (req, res) => {
+  try {
+    const subscriptions = await Subscription.find()
+      .populate(
+        "user",
+        "name email mobileNumber role"
+      )
+      .lean();
+
+    const subscriptionData =
+      subscriptions.map((subscription) => ({
+        Name: subscription.user?.name || "-",
+        Email: subscription.user?.email || "-",
+        Mobile:
+          subscription.user?.mobileNumber || "-",
+        Role: subscription.user?.role || "-",
+        Plan: subscription.plan,
+        Amount: subscription.amount,
+        Status: subscription.status,
+        "Start Date": subscription.startDate
+          ? new Date(
+              subscription.startDate
+            ).toLocaleDateString("en-IN")
+          : "-",
+        "End Date": subscription.endDate
+          ? new Date(
+              subscription.endDate
+            ).toLocaleDateString("en-IN")
+          : "-",
+      }));
+
+    const workbook = XLSX.utils.book_new();
+
+    const worksheet =
+      XLSX.utils.json_to_sheet(
+        subscriptionData
+      );
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Subscriptions"
+    );
+
+    const buffer = XLSX.write(workbook, {
+      type: "buffer",
+      bookType: "xlsx",
+    });
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="PropertyHub_Subscriptions.xlsx"'
+    );
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    res.send(buffer);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message:
+        "Failed to export subscriptions.",
+    });
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -705,5 +836,7 @@ module.exports = {
   getAllSubscriptions,
 
   exportUsersToExcel,
-exportPropertiesToExcel,
+  exportPropertiesToExcel,
+  exportPGsToExcel,
+  exportSubscriptionsToExcel,
 };

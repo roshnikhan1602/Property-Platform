@@ -11,6 +11,8 @@ function SubscriptionsTable({
   setSubscriptionStatus,
   subscriptionSort,
 setSubscriptionSort,
+
+handleExportSubscriptions,
 }) {
   const getDaysLeft = (endDate) => {
   if (!endDate)
@@ -60,13 +62,20 @@ setSubscriptionSort,
   return (
     <>
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-     <div className="p-6 border-b">
-  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="p-6 border-b">
+  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
     <h2 className="text-2xl font-bold">
       Subscription Management
     </h2>
 
-    <div className="flex flex-col sm:flex-row gap-3">
+<button
+  onClick={handleExportSubscriptions}
+  className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-medium transition cursor-pointer"
+>
+  Export Excel
+</button>
+
+    <div className="flex flex-col lg:flex-row gap-3 lg:ml-auto">
       <input
         type="text"
         placeholder="Search by user..."

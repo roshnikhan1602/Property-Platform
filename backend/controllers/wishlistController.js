@@ -79,27 +79,33 @@ const getWishlist = async (req, res) => {
       userId: req.user.id,
     }).populate("itemId");
 
-    for (const item of wishlist) {
-      if (!item.itemId) continue;
+    const updatedWishlist = await Promise.all(
+      wishlist.map(async (item) => {
+        if (!item.itemId) {
+          return item.toObject();
+        }
 
-      const owner =
-        item.itemType === "Property"
-          ? item.itemId.owner
-          : item.itemId.owner;
+        const subscription =
+          await Subscription.findOne({
+            user: item.itemId.owner,
+          }).sort({ createdAt: -1 });
 
-      const subscription =
-        await Subscription.findOne({
-          user: owner,
-        }).sort({ createdAt: -1 });
+        const listing = item.itemId.toObject();
 
-      item.itemId.listingAvailable =
-        !subscription ||
-        subscription.status !== "Expired";
-    }
+        listing.listingAvailable =
+          !subscription ||
+          subscription.status !== "Expired";
+
+        return {
+          ...item.toObject(),
+          itemId: listing,
+        };
+      })
+    );
 
     res.status(200).json({
       success: true,
-      wishlist,
+      wishlist: updatedWishlist,
     });
   } catch (error) {
     console.error(error);

@@ -17,9 +17,10 @@ function PropertiesTable({
   handleDelete,
   handleDeletePG,
 
-  handleExportProperties,
+ handleExportProperties,
+handleExportPGs,
 
-  propertySearch,
+propertySearch,
   setPropertySearch,
 
   propertyCity,
@@ -80,14 +81,16 @@ function PropertiesTable({
       : "All PGs"}
   </h2>
 
-  {propertyView === "properties" && (
-    <button
-      onClick={handleExportProperties}
-      className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-medium transition cursor-pointer"
-    >
-      Export Excel
-    </button>
-  )}
+  <button
+  onClick={
+    propertyView === "properties"
+      ? handleExportProperties
+      : handleExportPGs
+  }
+  className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-medium transition cursor-pointer"
+>
+  Export Excel
+</button>
 </div>
 
         {/* Filters */}

@@ -195,108 +195,202 @@ function AdminDashboard() {
   };
 
   const handleExportUsers = async () => {
-  try {
-    const response = await fetch(
-      "http://localhost:5000/api/admin/export/users",
-      {
-        credentials: "include",
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/admin/export/users",
+        {
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Export failed");
       }
-    );
 
-    if (!response.ok) {
-      throw new Error("Export failed");
+      const blob = await response.blob();
+
+      const url =
+        window.URL.createObjectURL(blob);
+
+      const link =
+        document.createElement("a");
+
+      link.href = url;
+
+      link.download =
+        "PropertyHub_Users.xlsx";
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+
+      setToast({
+        show: true,
+        message:
+          "Users exported successfully.",
+        type: "success",
+      });
+    } catch (error) {
+      console.error(error);
+
+      setToast({
+        show: true,
+        message:
+          "Failed to export users.",
+        type: "error",
+      });
     }
+  };
 
-    const blob = await response.blob();
+  const handleExportProperties = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/admin/export/properties",
+        {
+          credentials: "include",
+        }
+      );
 
-    const url =
-      window.URL.createObjectURL(blob);
-
-    const link =
-      document.createElement("a");
-
-    link.href = url;
-
-    link.download =
-      "PropertyHub_Users.xlsx";
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    link.remove();
-
-    window.URL.revokeObjectURL(url);
-
-    setToast({
-      show: true,
-      message:
-        "Users exported successfully.",
-      type: "success",
-    });
-  } catch (error) {
-    console.error(error);
-
-    setToast({
-      show: true,
-      message:
-        "Failed to export users.",
-      type: "error",
-    });
-  }
-};
-
-const handleExportProperties = async () => {
-  try {
-    const response = await fetch(
-      "http://localhost:5000/api/admin/export/properties",
-      {
-        credentials: "include",
+      if (!response.ok) {
+        throw new Error("Export failed");
       }
-    );
 
-    if (!response.ok) {
-      throw new Error("Export failed");
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+
+      link.download = "PropertyHub_Properties.xlsx";
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+
+      setToast({
+        show: true,
+        message: "Properties exported successfully.",
+        type: "success",
+      });
+    } catch (error) {
+      console.error(error);
+
+      setToast({
+        show: true,
+        message: "Failed to export properties.",
+        type: "error",
+      });
     }
+  };
 
-    const blob = await response.blob();
+  const handleExportPGs = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/admin/export/pgs",
+        {
+          credentials: "include",
+        }
+      );
 
-    const url = window.URL.createObjectURL(blob);
+      if (!response.ok) {
+        throw new Error("Export failed");
+      }
 
-    const link = document.createElement("a");
+      const blob = await response.blob();
 
-    link.href = url;
+      const url = window.URL.createObjectURL(blob);
 
-    link.download = "PropertyHub_Properties.xlsx";
+      const link = document.createElement("a");
 
-    document.body.appendChild(link);
+      link.href = url;
 
-    link.click();
+      link.download = "PropertyHub_PGs.xlsx";
 
-    link.remove();
+      document.body.appendChild(link);
 
-    window.URL.revokeObjectURL(url);
+      link.click();
 
-    setToast({
-      show: true,
-      message: "Properties exported successfully.",
-      type: "success",
-    });
-  } catch (error) {
-    console.error(error);
+      link.remove();
 
-    setToast({
-      show: true,
-      message: "Failed to export properties.",
-      type: "error",
-    });
-  }
-};
+      window.URL.revokeObjectURL(url);
 
+      setToast({
+        show: true,
+        message: "PGs exported successfully.",
+        type: "success",
+      });
+    } catch (error) {
+      console.error(error);
+
+      setToast({
+        show: true,
+        message: "Failed to export PGs.",
+        type: "error",
+      });
+    }
+  };
+
+  const handleExportSubscriptions = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/admin/export/subscriptions",
+        {
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Export failed");
+      }
+
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+
+      link.download =
+        "PropertyHub_Subscriptions.xlsx";
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+
+      setToast({
+        show: true,
+        message:
+          "Subscriptions exported successfully.",
+        type: "success",
+      });
+    } catch (error) {
+      console.error(error);
+
+      setToast({
+        show: true,
+        message:
+          "Failed to export subscriptions.",
+        type: "error",
+      });
+    }
+  };
   useEffect(() => {
     fetchData();
-
-
 
     if (location.state?.fromAdmin) {
       setActiveTab(
@@ -1079,7 +1173,7 @@ const handleExportProperties = async () => {
         className={`transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-16"
           }`}
       >
-       <section className="w-full px-8 pt-12 pb-10">
+        <section className="w-full px-8 pt-12 pb-10">
 
 
           {/* Analytics Cards */}
@@ -1096,24 +1190,24 @@ const handleExportProperties = async () => {
           )}
 
           {activeTab === "users" && (
-           <UsersTable
-  paginatedUsers={paginatedUsers}
-  userPage={userPage}
-  userTotalPages={userTotalPages}
-  setUserPage={setUserPage}
-  handleViewUser={handleViewUser}
-  handleDeleteUser={handleDeleteUser}
-  handleExportUsers={handleExportUsers}
+            <UsersTable
+              paginatedUsers={paginatedUsers}
+              userPage={userPage}
+              userTotalPages={userTotalPages}
+              setUserPage={setUserPage}
+              handleViewUser={handleViewUser}
+              handleDeleteUser={handleDeleteUser}
+              handleExportUsers={handleExportUsers}
 
-  userSearch={userSearch}
-  setUserSearch={setUserSearch}
+              userSearch={userSearch}
+              setUserSearch={setUserSearch}
 
-  userRole={userRole}
-  setUserRole={setUserRole}
+              userRole={userRole}
+              setUserRole={setUserRole}
 
-  userSort={userSort}
-  setUserSort={setUserSort}
-/>
+              userSort={userSort}
+              setUserSort={setUserSort}
+            />
           )}
 
           {activeTab === "properties" && (
@@ -1129,6 +1223,7 @@ const handleExportProperties = async () => {
               handleDelete={handleDelete}
               handleDeletePG={handleDeletePG}
               handleExportProperties={handleExportProperties}
+              handleExportPGs={handleExportPGs}
               propertySearch={propertySearch}
               setPropertySearch={setPropertySearch}
               propertyCity={propertyCity}
@@ -1219,6 +1314,9 @@ const handleExportProperties = async () => {
               setSubscriptionStatus={setSubscriptionStatus}
               subscriptionSort={subscriptionSort}
               setSubscriptionSort={setSubscriptionSort}
+              handleExportSubscriptions={
+                handleExportSubscriptions
+              }
             />
           )}
         </section>

@@ -21,7 +21,9 @@ const {
   getAllSubscriptions,
 
   exportUsersToExcel,
-  exportPropertiesToExcel,
+exportPropertiesToExcel,
+exportPGsToExcel,
+exportSubscriptionsToExcel,
 } = require("../controllers/adminController");
 
 router.get(
@@ -35,6 +37,10 @@ router.get(
   getAllSubscriptions
 );
 
+router.get(
+  "/export/subscriptions",
+  exportSubscriptionsToExcel
+);
 // User Routes
 router.get("/users", getAllUsers);
 
@@ -77,6 +83,11 @@ router.delete(
 
 // PG Routes
 router.get("/pgs", getAllPGs);
+
+router.get(
+  "/export/pgs",
+  exportPGsToExcel
+);
 
 router.put(
   "/pg/approve/:id",

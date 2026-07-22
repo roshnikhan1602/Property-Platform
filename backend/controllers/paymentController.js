@@ -81,12 +81,17 @@ const verifyPayment = async (req, res) => {
       },
     };
 
-    const startDate = new Date();
+   const startDate = new Date();
 
-    const endDate = new Date();
-    endDate.setMonth(
-      endDate.getMonth() + 1
-    );
+const endDate = new Date();
+
+if (plan === "Free") {
+  endDate.setDate(endDate.getDate() + 15);
+} else if (plan === "Premium") {
+  endDate.setMonth(endDate.getMonth() + 1);
+} else if (plan === "Elite") {
+  endDate.setMonth(endDate.getMonth() + 3);
+}
 
     let subscription =
       await Subscription.findOne({
