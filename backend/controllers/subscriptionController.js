@@ -56,6 +56,38 @@ const getCurrentSubscription = async (
   res
 ) => {
   try {
+    const currentUser = await User.findById(req.user.id);
+
+if (currentUser?.role === "admin") {
+  let adminSubscription = await Subscription.findOne({
+    user: req.user.id,
+  }).sort({ createdAt: -1 });
+
+  if (!adminSubscription) {
+    adminSubscription = await Subscription.create({
+      user: req.user.id,
+      plan: "Elite",
+      amount: 0,
+      propertyLimit: -1,
+      pgLimit: -1,
+      status: "Active",
+    });
+  } else {
+    adminSubscription.plan = "Elite";
+    adminSubscription.amount = 0;
+    adminSubscription.propertyLimit = -1;
+    adminSubscription.pgLimit = -1;
+    adminSubscription.status = "Active";
+
+    await adminSubscription.save();
+  }
+
+  return res.json({
+    success: true,
+    subscription: adminSubscription,
+  });
+}
+
 // Find the latest subscription
 let subscription =
   await Subscription.findOne({

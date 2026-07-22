@@ -21,23 +21,30 @@ const notificationSchema = new mongoose.Schema(
     },
 
     type: {
-  type: String,
-  enum: [
-    "property-approved",
-    "property-rejected",
-    "pg-approved",
-    "pg-rejected",
-    "subscription",
-    "review",
-    "review-reply", 
-    "support",
-    "support-reply",
-    "support-resolved",
-    "welcome",
-    "general",
-  ],
-  default: "general",
-},
+      type: String,
+      enum: [
+        "property-approved",
+        "property-rejected",
+        "pg-approved",
+        "pg-rejected",
+        "subscription",
+        "review",
+        "review-reply",
+        "support",
+        "support-reply",
+        "support-resolved",
+        "welcome",
+        "general",
+
+        // Visit Notifications
+        "visit-request",
+        "visit-approved",
+        "visit-rejected",
+        "visit-completed",
+        "visit-cancelled",
+      ],
+      default: "general",
+    },
 
     referenceId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -52,6 +59,7 @@ const notificationSchema = new mongoose.Schema(
         "Subscription",
         "Review",
         "Support",
+        "Visit",
       ],
       default: null,
     },
@@ -66,7 +74,4 @@ const notificationSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model(
-  "Notification",
-  notificationSchema
-);
+module.exports = mongoose.model("Notification", notificationSchema);

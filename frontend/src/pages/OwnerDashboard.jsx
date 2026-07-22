@@ -9,6 +9,8 @@ import {
   FaHeart,
   FaCrown,
   FaFileInvoiceDollar,
+  FaCalendarCheck,
+  FaClipboardList,
 } from "react-icons/fa";
 
 import Navbar from "../components/layout/Navbar";
@@ -241,6 +243,36 @@ const handleAddPG = () => {
           </Link>
 
 <Link
+  to="/my-visit-requests"
+  className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-orange-100 hover:text-orange-600 transition-all"
+>
+  <FaCalendarCheck className="min-w-[22px]" />
+
+  <span
+    className={`transition-all duration-300 whitespace-nowrap ${
+      sidebarOpen ? "opacity-100" : "opacity-0"
+    }`}
+  >
+    Visit Requests
+  </span>
+</Link>
+
+<Link
+  to="/my-visits"
+  className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-100 hover:text-blue-600 transition-all"
+>
+  <FaClipboardList className="min-w-[22px]" />
+
+  <span
+    className={`transition-all duration-300 whitespace-nowrap ${
+      sidebarOpen ? "opacity-100" : "opacity-0"
+    }`}
+  >
+    My Visits
+  </span>
+</Link>
+
+<Link
   to="/subscription-history"
   className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-indigo-100 hover:text-indigo-600 transition-all"
 >
@@ -359,7 +391,6 @@ const handleAddPG = () => {
               {totalViews}
             </p>
           </div>
-
         </div>
       </div>
 

@@ -63,7 +63,7 @@ fetchUser();
 
     try {
       const response = await fetch(
-  `http://localhost:5000/api/auth/profile/${user._id}`,
+  `http://localhost:5000/api/auth/profile`,
   {
     method: "PUT",
     credentials: "include",
@@ -149,8 +149,8 @@ setSuccessMessage(
                   );
 
                   try {
-                    const response = await fetch(
-  `http://localhost:5000/api/auth/profile-image/${user._id}`,
+                   const response = await fetch(
+  "http://localhost:5000/api/auth/profile-image",
   {
     method: "PUT",
     credentials: "include",

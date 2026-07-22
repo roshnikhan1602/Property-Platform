@@ -6,6 +6,7 @@ import {
   FaBuilding,
   FaUserCircle,
   FaCrown,
+  FaCalendarCheck,
 } from "react-icons/fa";
 
 import Navbar from "../components/layout/Navbar";
@@ -56,7 +57,7 @@ function UserDashboard() {
 
           <Link
             to="/wishlist"
-            className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 transition-all duration-300"
+            className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 hover:scale-[1.02] transition-all duration-300"
           >
             <div className="flex items-center justify-between mb-6">
               <FaHeart className="text-red-500 text-2xl" />
@@ -75,9 +76,30 @@ function UserDashboard() {
             </p>
           </Link>
 
+<Link
+  to="/my-visits"
+ className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 hover:scale-[1.02] transition-all duration-300"
+>
+  <div className="flex items-center justify-between mb-6">
+    <FaCalendarCheck className="text-orange-500 text-2xl" />
+
+    <span className="text-sm text-gray-400">
+      View →
+    </span>
+  </div>
+
+  <h2 className="text-xl font-semibold text-gray-900">
+    My Visits
+  </h2>
+
+  <p className="text-gray-500 mt-2">
+    Track all your booked visits
+  </p>
+</Link>
+
           <Link
             to="/"
-            className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 transition-all duration-300"
+          className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 hover:scale-[1.02] transition-all duration-300"
           >
             <div className="flex items-center justify-between mb-6">
               <FaHistory className="text-blue-500 text-2xl" />
@@ -98,7 +120,7 @@ function UserDashboard() {
 
           <Link
             to="/properties"
-            className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 transition-all duration-300"
+            className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 hover:scale-[1.02] transition-all duration-300"
           >
             <div className="flex items-center justify-between mb-6">
               <FaBuilding className="text-green-500 text-2xl" />
@@ -140,7 +162,7 @@ function UserDashboard() {
 
           <Link
             to="/owner-profile"
-            className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 transition-all duration-300"
+        className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-blue-500 hover:scale-[1.02] transition-all duration-300"
           >
             <div className="flex items-center justify-between mb-6">
               <FaUserCircle className="text-purple-500 text-2xl" />

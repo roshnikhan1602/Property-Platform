@@ -10,6 +10,7 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ReviewSection from "../components/reviews/ReviewSection";
 import ElevatePropertyModal from "../components/ai/ElevatePropertyModal";
+import BookVisitModal from "../components/visits/BookVisitModal";
 import {
   addReview,
   getPropertyReviews,
@@ -69,6 +70,7 @@ function PropertyDetails({
   const [showElevateModal, setShowElevateModal] = useState(false);
   const [user, setUser] = useState(null);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showBookVisitModal, setShowBookVisitModal] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [toast, setToast] = useState({
@@ -991,6 +993,22 @@ function PropertyDetails({
             🔗 Share Property
           </button>
 
+{String(user?._id) !== String(property?.owner) && (
+  <button
+    onClick={() => {
+      if (!user) {
+        setShowLoginModal(true);
+        return;
+      }
+
+      setShowBookVisitModal(true);
+    }}
+    className="bg-orange-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-orange-700 transition"
+  >
+    📅 Book Visit
+  </button>
+)}
+
           <button
             onClick={() => navigate(`/property-ai/${property._id}`)}
             className="bg-purple-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-purple-700 transition"
@@ -1035,6 +1053,13 @@ function PropertyDetails({
           }
         />
       )}
+
+<BookVisitModal
+  isOpen={showBookVisitModal}
+  onClose={() => setShowBookVisitModal(false)}
+  property={property}
+/>
+
       <ShareModal
         isOpen={showShareModal}
         onClose={() =>
