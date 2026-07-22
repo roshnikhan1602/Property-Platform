@@ -6,6 +6,7 @@ import {
   FaHeadset,
   FaCreditCard,
   FaClock,
+  FaCalendarCheck,
 } from "react-icons/fa";
 
 function AdminSidebar({
@@ -98,6 +99,20 @@ function AdminSidebar({
             Subscriptions
           </span>
         </button>
+
+<button
+  onClick={() => setActiveTab("visits")}
+  className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-100"
+>
+  <FaCalendarCheck className="min-w-[22px]" />
+  <span
+    className={`transition-all duration-300 whitespace-nowrap ${
+      sidebarOpen ? "opacity-100" : "opacity-0"
+    }`}
+  >
+    Visits
+  </span>
+</button>
 
         <button
           onClick={() => setActiveTab("support")}

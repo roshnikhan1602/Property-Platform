@@ -16,6 +16,7 @@ import PendingTable from "../components/adminDashboard/PendingTable";
 import ApprovedTable from "../components/adminDashboard/ApprovedTable";
 import SupportTable from "../components/adminDashboard/SupportTable";
 import SubscriptionsTable from "../components/adminDashboard/SubscriptionsTable";
+import VisitsTable from "../components/adminDashboard/VisitsTable";
 
 function AdminDashboard() {
   const [users, setUsers] = useState([]);
@@ -123,6 +124,23 @@ function AdminDashboard() {
   const [showReplyModal, setShowReplyModal] =
     useState(false);
 
+    const [visits, setVisits] = useState([]);
+
+const [visitStats, setVisitStats] = useState({
+  totalVisits: 0,
+  pendingVisits: 0,
+  approvedVisits: 0,
+  completedVisits: 0,
+  rejectedVisits: 0,
+  cancelledVisits: 0,
+});
+
+const [visitSearch, setVisitSearch] = useState("");
+const [visitStatus, setVisitStatus] = useState("All");
+const [visitSort, setVisitSort] = useState("Newest");
+
+const [visitPage, setVisitPage] = useState(1);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -177,6 +195,26 @@ function AdminDashboard() {
           setDashboardStats(data.stats);
         }
       });
+
+fetch("http://localhost:5000/api/visits/admin/all", {
+  credentials: "include",
+})
+  .then((res) => res.json())
+  .then((data) => {
+    if (data.success) {
+      setVisits(data.visits);
+    }
+  });
+
+fetch("http://localhost:5000/api/visits/admin/stats", {
+  credentials: "include",
+})
+  .then((res) => res.json())
+  .then((data) => {
+    if (data.success) {
+      setVisitStats(data.stats);
+    }
+  });
 
     fetch(
       "http://localhost:5000/api/admin/subscriptions",
@@ -697,6 +735,43 @@ function AdminDashboard() {
       ROWS_PER_PAGE
     );
 
+const filteredVisits = visits
+  .filter((visit) => {
+    const search = visitSearch.toLowerCase();
+
+    const matchesSearch =
+      (visit.user?.name || "")
+        .toLowerCase()
+        .includes(search) ||
+      (visit.owner?.name || "")
+        .toLowerCase()
+        .includes(search) ||
+      (visit.propertyTitle || "")
+        .toLowerCase()
+        .includes(search);
+
+    const matchesStatus =
+      visitStatus === "All" ||
+      visit.status === visitStatus;
+
+    return matchesSearch && matchesStatus;
+  })
+  .sort((a, b) => {
+    if (visitSort === "Oldest") {
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    }
+
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
+const visitTotalPages =
+  Math.ceil(filteredVisits.length / ROWS_PER_PAGE) || 1;
+
+const paginatedVisits = filteredVisits.slice(
+  (visitPage - 1) * ROWS_PER_PAGE,
+  visitPage * ROWS_PER_PAGE
+);
+
   const filteredUsers = users
     .filter((user) => {
       const matchesSearch =
@@ -771,11 +846,16 @@ function AdminDashboard() {
     setApprovedPage(1);
     setSupportPage(1);
     setSubscriptionPage(1);
+    setVisitPage(1);
   }, [activeTab]);
 
   useEffect(() => {
     setUserPage(1);
   }, [userSearch, userRole, userSort]);
+
+useEffect(() => {
+  setVisitPage(1);
+}, [visitSearch, visitStatus, visitSort]);
 
   const handleApprove = async (id) => {
     try {
@@ -1319,6 +1399,23 @@ function AdminDashboard() {
               }
             />
           )}
+
+{activeTab === "visits" && (
+  <VisitsTable
+    visits={paginatedVisits}
+    visitStats={visitStats}
+    visitPage={visitPage}
+    visitTotalPages={visitTotalPages}
+    setVisitPage={setVisitPage}
+    visitSearch={visitSearch}
+    setVisitSearch={setVisitSearch}
+    visitStatus={visitStatus}
+    setVisitStatus={setVisitStatus}
+    visitSort={visitSort}
+    setVisitSort={setVisitSort}
+  />
+)}
+
         </section>
 
         {selectedUser && (

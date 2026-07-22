@@ -10,6 +10,14 @@ const subscriptionSuccessEmail = require("../templates/subscriptionSuccessEmail"
 
 const createOrder = async (req, res) => {
   try {
+    const user = await User.findById(req.user.id);
+
+if (user?.role === "admin") {
+  return res.status(403).json({
+    success: false,
+    message: "Admin already has the Elite plan.",
+  });
+}
     const { plan, amount } = req.body;
 
     const options = {
@@ -36,6 +44,14 @@ const createOrder = async (req, res) => {
 
 const verifyPayment = async (req, res) => {
   try {
+   const currentUser = await User.findById(req.user.id);
+
+if (currentUser?.role === "admin") {
+  return res.status(403).json({
+    success: false,
+    message: "Admin does not require a subscription.",
+  });
+}
     const {
       plan,
       amount,

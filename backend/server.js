@@ -17,6 +17,9 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const shareRoutes = require("./routes/shareRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 
+// ✅ NEW
+const visitRoutes = require("./routes/visitRoutes");
+
 require("./jobs/subscriptionReminder");
 connectDB();
 
@@ -80,7 +83,10 @@ app.use(
   chatRoutes
 );
 
-app.use("/api/ai", aiRoutes);
+app.use(
+  "/api/ai",
+  aiRoutes
+);
 
 app.use(
   "/api/stats",
@@ -103,10 +109,16 @@ app.use(
   paymentRoutes
 );
 
-// NEW Share Route
+// Share Routes
 app.use(
   "/api/share",
   shareRoutes
+);
+
+// ✅ Visit Routes
+app.use(
+  "/api/visits",
+  visitRoutes
 );
 
 app.get("/", (req, res) => {

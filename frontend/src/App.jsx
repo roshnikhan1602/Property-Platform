@@ -39,13 +39,16 @@ import AdminRoute from "./components/AdminRoute";
 import Notifications from "./pages/Notifications";
 import PropertyAI from "./pages/PropertyAI";
 
-// ✅ NEW IMPORT
+// ✅ Visit Pages
+import MyVisitRequests from "./pages/MyVisitRequests";
+import MyVisits from "./pages/MyVisits";
+
+// Guest Session
 import GuestSessionManager from "./components/common/GuestSessionManager";
 
 function App() {
   return (
     <BrowserRouter>
-      {/* Guest session timer */}
       <GuestSessionManager />
 
       <Routes>
@@ -154,6 +157,16 @@ function App() {
           }
         />
 
+        {/* ✅ Owner Visit Requests */}
+        <Route
+          path="/my-visit-requests"
+          element={
+            <ProtectedRoute>
+              <MyVisitRequests />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/user-dashboard"
           element={
@@ -163,7 +176,15 @@ function App() {
           }
         />
 
-
+        {/* ✅ User Visits */}
+        <Route
+          path="/my-visits"
+          element={
+            <ProtectedRoute>
+              <MyVisits />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/owner-profile"
@@ -247,6 +268,7 @@ function App() {
             </AdminRoute>
           }
         />
+
         <Route
           path="/property-ai/:id"
           element={<PropertyAI />}

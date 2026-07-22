@@ -13,6 +13,8 @@ function Subscription() {
   const [currentPlan, setCurrentPlan] =
     useState(null);
 
+    const [user, setUser] = useState(null);
+
   const [loading, setLoading] =
     useState(true);
 
@@ -79,9 +81,22 @@ function Subscription() {
 
       const data = await response.json();
 
-      if (data.success) {
-        setCurrentPlan(data.subscription);
-      }
+     if (data.success) {
+  setCurrentPlan(data.subscription);
+
+  const response = await fetch(
+    "http://localhost:5000/api/auth/me",
+    {
+      credentials: "include",
+    }
+  );
+
+  const userData = await response.json();
+
+  if (userData.success) {
+    setUser(userData.user);
+  }
+}
     } catch (error) {
       console.error(error);
 
@@ -152,7 +167,7 @@ function Subscription() {
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <div className="bg-blue-100 text-blue-700 px-5 py-2 rounded-full font-medium">
                 Current Plan :{" "}
-                {currentPlan.plan}
+                {currentPlan.plan}👑 
               </div>
 
               <div
@@ -167,39 +182,48 @@ function Subscription() {
                 {currentPlan.status}
               </div>
 
-              {currentPlan.plan !==
-                "Free" &&
-                currentPlan.endDate && (
-                  <>
-                    <div className="bg-purple-100 text-purple-700 px-5 py-2 rounded-full font-medium">
-                      {currentPlan.status ===
-                      "Active"
-                        ? "Expires"
-                        : "Expired On"}
-                      {" : "}
-                      {new Date(
-                        currentPlan.endDate
-                      ).toLocaleDateString()}
-                    </div>
+              {user?.role === "admin" ? (
+  <>
+    <div className="bg-purple-100 text-purple-700 px-5 py-2 rounded-full font-medium">
+      Administrator
+    </div>
 
-                    {currentPlan.status ===
-                      "Active" && (
-                      <div
-                        className={`px-5 py-2 rounded-full font-medium ${
-                          daysRemaining > 7
-                            ? "bg-green-100 text-green-700"
-                            : daysRemaining > 0
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-red-100 text-red-700"
-                        }`}
-                      >
-                        {daysRemaining > 0
-                          ? `${daysRemaining} days left`
-                          : "Expired"}
-                      </div>
-                    )}
-                  </>
-                )}
+    <div className="bg-emerald-100 text-emerald-700 px-5 py-2 rounded-full font-medium">
+      Unlimited Access
+    </div>
+  </>
+) : (
+  currentPlan.plan !== "Free" &&
+  currentPlan.endDate && (
+    <>
+      <div className="bg-purple-100 text-purple-700 px-5 py-2 rounded-full font-medium">
+        {currentPlan.status === "Active"
+          ? "Expires"
+          : "Expired On"}
+        {" : "}
+        {new Date(
+          currentPlan.endDate
+        ).toLocaleDateString()}
+      </div>
+
+      {currentPlan.status === "Active" && (
+        <div
+          className={`px-5 py-2 rounded-full font-medium ${
+            daysRemaining > 7
+              ? "bg-green-100 text-green-700"
+              : daysRemaining > 0
+              ? "bg-yellow-100 text-yellow-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
+          {daysRemaining > 0
+            ? `${daysRemaining} days left`
+            : "Expired"}
+        </div>
+      )}
+    </>
+  )
+)}
             </div>
           )}
         </div>
