@@ -14,16 +14,43 @@ function AddPG() {
     description: "",
     rent: "",
     depositAmount: "",
+    maintenanceCharges: "",
+
     sharingType: "",
     genderPreference: "",
+
+    totalBeds: "",
+    availableBeds: "",
+    availableNow: true,
+
     foodAvailable: false,
     wifiAvailable: false,
     acAvailable: false,
+    gymAvailable: false,
+    swimmingPoolAvailable: false,
+    tvAvailable: false,
+    cctvAvailable: false,
+
+    attachedBathroom: false,
+    laundryAvailable: false,
+    housekeepingAvailable: false,
+    liftAvailable: false,
+    geyserAvailable: false,
+    parkingAvailable: false,
+    powerBackupAvailable: false,
+    studyTableAvailable: false,
+    cupboardAvailable: false,
+
+    smokingAllowed: false,
+    petsAllowed: false,
+    visitorsAllowed: true,
+
     address: "",
     city: "",
     state: "",
     pincode: "",
     locality: "",
+
     ownerName: "",
     ownerPhone: "",
     ownerEmail: "",
@@ -92,13 +119,13 @@ function AddPG() {
     });
     try {
       const response = await fetch(
-  "http://localhost:5000/api/pgs",
-  {
-    method: "POST",
-    credentials: "include",
-    body: form,
-  }
-);
+        "http://localhost:5000/api/pgs",
+        {
+          method: "POST",
+          credentials: "include",
+          body: form,
+        }
+      );
 
       const data =
         await response.json();
@@ -139,12 +166,12 @@ function AddPG() {
       } else {
         setSubmitting(false);
 
-         setToast({
-    show: true,
-    message:
-      data.message || "Failed to add PG",
-    type: "error",
-  });
+        setToast({
+          show: true,
+          message:
+            data.message || "Failed to add PG",
+          type: "error",
+        });
       }
     } catch (error) {
       console.error(error);
@@ -244,6 +271,21 @@ function AddPG() {
 
               <div>
                 <label className="block mb-2 font-medium">
+                  Maintenance Charges
+                </label>
+
+                <input
+                  type="number"
+                  name="maintenanceCharges"
+                  value={formData.maintenanceCharges}
+                  onChange={handleChange}
+                  placeholder="Enter Maintenance Charges"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 font-medium">
                   Sharing Type *
                 </label>
 
@@ -301,11 +343,38 @@ function AddPG() {
                   <option value="Girls">
                     Girls
                   </option>
-
-                  <option value="Unisex">
+                  <option value="Co-live">
                     Co-live
                   </option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block mb-2 font-medium">
+                  Total Beds
+                </label>
+
+                <input
+                  type="number"
+                  name="totalBeds"
+                  value={formData.totalBeds}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 font-medium">
+                  Available Beds
+                </label>
+
+                <input
+                  type="number"
+                  name="availableBeds"
+                  value={formData.availableBeds}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                />
               </div>
 
             </div>
@@ -429,6 +498,96 @@ function AddPG() {
                   />
                   CCTV
                 </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="attachedBathroom"
+                    checked={formData.attachedBathroom}
+                    onChange={handleChange}
+                  />
+                  Attached Bathroom
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="laundryAvailable"
+                    checked={formData.laundryAvailable}
+                    onChange={handleChange}
+                  />
+                  Laundry
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="housekeepingAvailable"
+                    checked={formData.housekeepingAvailable}
+                    onChange={handleChange}
+                  />
+                  Housekeeping
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="liftAvailable"
+                    checked={formData.liftAvailable}
+                    onChange={handleChange}
+                  />
+                  Lift
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="geyserAvailable"
+                    checked={formData.geyserAvailable}
+                    onChange={handleChange}
+                  />
+                  Geyser
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="parkingAvailable"
+                    checked={formData.parkingAvailable}
+                    onChange={handleChange}
+                  />
+                  Parking
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="powerBackupAvailable"
+                    checked={formData.powerBackupAvailable}
+                    onChange={handleChange}
+                  />
+                  Power Backup
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="studyTableAvailable"
+                    checked={formData.studyTableAvailable}
+                    onChange={handleChange}
+                  />
+                  Study Table
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="cupboardAvailable"
+                    checked={formData.cupboardAvailable}
+                    onChange={handleChange}
+                  />
+                  Cupboard
+                </label>
               </div>
 
             </div>
@@ -502,6 +661,58 @@ function AddPG() {
                 placeholder="Pincode"
                 className="border border-gray-300 rounded-lg px-4 py-3"
               />
+
+            </div>
+
+            <div className="mt-8">
+
+              <h2 className="text-2xl font-semibold mb-4">
+                PG Rules
+              </h2>
+
+              <div className="flex flex-wrap gap-6">
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="availableNow"
+                    checked={formData.availableNow}
+                    onChange={handleChange}
+                  />
+                  Available Now
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="smokingAllowed"
+                    checked={formData.smokingAllowed}
+                    onChange={handleChange}
+                  />
+                  Smoking Allowed
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="petsAllowed"
+                    checked={formData.petsAllowed}
+                    onChange={handleChange}
+                  />
+                  Pets Allowed
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="visitorsAllowed"
+                    checked={formData.visitorsAllowed}
+                    onChange={handleChange}
+                  />
+                  Visitors Allowed
+                </label>
+
+              </div>
 
             </div>
 

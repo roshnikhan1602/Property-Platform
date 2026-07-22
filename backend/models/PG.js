@@ -22,6 +22,11 @@ const pgSchema = new mongoose.Schema(
       default: 0,
     },
 
+    maintenanceCharges: {
+      type: Number,
+      default: 0,
+    },
+
     sharingType: {
       type: String,
       enum: ["Single", "Double", "Triple"],
@@ -30,8 +35,23 @@ const pgSchema = new mongoose.Schema(
 
     genderPreference: {
       type: String,
-      enum: ["Boys", "Girls", "Unisex"],
+      enum: ["Boys", "Girls", "Co-live"],
       required: true,
+    },
+
+    totalBeds: {
+      type: Number,
+      default: 1,
+    },
+
+    availableBeds: {
+      type: Number,
+      default: 1,
+    },
+
+    availableNow: {
+      type: Boolean,
+      default: true,
     },
 
     foodAvailable: {
@@ -67,6 +87,66 @@ const pgSchema = new mongoose.Schema(
     cctvAvailable: {
       type: Boolean,
       default: false,
+    },
+
+    attachedBathroom: {
+      type: Boolean,
+      default: false,
+    },
+
+    laundryAvailable: {
+      type: Boolean,
+      default: false,
+    },
+
+    housekeepingAvailable: {
+      type: Boolean,
+      default: false,
+    },
+
+    liftAvailable: {
+      type: Boolean,
+      default: false,
+    },
+
+    geyserAvailable: {
+      type: Boolean,
+      default: false,
+    },
+
+    parkingAvailable: {
+      type: Boolean,
+      default: false,
+    },
+
+    powerBackupAvailable: {
+      type: Boolean,
+      default: false,
+    },
+
+    studyTableAvailable: {
+      type: Boolean,
+      default: false,
+    },
+
+    cupboardAvailable: {
+      type: Boolean,
+      default: false,
+    },
+
+    smokingAllowed: {
+      type: Boolean,
+      default: false,
+    },
+
+    petsAllowed: {
+      type: Boolean,
+      default: false,
+    },
+
+    visitorsAllowed: {
+      type: Boolean,
+      default: true,
     },
 
     address: {

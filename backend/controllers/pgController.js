@@ -161,6 +161,21 @@ const getAllPGs = async (req, res) => {
       city,
       gender,
       sharingType,
+      minRent,
+      maxRent,
+      foodAvailable,
+      wifiAvailable,
+      acAvailable,
+      gymAvailable,
+      swimmingPoolAvailable,
+      tvAvailable,
+      cctvAvailable,
+      parkingAvailable,
+      laundryAvailable,
+      powerBackup,
+      housekeepingAvailable,
+      attachedBathroom,
+      availableFor,
     } = req.query;
 
     const page = parseInt(req.query.page) || 1;
@@ -185,6 +200,73 @@ const getAllPGs = async (req, res) => {
 
     if (sharingType) {
       filters.sharingType = sharingType;
+    }
+
+    // Rent Filter
+    if (minRent || maxRent) {
+      filters.rent = {};
+
+      if (minRent) {
+        filters.rent.$gte = Number(minRent);
+      }
+
+      if (maxRent) {
+        filters.rent.$lte = Number(maxRent);
+      }
+    }
+
+    // Available For
+    if (availableFor) {
+      filters.availableFor = availableFor;
+    }
+
+    // Amenities
+    if (foodAvailable === "true") {
+      filters.foodAvailable = true;
+    }
+
+    if (wifiAvailable === "true") {
+      filters.wifiAvailable = true;
+    }
+
+    if (acAvailable === "true") {
+      filters.acAvailable = true;
+    }
+
+    if (gymAvailable === "true") {
+      filters.gymAvailable = true;
+    }
+
+    if (swimmingPoolAvailable === "true") {
+      filters.swimmingPoolAvailable = true;
+    }
+
+    if (tvAvailable === "true") {
+      filters.tvAvailable = true;
+    }
+
+    if (cctvAvailable === "true") {
+      filters.cctvAvailable = true;
+    }
+
+    if (parkingAvailable === "true") {
+      filters.parkingAvailable = true;
+    }
+
+    if (laundryAvailable === "true") {
+      filters.laundryAvailable = true;
+    }
+
+    if (powerBackup === "true") {
+      filters.powerBackup = true;
+    }
+
+    if (housekeepingAvailable === "true") {
+      filters.housekeepingAvailable = true;
+    }
+
+    if (attachedBathroom === "true") {
+      filters.attachedBathroom = true;
     }
 
     let pgs = await PG.find(filters)
@@ -452,9 +534,8 @@ const togglePGStatus = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: `PG ${
-        pg.isActive ? "activated" : "deactivated"
-      } successfully.`,
+      message: `PG ${pg.isActive ? "activated" : "deactivated"
+        } successfully.`,
       pg,
     });
   } catch (error) {

@@ -28,6 +28,14 @@ function AddProperty() {
     ownerName: "",
     ownerPhone: "",
     ownerEmail: "",
+    highlights: "",
+    facing: "",
+    parking: "",
+    availableFrom: "",
+    floor: "",
+    totalFloors: "",
+    ageOfProperty: "",
+    amenities: "",
   });
   const [images, setImages] = useState([]);
   const [submitting, setSubmitting] = useState(false);
@@ -44,33 +52,33 @@ function AddProperty() {
     });
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (submitting) return;
+    if (submitting) return;
 
-  setSubmitting(true);
+    setSubmitting(true);
     if (
-  !formData.title ||
-  !formData.price ||
-  !formData.listingType ||
-  !formData.propertyType ||
-  !formData.area ||
-  !formData.address ||
-  !formData.city ||
-  !formData.locality ||
-  !formData.state ||
-  !formData.pincode ||
-  !formData.ownerName ||
-  !formData.ownerPhone ||
-  !formData.ownerEmail ||
-  images.length === 0
-){
-  setSubmitting(false);
+      !formData.title ||
+      !formData.price ||
+      !formData.listingType ||
+      !formData.propertyType ||
+      !formData.area ||
+      !formData.address ||
+      !formData.city ||
+      !formData.locality ||
+      !formData.state ||
+      !formData.pincode ||
+      !formData.ownerName ||
+      !formData.ownerPhone ||
+      !formData.ownerEmail ||
+      images.length === 0
+    ) {
+      setSubmitting(false);
       setToast({
         show: true,
         message:
-  "Please fill all required fields and upload at least one image",
+          "Please fill all required fields and upload at least one image",
         type: "error",
       });
 
@@ -79,23 +87,32 @@ function AddProperty() {
 
     const form = new FormData();
 
-Object.keys(formData).forEach((key) => {
-  form.append(key, formData[key]);
-});
+    Object.keys(formData).forEach((key) => {
+      if (key === "highlights" || key === "amenities") {
+        const value = formData[key]
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean);
+
+        form.append(key, JSON.stringify(value));
+      } else {
+        form.append(key, formData[key]);
+      }
+    });
 
 
-images.forEach((image) => {
-  form.append("images", image);
-});
+    images.forEach((image) => {
+      form.append("images", image);
+    });
     try {
-  const response = await fetch(
-  "http://localhost:5000/api/properties",
-  {
-    method: "POST",
-    credentials: "include",
-    body: form,
-  }
-);
+      const response = await fetch(
+        "http://localhost:5000/api/properties",
+        {
+          method: "POST",
+          credentials: "include",
+          body: form,
+        }
+      );
 
       const data = await response.json();
 
@@ -119,6 +136,14 @@ images.forEach((image) => {
           ownerName: "",
           ownerPhone: "",
           ownerEmail: "",
+          highlights: "",
+          facing: "",
+          parking: "",
+          availableFrom: "",
+          floor: "",
+          totalFloors: "",
+          ageOfProperty: "",
+          amenities: "",
         });
 
         setToast({
@@ -135,7 +160,7 @@ images.forEach((image) => {
         setToast({
           show: true,
           message: data.message ||
-  "Failed to add Property",
+            "Failed to add Property",
           type: "error",
         });
       }
@@ -324,7 +349,6 @@ images.forEach((image) => {
               <label className="block mb-2 font-medium">
                 Description
               </label>
-
               <textarea
                 rows="4"
                 name="description"
@@ -333,6 +357,149 @@ images.forEach((image) => {
                 placeholder="Enter property description"
                 className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+
+              <div>
+                <label className="block mb-2 font-medium">
+                  Facing
+                </label>
+
+                <select
+                  name="facing"
+                  value={formData.facing}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                >
+                  <option value="">Select Facing</option>
+                  <option value="East">East</option>
+                  <option value="West">West</option>
+                  <option value="North">North</option>
+                  <option value="South">South</option>
+                  <option value="North-East">North-East</option>
+                  <option value="North-West">North-West</option>
+                  <option value="South-East">South-East</option>
+                  <option value="South-West">South-West</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block mb-2 font-medium">
+                  Parking
+                </label>
+
+                <select
+                  name="parking"
+                  value={formData.parking}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                >
+                  <option value="">Select Parking</option>
+                  <option value="Car">Car</option>
+                  <option value="Bike">Bike</option>
+                  <option value="Car & Bike">Car & Bike</option>
+                  <option value="No Parking">No Parking</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block mb-2 font-medium">
+                  Floor
+                </label>
+
+                <input
+                  type="number"
+                  name="floor"
+                  value={formData.floor}
+                  onChange={handleChange}
+                  placeholder="Current Floor"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 font-medium">
+                  Total Floors
+                </label>
+
+                <input
+                  type="number"
+                  name="totalFloors"
+                  value={formData.totalFloors}
+                  onChange={handleChange}
+                  placeholder="Total Floors"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 font-medium">
+                  Property Age
+                </label>
+
+                <input
+                  type="text"
+                  name="ageOfProperty"
+                  value={formData.ageOfProperty}
+                  onChange={handleChange}
+                  placeholder="Example: 5 Years"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 font-medium">
+                  Available From
+                </label>
+
+                <input
+                  type="date"
+                  name="availableFrom"
+                  value={formData.availableFrom}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                />
+              </div>
+
+            </div>
+
+            <div className="mt-6">
+              <label className="block mb-2 font-medium">
+                Highlights
+              </label>
+
+              <input
+                type="text"
+                name="highlights"
+                value={formData.highlights}
+                onChange={handleChange}
+                placeholder="Corner Plot, Near Metro, Garden View"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
+              />
+
+              <p className="text-sm text-gray-500 mt-1">
+                Separate multiple highlights using commas.
+              </p>
+            </div>
+
+            <div className="mt-6">
+              <label className="block mb-2 font-medium">
+                Amenities
+              </label>
+
+              <input
+                type="text"
+                name="amenities"
+                value={formData.amenities}
+                onChange={handleChange}
+                placeholder="Lift, Gym, CCTV, Club House"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
+              />
+
+              <p className="text-sm text-gray-500 mt-1">
+                Separate amenities using commas.
+              </p>
             </div>
 
             <div className="mt-6">
@@ -411,9 +578,9 @@ images.forEach((image) => {
                 />
               </div>
               <div className="mt-8">
-               <label className="block mb-2 font-medium">
-  Property Images <span className="text-red-500">*</span>
-</label>
+                <label className="block mb-2 font-medium">
+                  Property Images <span className="text-red-500">*</span>
+                </label>
                 <input
                   type="file"
                   multiple
@@ -428,17 +595,17 @@ images.forEach((image) => {
                   You can select multiple images.
                 </p>
                 {images.length > 0 && (
-  <div className="mt-3 space-y-1">
-    {images.map((image, index) => (
-      <p
-        key={index}
-        className="text-sm text-gray-600"
-      >
-        {image.name}
-      </p>
-    ))}
-  </div>
-)}
+                  <div className="mt-3 space-y-1">
+                    {images.map((image, index) => (
+                      <p
+                        key={index}
+                        className="text-sm text-gray-600"
+                      >
+                        {image.name}
+                      </p>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
             <div className="mt-8">
@@ -495,17 +662,16 @@ images.forEach((image) => {
 
               </div>
             </div>
-           <button
-  type="submit"
-  disabled={submitting}
-  className={`w-full mt-8 py-4 rounded-xl font-medium transition ${
-    submitting
-      ? "bg-blue-400 cursor-not-allowed"
-      : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-  } text-white`}
->
-  {submitting ? "Submitting..." : "Submit Property"}
-</button>
+            <button
+              type="submit"
+              disabled={submitting}
+              className={`w-full mt-8 py-4 rounded-xl font-medium transition ${submitting
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                } text-white`}
+            >
+              {submitting ? "Submitting..." : "Submit Property"}
+            </button>
 
           </form>
 
