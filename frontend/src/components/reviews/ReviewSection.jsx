@@ -112,11 +112,11 @@ function ReviewSection({
         </div>
 
         {loadingReviews ? (
-          <div className="bg-white rounded-xl shadow-sm border p-10 text-center text-gray-500">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
             Loading reviews...
           </div>
         ) : reviews.length === 0 ? (
-          <div className="bg-white rounded-xl border shadow-sm p-12 text-center">
+         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
             <div className="text-5xl mb-3">
               💬
             </div>

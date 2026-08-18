@@ -78,19 +78,20 @@ function PGReviewCard({
     }
   };
 
-  const handleDeleteReply =
-    async () => {
-      const data =
-        await deleteReply(review._id);
+  const handleDeleteReply = async () => {
+    const data =
+      await deleteReply(review._id);
 
-      if (data.success) {
-        setReply("");
-        onUpdated();
-      }
-    };
+    if (data.success) {
+      setReply("");
+      onUpdated();
+    }
+  };
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 p-5">
+
+      {/* User Information */}
 
       <div className="flex justify-between items-start">
 
@@ -103,7 +104,7 @@ function PGReviewCard({
                 review.user?.name ||
                 review.userName
               }
-              className="w-11 h-11 rounded-full object-cover border"
+              className="w-11 h-11 rounded-full object-cover border border-gray-200"
             />
           ) : (
             <FaUserCircle
@@ -141,15 +142,16 @@ function PGReviewCard({
 
             <div className="mt-2">
               <PGRatingStars
-                rating={rating}
-                setRating={setRating}
-                readonly={!editing}
+                rating={review.rating}
+                readonly
               />
             </div>
 
           </div>
 
         </div>
+
+        {/* Edit / Delete */}
 
         {isReviewOwner && (
           <div className="flex items-center gap-2">
@@ -203,26 +205,40 @@ function PGReviewCard({
 
       </div>
 
+      {/* Review Content */}
+
       {editing ? (
-        <textarea
-          rows={3}
-          value={comment}
-          onChange={(e) =>
-            setComment(e.target.value)
-          }
-          className="w-full mt-4 border border-gray-300 rounded-lg p-3 resize-none focus:ring-2 focus:ring-blue-500"
-        />
+        <div className="mt-4">
+
+          <div className="mb-3">
+            <PGRatingStars
+              rating={rating}
+              setRating={setRating}
+            />
+          </div>
+
+          <textarea
+            rows={3}
+            value={comment}
+            onChange={(e) =>
+              setComment(e.target.value)
+            }
+            className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+        </div>
       ) : (
         <p className="mt-4 text-gray-700 leading-6 text-sm">
           {review.comment}
         </p>
       )}
 
-      {review.ownerReply && (
+      {/* Owner Reply */}
 
+      {review.ownerReply && (
         <div className="mt-4 rounded-lg border-l-4 border-blue-600 bg-blue-50 p-4">
 
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-2">
 
             <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
               OWNER REPLY
@@ -233,7 +249,7 @@ function PGReviewCard({
                 onClick={
                   handleDeleteReply
                 }
-                className="text-red-600 hover:text-red-800 text-sm"
+                className="text-red-600 text-sm hover:underline"
               >
                 Delete Reply
               </button>
@@ -241,18 +257,18 @@ function PGReviewCard({
 
           </div>
 
-          <p className="mt-3 text-sm text-gray-700">
+          <p className="text-sm text-gray-700">
             {review.ownerReply}
           </p>
 
         </div>
-
       )}
+
+      {/* Reply Box */}
 
       {canReply &&
         !review.ownerReply &&
         (replying ? (
-
           <div className="mt-4">
 
             <textarea
@@ -262,7 +278,7 @@ function PGReviewCard({
                 setReply(e.target.value)
               }
               placeholder="Write your reply..."
-              className="w-full border rounded-lg p-3 resize-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none outline-none focus:ring-2 focus:ring-blue-500"
             />
 
             <div className="flex gap-2 mt-3">
@@ -287,9 +303,7 @@ function PGReviewCard({
             </div>
 
           </div>
-
         ) : (
-
           <button
             onClick={() =>
               setReplying(true)
@@ -299,16 +313,17 @@ function PGReviewCard({
             <FaReply />
             Reply
           </button>
-
         ))}
 
-      <div className="flex items-center gap-3 mt-5 pt-4 border-t">
+      {/* Likes / Dislikes */}
+
+      <div className="flex items-center gap-3 mt-5 pt-4">
 
         <button
           onClick={() =>
             onLike(review._id)
           }
-          className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 hover:bg-green-100"
+          className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 hover:bg-green-100 text-sm"
         >
           <FaThumbsUp />
           {review.likes?.length || 0}
@@ -318,7 +333,7 @@ function PGReviewCard({
           onClick={() =>
             onDislike(review._id)
           }
-          className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 hover:bg-red-100"
+          className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 hover:bg-red-100 text-sm"
         >
           <FaThumbsDown />
           {review.dislikes?.length || 0}

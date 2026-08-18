@@ -130,9 +130,9 @@ function NotificationBell({
       </button>
 
       {showDropdown && (
-        <div className="absolute right-0 mt-3 w-96 bg-white rounded-xl shadow-2xl border z-50">
+        <div className="absolute right-0 mt-3 w-96 bg-white rounded-xl shadow-2xl border border-gray-300 z-50">
 
-          <div className="px-4 py-3 border-b flex justify-between items-center">
+         <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
             <h2 className="font-bold text-lg">
               Notifications
             </h2>
@@ -170,7 +170,7 @@ function NotificationBell({
                       key={
                         notification._id
                       }
-                      className={`border-b p-4 ${
+                      className={`border-b border-gray-200 p-4 ${
                         !notification.isRead
                           ? "bg-blue-50"
                           : ""

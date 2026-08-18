@@ -207,47 +207,31 @@ function PropertyCard({
 
           </div>
 
-          <div className="mt-5">
+ <div className="mt-5 flex items-end justify-between">
 
-            <p className="text-sm text-gray-500">
-              Starting From
-            </p>
+  <div>
+    <p className="text-sm text-gray-500">
+      Starting From
+    </p>
 
-            <h4 className="text-3xl font-bold text-blue-600">
-              ₹{" "}
-              {property.price.toLocaleString()}
-            </h4>
+    <h4 className="text-3xl font-bold text-blue-600">
+      ₹{" "}
+      {property.price.toLocaleString()}
+    </h4>
+  </div>
 
-          </div>
+  <div className="text-right pb-1">
+    <div className="text-yellow-500 text-lg leading-none">
+      {"★".repeat(filledStars)}
+      {"☆".repeat(5 - filledStars)}
+    </div>
 
-          <div className="flex items-center justify-between mt-6">
+    <span className="text-xs font-medium text-gray-500">
+      {rating} Rating
+    </span>
+  </div>
 
-           <button
-  onClick={(e) => {
-    e.stopPropagation();
-    navigate(`/properties/${property._id}`);
-  }}
-              className="bg-blue-600 text-white py-3 px-6 rounded-xl font-medium hover:bg-blue-700 transition cursor-pointer"
-            >
-              View Details
-            </button>
-
-            <div className="text-right">
-              <div className="text-yellow-500 text-2xl">
-                {"★".repeat(
-                  filledStars
-                )}
-                {"☆".repeat(
-                  5 - filledStars
-                )}
-              </div>
-
-              <span className="text-sm font-medium text-gray-600">
-                {rating} Rating
-              </span>
-            </div>
-
-          </div>
+</div>
 
         </div>
 

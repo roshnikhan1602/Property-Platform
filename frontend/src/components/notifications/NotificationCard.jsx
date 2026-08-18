@@ -43,11 +43,11 @@ function NotificationCard({
 
   return (
     <div
-      className={`bg-white border rounded-xl p-4 shadow-sm transition hover:shadow-md ${
-        !notification.isRead
-          ? "border-blue-500 bg-blue-50"
-          : "border-gray-200"
-      }`}
+      className={`bg-white border border-gray-300 rounded-xl p-4 shadow-sm transition hover:shadow-md ${
+  !notification.isRead
+    ? "bg-blue-50"
+    : ""
+}`}
     >
       <div className="flex justify-between items-start gap-3">
         <div className="flex gap-3 flex-1">

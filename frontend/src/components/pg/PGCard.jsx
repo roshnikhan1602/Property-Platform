@@ -276,41 +276,37 @@ function PGCard({ pg }) {
 
 </div>
 
-          {Number(pg.depositAmount) > 0 && (
-            <div className="mt-3">
+       
 
-              <p className="text-sm text-gray-500">
-                Security Deposit
-              </p>
+  <div className="flex items-end justify-between mt-5">
 
-              <p className="font-semibold text-gray-800">
-                ₹ {pg.depositAmount.toLocaleString()}
-              </p>
+  <div>
+    <p className="text-sm text-gray-500">
+      Security Deposit
+    </p>
 
-            </div>
-          )}
-
-  <div className="flex justify-between items-end mt-6">
-  <button
-  onClick={(e) => {
-    e.stopPropagation();
-    navigate(`/pgs/${pg._id}`);
-  }}
-    className="bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition cursor-pointer"
-  >
-    View PG Details
-  </button>
+    {Number(pg.depositAmount) > 0 ? (
+      <p className="font-semibold text-gray-800 mt-1">
+        ₹ {pg.depositAmount.toLocaleString()}
+      </p>
+    ) : (
+      <p className="font-semibold text-gray-800 mt-1">
+        No Deposit
+      </p>
+    )}
+  </div>
 
   <div className="text-right">
-    <div className="text-yellow-500 text-2xl leading-none">
+    <div className="text-yellow-500 text-lg leading-none">
       {"★".repeat(filledStars)}
       {"☆".repeat(5 - filledStars)}
     </div>
 
-    <p className="text-sm font-semibold text-gray-600 mt-1">
+    <p className="text-xs font-medium text-gray-500 mt-1">
       {Number(pg.averageRating || 0).toFixed(1)} Rating
     </p>
   </div>
+
 </div>
 
         </div>

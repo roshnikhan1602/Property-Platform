@@ -5,7 +5,7 @@ function PGReviewForm({
   onSubmit,
   loading = false,
 }) {
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
 
   const handleSubmit = (e) => {
@@ -18,18 +18,32 @@ function PGReviewForm({
       comment,
     });
 
-    setRating(5);
+    setRating(0);
     setComment("");
   };
 
   return (
-    <div className="bg-white rounded-xl border shadow-sm p-5">
-      <h2 className="text-xl font-semibold mb-5">
-        Write a Review
-      </h2>
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
 
-      <div className="mb-5">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">
+          Write a Review
+        </h2>
+
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={loading}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium transition disabled:opacity-50"
+        >
+          {loading
+            ? "Submitting..."
+            : "Submit Review"}
+        </button>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
           Rating
         </label>
 
@@ -39,13 +53,13 @@ function PGReviewForm({
         />
       </div>
 
-      <div className="mb-5">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
           Your Review
         </label>
 
         <textarea
-          rows={3}
+          rows={2}
           placeholder="Share your experience..."
           value={comment}
           onChange={(e) =>
@@ -55,18 +69,6 @@ function PGReviewForm({
         />
       </div>
 
-      <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium transition disabled:opacity-50"
-        >
-          {loading
-            ? "Submitting..."
-            : "Submit Review"}
-        </button>
-      </div>
     </div>
   );
 }

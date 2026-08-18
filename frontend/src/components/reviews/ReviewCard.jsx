@@ -10,14 +10,15 @@ import {
   FaReply,
 } from "react-icons/fa";
 
-import RatingStars from "./RatingStars";
+import PGRatingStars from "./PGRatingStars";
+
 import {
   updateReview,
   replyToReview,
   deleteReply,
-} from "../../services/reviewService";
+} from "../../services/pgReviewService";
 
-function ReviewCard({
+function PGReviewCard({
   review,
   currentUser,
   onLike,
@@ -69,8 +70,19 @@ function ReviewCard({
     }
   };
 
+  const handleDeleteReply = async () => {
+    const data = await deleteReply(review._id);
+
+    if (data.success) {
+      setReply("");
+      onUpdated();
+    }
+  };
+
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 p-5">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 p-4">
+
+      {/* Review Header */}
 
       <div className="flex justify-between items-start">
 
@@ -79,8 +91,11 @@ function ReviewCard({
           {review.user?.profileImage ? (
             <img
               src={review.user.profileImage}
-              alt={review.user?.name || review.userName}
-              className="w-11 h-11 rounded-full object-cover border"
+              alt={
+                review.user?.name ||
+                review.userName
+              }
+              className="w-11 h-11 rounded-full object-cover border border-gray-200"
             />
           ) : (
             <FaUserCircle
@@ -90,9 +105,12 @@ function ReviewCard({
           )}
 
           <div>
+
             <div className="flex items-center gap-2 flex-wrap">
+
               <h3 className="font-semibold text-gray-900">
-                {review.user?.name || review.userName}
+                {review.user?.name ||
+                  review.userName}
               </h3>
 
               {review.isEdited && (
@@ -100,30 +118,34 @@ function ReviewCard({
                   Edited
                 </span>
               )}
+
             </div>
 
             <p className="text-xs text-gray-500 mt-0.5">
-              {new Date(review.createdAt).toLocaleString(
-                "en-IN",
-                {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                }
-              )}
+              {new Date(
+                review.createdAt
+              ).toLocaleString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })}
             </p>
 
-            <div className="mt-2">
-              <RatingStars
+            <div className="mt-1.5">
+              <PGRatingStars
                 rating={review.rating}
                 readonly
               />
             </div>
+
           </div>
         </div>
 
+        {/* Edit / Delete */}
+
         {isReviewOwner && (
           <div className="flex items-center gap-2">
+
             {editing ? (
               <>
                 <button
@@ -147,99 +169,94 @@ function ReviewCard({
             ) : (
               <>
                 <button
-                  onClick={() => setEditing(true)}
+                  onClick={() =>
+                    setEditing(true)
+                  }
                   className="w-8 h-8 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-700 flex items-center justify-center"
                 >
                   <FaEdit size={14} />
                 </button>
 
                 <button
-                  onClick={() => onDelete(review._id)}
+                  onClick={() =>
+                    onDelete(review._id)
+                  }
                   className="w-8 h-8 rounded-full bg-red-100 hover:bg-red-200 text-red-700 flex items-center justify-center"
                 >
                   <FaTrash size={14} />
                 </button>
               </>
             )}
+
           </div>
         )}
+
       </div>
 
-     {editing ? (
-    <div className="mt-4">
+      {/* Review Content */}
 
-      <div className="mb-3">
-        <RatingStars
-          rating={rating}
-          setRating={setRating}
-        />
-      </div>
+      {editing ? (
+        <div className="mt-3">
 
-      <textarea
-        rows={3}
-        value={comment}
-        onChange={(e) =>
-          setComment(e.target.value)
-        }
-        className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none outline-none focus:ring-2 focus:ring-blue-500"
-      />
+          <div className="mb-2">
+            <PGRatingStars
+              rating={rating}
+              setRating={setRating}
+            />
+          </div>
 
-    </div>
-  ) : (
-    <>
-      <p className="mt-4 text-gray-700 leading-6 text-sm">
-        {review.comment}
-      </p>
-
-      <div className="mt-2">
-        <RatingStars
-          rating={review.rating}
-          readonly
-        />
-      </div>
-    </>
-  )}
-
-        {/* Owner Reply Section */}
-
-        {review.ownerReply && (
-  <div className="mt-4 rounded-lg border-l-4 border-blue-600 bg-blue-50 p-4">
-
-    <div className="flex justify-between items-center mb-2">
-
-      <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
-        OWNER REPLY
-      </span>
-
-      {canReply && (
-        <button
-          onClick={async () => {
-            const data = await deleteReply(review._id);
-
-            if (data.success) {
-              onUpdated();
+          <textarea
+            rows={3}
+            value={comment}
+            onChange={(e) =>
+              setComment(e.target.value)
             }
-          }}
-          className="text-red-600 text-sm hover:underline"
-        >
-          Delete Reply
-        </button>
+            className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+        </div>
+      ) : (
+        <p className="mt-3 text-gray-700 leading-6 text-sm">
+          {review.comment}
+        </p>
       )}
 
-    </div>
+      {/* Owner Reply */}
 
-    <p className="text-sm text-gray-700">
-      {review.ownerReply}
-    </p>
+      {review.ownerReply && (
+        <div className="mt-3 rounded-lg border-l-4 border-blue-600 bg-blue-50 p-3">
 
-  </div>
-)}
+          <div className="flex justify-between items-center mb-1.5">
+
+            <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+              OWNER REPLY
+            </span>
+
+            {canReply && (
+              <button
+                onClick={handleDeleteReply}
+                className="text-red-600 text-sm hover:underline"
+              >
+                Delete Reply
+              </button>
+            )}
+
+          </div>
+
+          <p className="text-sm text-gray-700">
+            {review.ownerReply}
+          </p>
+
+        </div>
+      )}
+
       {/* Reply Box */}
 
       {canReply &&
         !review.ownerReply &&
         (replying ? (
-          <div className="mt-4">
+          <div className="mt-3">
+
             <textarea
               rows={3}
               value={reply}
@@ -247,10 +264,11 @@ function ReviewCard({
                 setReply(e.target.value)
               }
               placeholder="Write your reply..."
-              className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500"
             />
 
-            <div className="flex gap-2 mt-3">
+            <div className="flex gap-2 mt-2">
+
               <button
                 onClick={handleReply}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
@@ -267,22 +285,30 @@ function ReviewCard({
               >
                 Cancel
               </button>
+
             </div>
+
           </div>
         ) : (
           <button
-            onClick={() => setReplying(true)}
-            className="mt-4 flex items-center gap-2 text-blue-600 hover:text-blue-800"
+            onClick={() =>
+              setReplying(true)
+            }
+            className="mt-3 flex items-center gap-2 text-blue-600 hover:text-blue-800"
           >
             <FaReply />
             Reply
           </button>
         ))}
 
-      <div className="flex items-center gap-3 mt-5 pt-4 border-t">
+      {/* Like / Dislike */}
+
+      <div className="flex items-center gap-3 mt-4">
 
         <button
-          onClick={() => onLike(review._id)}
+          onClick={() =>
+            onLike(review._id)
+          }
           className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 hover:bg-green-100 text-sm"
         >
           <FaThumbsUp />
@@ -290,7 +316,9 @@ function ReviewCard({
         </button>
 
         <button
-          onClick={() => onDislike(review._id)}
+          onClick={() =>
+            onDislike(review._id)
+          }
           className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-100 hover:bg-red-100 text-sm"
         >
           <FaThumbsDown />
@@ -298,8 +326,9 @@ function ReviewCard({
         </button>
 
       </div>
+
     </div>
   );
 }
 
-export default ReviewCard;
+export default PGReviewCard;

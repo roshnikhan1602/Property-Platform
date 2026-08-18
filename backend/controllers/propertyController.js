@@ -288,8 +288,11 @@ const getMyProperties = async (req, res) => {
 const getPropertyById = async (req, res) => {
   try {
     const property = await Property.findById(
-      req.params.id
-    );
+  req.params.id
+).populate(
+  "owner",
+  "name profileImage createdAt"
+);
 
     if (!property) {
       return res.status(404).json({

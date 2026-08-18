@@ -172,9 +172,13 @@ const getAllPGs = async (req, res) => {
       cctvAvailable,
       parkingAvailable,
       laundryAvailable,
-      powerBackup,
+      powerBackupAvailable,
       housekeepingAvailable,
       attachedBathroom,
+      liftAvailable,
+      geyserAvailable,
+      studyTableAvailable,
+      cupboardAvailable,
       availableFor,
     } = req.query;
 
@@ -257,9 +261,9 @@ const getAllPGs = async (req, res) => {
       filters.laundryAvailable = true;
     }
 
-    if (powerBackup === "true") {
-      filters.powerBackup = true;
-    }
+   if (powerBackupAvailable === "true") {
+  filters.powerBackupAvailable = true;
+}
 
     if (housekeepingAvailable === "true") {
       filters.housekeepingAvailable = true;
@@ -269,6 +273,21 @@ const getAllPGs = async (req, res) => {
       filters.attachedBathroom = true;
     }
 
+    if (liftAvailable === "true") {
+      filters.liftAvailable = true;
+    }
+
+    if (geyserAvailable === "true") {
+      filters.geyserAvailable = true;
+    }
+
+    if (studyTableAvailable === "true") {
+      filters.studyTableAvailable = true;
+    }
+
+    if (cupboardAvailable === "true") {
+      filters.cupboardAvailable = true;
+    }
     let pgs = await PG.find(filters)
       .sort({ views: -1 })
       .skip(skip)
@@ -346,7 +365,10 @@ const getMyPGs = async (req, res) => {
 
 const getPGById = async (req, res) => {
   try {
-    const pg = await PG.findById(req.params.id);
+    const pg = await PG.findById(req.params.id).populate(
+  "owner",
+  "name profileImage createdAt"
+);
 
     if (!pg) {
       return res.status(404).json({

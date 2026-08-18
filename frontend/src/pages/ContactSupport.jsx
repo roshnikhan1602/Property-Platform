@@ -209,7 +209,7 @@ function ContactSupport({
 
           <div className="grid md:grid-cols-2 gap-10">
 
-            <div className="bg-white p-8 rounded-2xl shadow-md">
+            <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-md">
 
               <h2 className="text-2xl font-semibold mb-6">
                 Get In Touch
@@ -264,7 +264,7 @@ function ContactSupport({
 
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-md">
+            <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-md">
 
               <h2 className="text-2xl font-semibold mb-6">
                 Send a Message
@@ -287,7 +287,7 @@ function ContactSupport({
                   onChange={
                     handleChange
                   }
-                  className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
                 <input
@@ -300,7 +300,7 @@ function ContactSupport({
                   onChange={
                     handleChange
                   }
-                  className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
                 <textarea
@@ -313,7 +313,7 @@ function ContactSupport({
                   onChange={
                     handleChange
                   }
-                  className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
                 <button
@@ -332,12 +332,12 @@ function ContactSupport({
           </div>
 
         </div>
-      </div>
+     
       
     {myTickets && (
-  <div className="max-w-6xl mx-auto px-6 pb-16">
+ <div className="max-w-6xl mx-auto px-6 pt-6 pb-10">
 
-    <div className="bg-white p-8 rounded-2xl shadow-md">
+    <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-md">
 
       <h2 className="text-2xl font-semibold mb-6">
         My Support Tickets
@@ -353,7 +353,7 @@ function ContactSupport({
           <table className="w-full">
 
             <thead>
-              <tr className="border-b">
+              <tr className="border-b border-gray-200">
 
                 <th className="text-left py-3">
                   Date
@@ -380,7 +380,7 @@ function ContactSupport({
                 (ticket) => (
                   <tr
                     key={ticket._id}
-                    className="border-b"
+                    className="border-b border-gray-200"
                   >
 
                     <td className="py-3">
@@ -416,7 +416,7 @@ function ContactSupport({
 
   </div>
 )}
-    
+     </div>
       <Footer />
     </>
   );

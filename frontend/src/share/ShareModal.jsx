@@ -65,21 +65,17 @@ ${url}`;
 
   const copyDetails = async () => {
     try {
-      await navigator.clipboard.writeText(
-        details
-      );
+      await navigator.clipboard.writeText(details);
 
       setToast({
         show: true,
-        message:
-          "Details copied successfully!",
+        message: "Details copied successfully!",
         type: "success",
       });
     } catch (error) {
       setToast({
         show: true,
-        message:
-          "Unable to copy details.",
+        message: "Unable to copy details.",
         type: "error",
       });
     }
@@ -118,8 +114,7 @@ ${url}`;
     if (!recipientEmail.trim()) {
       setToast({
         show: true,
-        message:
-          "Please enter recipient email.",
+        message: "Please enter recipient email.",
         type: "error",
       });
 
@@ -134,8 +129,7 @@ ${url}`;
         {
           method: "POST",
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             recipientEmail,
@@ -147,20 +141,18 @@ ${url}`;
         }
       );
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (data.success) {
         setToast({
           show: true,
-          message:
-            "Email sent successfully!",
+          message: "Email sent successfully!",
           type: "success",
         });
 
         setRecipientEmail("");
         setShowEmailForm(false);
-        
+
         setTimeout(() => {
           onClose();
         }, 1500);
@@ -176,8 +168,7 @@ ${url}`;
 
       setToast({
         show: true,
-        message:
-          "Unable to send email.",
+        message: "Unable to send email.",
         type: "error",
       });
     } finally {
@@ -185,164 +176,156 @@ ${url}`;
     }
   };
 
+  const shareOptions = [
+    {
+      label: "Copy Link",
+      icon: <FaLink />,
+      color: "text-blue-600",
+      hover: "hover:bg-blue-50",
+      action: copyLink,
+    },
+    {
+      label: "Copy Details",
+      icon: <FaCopy />,
+      color: "text-indigo-600",
+      hover: "hover:bg-indigo-50",
+      action: copyDetails,
+    },
+    {
+      label: "WhatsApp",
+      icon: <FaWhatsapp />,
+      color: "text-green-600",
+      hover: "hover:bg-green-50",
+      action: shareWhatsApp,
+    },
+    {
+      label: "Telegram",
+      icon: <FaTelegram />,
+      color: "text-sky-500",
+      hover: "hover:bg-sky-50",
+      action: shareTelegram,
+    },
+    {
+      label: "Facebook",
+      icon: <FaFacebook />,
+      color: "text-blue-700",
+      hover: "hover:bg-blue-50",
+      action: shareFacebook,
+    },
+    {
+      label: "Email",
+      icon: <FaEnvelope />,
+      color: "text-red-600",
+      hover: "hover:bg-red-50",
+      action: () =>
+        setShowEmailForm(!showEmailForm),
+    },
+  ];
+
   return (
     <>
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl">
+
+        <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
 
           {/* Header */}
 
-          <div className="flex justify-between items-center border-b px-6 py-4">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
 
-            <h2 className="text-xl font-bold">
-              Share Listing
-            </h2>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Share Listing
+              </h2>
+
+              <p className="text-xs text-gray-500 mt-0.5">
+                Share this listing with others
+              </p>
+            </div>
 
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-red-500"
+              className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 flex items-center justify-center transition"
             >
-              <FaTimes size={22} />
+              <FaTimes size={15} />
             </button>
 
           </div>
 
-          {/* Share Buttons */}
+          {/* Share Options */}
 
-          <div className="grid grid-cols-2 gap-4 p-6">
+          <div className="grid grid-cols-3 gap-3 p-5">
 
-            <button
-              onClick={copyLink}
-              className="border rounded-xl p-4 hover:bg-gray-100 transition flex flex-col items-center"
-            >
-              <FaLink
-                size={28}
-                className="text-blue-600"
-              />
+            {shareOptions.map((option) => (
+              <button
+                key={option.label}
+                onClick={option.action}
+                className={`h-24 rounded-xl border border-gray-200 ${option.hover} flex flex-col items-center justify-center transition`}
+              >
+                <span
+                  className={`${option.color} text-xl`}
+                >
+                  {option.icon}
+                </span>
 
-              <span className="mt-2">
-                Copy Link
-              </span>
-            </button>
-
-            <button
-              onClick={copyDetails}
-              className="border rounded-xl p-4 hover:bg-gray-100 transition flex flex-col items-center"
-            >
-              <FaCopy
-                size={28}
-                className="text-indigo-600"
-              />
-
-              <span className="mt-2">
-                Copy Details
-              </span>
-            </button>
-
-            <button
-              onClick={shareWhatsApp}
-              className="border rounded-xl p-4 hover:bg-green-50 transition flex flex-col items-center"
-            >
-              <FaWhatsapp
-                size={30}
-                className="text-green-600"
-              />
-
-              <span className="mt-2">
-                WhatsApp
-              </span>
-            </button>
-
-            <button
-              onClick={shareTelegram}
-              className="border rounded-xl p-4 hover:bg-blue-50 transition flex flex-col items-center"
-            >
-              <FaTelegram
-                size={30}
-                className="text-sky-500"
-              />
-
-              <span className="mt-2">
-                Telegram
-              </span>
-            </button>
-
-            <button
-              onClick={shareFacebook}
-              className="border rounded-xl p-4 hover:bg-blue-50 transition flex flex-col items-center"
-            >
-              <FaFacebook
-                size={30}
-                className="text-blue-700"
-              />
-
-              <span className="mt-2">
-                Facebook
-              </span>
-            </button>
-
-            <button
-              onClick={() =>
-                setShowEmailForm(
-                  !showEmailForm
-                )
-              }
-              className="border rounded-xl p-4 hover:bg-red-50 transition flex flex-col items-center"
-            >
-              <FaEnvelope
-                size={30}
-                className="text-red-600"
-              />
-
-              <span className="mt-2">
-                Email
-              </span>
-            </button>
+                <span className="text-xs font-medium text-gray-700 mt-2">
+                  {option.label}
+                </span>
+              </button>
+            ))}
 
           </div>
 
           {/* Email Form */}
 
           {showEmailForm && (
-            <div className="px-6 pb-6">
+            <div className="px-5 pb-5">
 
-              <input
-                type="email"
-                placeholder="Enter recipient email"
-                value={recipientEmail}
-                onChange={(e) =>
-                  setRecipientEmail(
-                    e.target.value
-                  )
-                }
-                className="w-full border rounded-lg px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="border border-gray-200 bg-gray-50 rounded-xl p-4">
 
-              <button
-                onClick={sendEmail}
-                disabled={sending}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400"
-              >
-                {sending
-                  ? "Sending..."
-                  : "Send Email"}
-              </button>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Recipient Email
+                </label>
+
+                <input
+                  type="email"
+                  placeholder="Enter recipient email"
+                  value={recipientEmail}
+                  onChange={(e) =>
+                    setRecipientEmail(
+                      e.target.value
+                    )
+                  }
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white"
+                />
+
+                <button
+                  onClick={sendEmail}
+                  disabled={sending}
+                  className="w-full mt-3 bg-blue-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 transition disabled:bg-gray-400"
+                >
+                  {sending
+                    ? "Sending..."
+                    : "Send Email"}
+                </button>
+
+              </div>
 
             </div>
           )}
 
           {/* QR Code */}
 
-          <div className="border-t px-6 py-6 flex flex-col items-center">
+          <div className="border-t border-gray-200 px-5 py-5 flex flex-col items-center">
 
-            <QRCode
-              value={url}
-              size={180}
-            />
+            <div className="p-3 border border-gray-200 rounded-xl bg-white">
+              <QRCode
+                value={url}
+                size={140}
+              />
+            </div>
 
-            <p className="mt-4 text-sm text-gray-600 text-center">
-              Scan this QR Code to open
-              this listing.
+            <p className="mt-3 text-xs text-gray-500 text-center">
+              Scan to open this listing
             </p>
 
           </div>

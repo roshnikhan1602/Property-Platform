@@ -73,19 +73,31 @@ function PGListing({
     Number(searchParams.get("page")) || 1;
 
   useEffect(() => {
-    fetchPGs();
-  }, [
-    page,
-    city,
-    gender,
-    sharingType,
-    minRent,
-    maxRent,
-    foodAvailable,
-    wifiAvailable,
-    acAvailable,
-    availableFrom,
-  ]);
+  fetchPGs();
+}, [
+  page,
+  city,
+  gender,
+  sharingType,
+  minRent,
+  maxRent,
+  foodAvailable,
+  wifiAvailable,
+  acAvailable,
+  gymAvailable,
+  swimmingPoolAvailable,
+  tvAvailable,
+  cctvAvailable,
+  parkingAvailable,
+  laundryAvailable,
+  housekeepingAvailable,
+  attachedBathroom,
+  liftAvailable,
+  geyserAvailable,
+  powerBackupAvailable,
+  studyTableAvailable,
+  cupboardAvailable,
+]);
 
   const fetchPGs = async () => {
     try {
@@ -137,36 +149,34 @@ function PGListing({
     }
   };
 
-  const handleSearch = () => {
-    const params = new URLSearchParams();
+const handleClearFilters = () => {
+  setCity("");
+  setGender("");
+  setSharingType("");
+  setMinRent("");
+  setMaxRent("");
 
-    if (city) params.set("city", city);
-    if (gender) params.set("gender", gender);
-    if (sharingType) params.set("sharingType", sharingType);
-    if (minRent) params.set("minRent", minRent);
-    if (maxRent) params.set("maxRent", maxRent);
-    if (foodAvailable) params.set("foodAvailable", foodAvailable);
-    if (wifiAvailable) params.set("wifiAvailable", wifiAvailable);
-    if (acAvailable) params.set("acAvailable", acAvailable);
-    if (availableFrom) params.set("availableFrom", availableFrom);
+  setFoodAvailable("");
+  setWifiAvailable("");
+  setAcAvailable("");
+  setGymAvailable("");
+  setSwimmingPoolAvailable("");
+  setTvAvailable("");
+  setCctvAvailable("");
+  setAttachedBathroom("");
+  setLaundryAvailable("");
+  setHousekeepingAvailable("");
+  setLiftAvailable("");
+  setGeyserAvailable("");
+  setParkingAvailable("");
+  setPowerBackupAvailable("");
+  setStudyTableAvailable("");
+  setCupboardAvailable("");
 
-    params.set("page", 1);
+  setAvailableFrom("");
 
-    setSearchParams(params);
-  };
-
-  const handleClearFilters = () => {
-    setCity("");
-    setGender("");
-    setSharingType("");
-    setMinRent("");
-    setMaxRent("");
-    setFoodAvailable("");
-    setWifiAvailable("");
-    setAcAvailable("");
-    setAvailableFrom("");
-    setSearchParams({});
-  };
+  setSearchParams({});
+};
 
   return (
     <>
@@ -241,7 +251,7 @@ function PGListing({
                         onClick={() => setGender("")}
                         className={`rounded-xl py-3 border transition font-medium cursor-pointer ${gender === ""
                           ? "bg-blue-600 text-white border-blue-600"
-                          : "bg-white hover:bg-gray-50"
+                         : "bg-white border-gray-300 hover:bg-gray-50"
                           }`}
                       >
                         All
@@ -252,7 +262,7 @@ function PGListing({
                         onClick={() => setGender("Boys")}
                         className={`rounded-xl py-3 border transition font-medium cursor-pointer ${gender === "Boys"
                           ? "bg-blue-600 text-white border-blue-600"
-                          : "bg-white hover:bg-gray-50"
+                          : "bg-white border-gray-300 hover:bg-gray-50"
                           }`}
                       >
                         Boys
@@ -263,7 +273,7 @@ function PGListing({
                         onClick={() => setGender("Girls")}
                         className={`rounded-xl py-3 border transition font-medium cursor-pointer ${gender === "Girls"
                           ? "bg-pink-600 text-white border-pink-600"
-                          : "bg-white hover:bg-gray-50"
+                          : "bg-white border-gray-300  hover:bg-gray-50"
                           }`}
                       >
                         Girls
@@ -274,7 +284,7 @@ function PGListing({
                         onClick={() => setGender("Co-live")}
                         className={`rounded-xl py-3 border transition font-medium cursor-pointer ${gender === "Co-live"
                           ? "bg-green-600 text-white border-green-600"
-                          : "bg-white hover:bg-gray-50"
+                          : "bg-white border-gray-300 hover:bg-gray-50"
                           }`}
                       >
                         Co-live
@@ -365,292 +375,264 @@ function PGListing({
 
                   <div className="grid grid-cols-2 gap-3">
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setWifiAvailable(
-                          wifiAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${wifiAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <FaWifi className="text-xl mb-1" />
-                      <span className="text-sm">WiFi</span>
-                    </button>
+  <button
+    type="button"
+    onClick={() =>
+      setWifiAvailable(
+        wifiAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      wifiAvailable === "true"
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white border-gray-300 hover:bg-blue-50"
+    }`}
+  >
+    <FaWifi className="text-xl mb-1" />
+    <span className="text-sm">WiFi</span>
+  </button>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setFoodAvailable(
-                          foodAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${foodAvailable === "true"
-                        ? "bg-orange-500 text-white border-orange-500"
-                        : "bg-white hover:bg-orange-50"
-                        }`}
-                    >
-                      <FaUtensils className="text-xl mb-1" />
-                      <span className="text-sm">Food</span>
-                    </button>
+  <button
+    type="button"
+    onClick={() =>
+      setFoodAvailable(
+        foodAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      foodAvailable === "true"
+        ? "bg-orange-500 text-white border-orange-500"
+        : "bg-white border-gray-300 hover:bg-orange-50"
+    }`}
+  >
+    <FaUtensils className="text-xl mb-1" />
+    <span className="text-sm">Food</span>
+  </button>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setAcAvailable(
-                          acAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${acAvailable === "true"
-                        ? "bg-cyan-600 text-white border-cyan-600"
-                        : "bg-white hover:bg-cyan-50"
-                        }`}
-                    >
-                      <FaSnowflake className="text-xl mb-1" />
-                      <span className="text-sm">AC</span>
-                    </button>
+  <button
+    type="button"
+    onClick={() =>
+      setAcAvailable(
+        acAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      acAvailable === "true"
+        ? "bg-cyan-600 text-white border-cyan-600"
+        : "bg-white border-gray-300 hover:bg-cyan-50"
+    }`}
+  >
+    <FaSnowflake className="text-xl mb-1" />
+    <span className="text-sm">AC</span>
+  </button>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setTvAvailable(
-                          tvAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${tvAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <FaTv className="text-lg" />
-                      TV
-                    </button>
+  <button
+    type="button"
+    onClick={() =>
+      setTvAvailable(
+        tvAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      tvAvailable === "true"
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white border-gray-300 hover:bg-blue-50"
+    }`}
+  >
+    <FaTv className="text-xl mb-1" />
+    <span className="text-sm">TV</span>
+  </button>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setParkingAvailable(
-                          parkingAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${parkingAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <FaParking className="text-lg" />
-                      Parking
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setLaundryAvailable(
-                          laundryAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${laundryAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <MdLocalLaundryService className="text-lg" />
-                      Laundry
-                    </button>
+  <button
+    type="button"
+    onClick={() =>
+      setParkingAvailable(
+        parkingAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      parkingAvailable === "true"
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white border-gray-300 hover:bg-blue-50"
+    }`}
+  >
+    <FaParking className="text-xl mb-1" />
+    <span className="text-sm">Parking</span>
+  </button>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setGymAvailable(
-                          gymAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${gymAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <FaDumbbell className="text-lg" />
-                      Gym
-                    </button>
+  <button
+    type="button"
+    onClick={() =>
+      setLaundryAvailable(
+        laundryAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      laundryAvailable === "true"
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white border-gray-300 hover:bg-blue-50"
+    }`}
+  >
+    <MdLocalLaundryService className="text-xl mb-1" />
+    <span className="text-sm">Laundry</span>
+  </button>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setSwimmingPoolAvailable(
-                          swimmingPoolAvailable === "true"
-                            ? ""
-                            : "true"
-                        )
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${swimmingPoolAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <FaSwimmingPool className="text-lg" />
-                      Swimming Pool
-                    </button>
+  <button
+    type="button"
+    onClick={() =>
+      setGymAvailable(
+        gymAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      gymAvailable === "true"
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white border-gray-300 hover:bg-blue-50"
+    }`}
+  >
+    <FaDumbbell className="text-xl mb-1" />
+    <span className="text-sm">Gym</span>
+  </button>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setCctvAvailable(
-                          cctvAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${cctvAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <FaShieldAlt className="text-lg" />
-                      CCTV
-                    </button>
+  <button
+    type="button"
+    onClick={() =>
+      setSwimmingPoolAvailable(
+        swimmingPoolAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      swimmingPoolAvailable === "true"
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white border-gray-300 hover:bg-blue-50"
+    }`}
+  >
+    <FaSwimmingPool className="text-xl mb-1" />
+    <span className="text-sm text-center">Swimming Pool</span>
+  </button>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setLiftAvailable(
-                          liftAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${liftAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <MdElevator className="text-lg" />
-                      Lift
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setGeyserAvailable(
-                          geyserAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${geyserAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <MdPower className="text-lg" />
-                      Geyser
-                    </button>
+  <button
+    type="button"
+    onClick={() =>
+      setCctvAvailable(
+        cctvAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      cctvAvailable === "true"
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white border-gray-300 hover:bg-blue-50"
+    }`}
+  >
+    <FaShieldAlt className="text-xl mb-1" />
+    <span className="text-sm">CCTV</span>
+  </button>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setHousekeepingAvailable(
-                          housekeepingAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${housekeepingAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <FaBed className="text-lg" />
-                      House
-                      keeping
-                    </button>
+  <button
+    type="button"
+    onClick={() =>
+      setLiftAvailable(
+        liftAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      liftAvailable === "true"
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white border-gray-300 hover:bg-blue-50"
+    }`}
+  >
+    <MdElevator className="text-xl mb-1" />
+    <span className="text-sm">Lift</span>
+  </button>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setParkingAvailable(
-                          parkingAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${parkingAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <FaParking className="text-lg" />
-                      Parking
-                    </button>
+  <button
+    type="button"
+    onClick={() =>
+      setGeyserAvailable(
+        geyserAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      geyserAvailable === "true"
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white border-gray-300 hover:bg-blue-50"
+    }`}
+  >
+    <MdPower className="text-xl mb-1" />
+    <span className="text-sm">Geyser</span>
+  </button>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setPowerBackupAvailable(
-                          powerBackupAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${powerBackupAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <MdPower className="text-lg" />
-                      Power Backup
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setStudyTableAvailable(
-                          studyTableAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${studyTableAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <MdDesk className="text-lg" />
-                      Study Table
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setCupboardAvailable(
-                          cupboardAvailable === "true" ? "" : "true"
-                        )
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${cupboardAvailable === "true"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:bg-blue-50"
-                        }`}
-                    >
-                      <PiDoorOpenFill className="text-lg" />
-                      Cupboard
-                    </button>
+  <button
+    type="button"
+    onClick={() =>
+      setHousekeepingAvailable(
+        housekeepingAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      housekeepingAvailable === "true"
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white border-gray-300 hover:bg-blue-50"
+    }`}
+  >
+    <FaBed className="text-xl mb-1" />
+    <span className="text-sm text-center">Housekeeping</span>
+  </button>
 
-                  </div>
+  <button
+    type="button"
+    onClick={() =>
+      setPowerBackupAvailable(
+        powerBackupAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      powerBackupAvailable === "true"
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white border-gray-300 hover:bg-blue-50"
+    }`}
+  >
+    <MdPower className="text-xl mb-1" />
+    <span className="text-sm text-center">Power Backup</span>
+  </button>
+
+  <button
+    type="button"
+    onClick={() =>
+      setStudyTableAvailable(
+        studyTableAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      studyTableAvailable === "true"
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white border-gray-300 hover:bg-blue-50"
+    }`}
+  >
+    <MdDesk className="text-xl mb-1" />
+    <span className="text-sm text-center">Study Table</span>
+  </button>
+
+  <button
+    type="button"
+    onClick={() =>
+      setCupboardAvailable(
+        cupboardAvailable === "true" ? "" : "true"
+      )
+    }
+    className={`h-20 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer ${
+      cupboardAvailable === "true"
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white border-gray-300 hover:bg-blue-50"
+    }`}
+  >
+    <PiDoorOpenFill className="text-xl mb-1" />
+    <span className="text-sm">Cupboard</span>
+  </button>
+
+</div>
                 </div>
 
-
-                {/* Available From
-
-              <div className="mb-6">
-
-                <label className="block text-sm font-semibold mb-2">
-                  Available From
-                </label>
-
-                <input
-                  type="date"
-                  value={availableFrom}
-                  onChange={(e) =>
-                    setAvailableFrom(
-                      e.target.value
-                    )
-                  }
-                  className="w-full border rounded-lg px-4 py-3"
-                />
-
-              </div> */}
-
-                <button
-                  onClick={handleSearch}
-                  className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer"
-                >
-                  Apply Filters
-                </button>
                 <button
                   onClick={handleClearFilters}
                   className="w-full mt-5 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 font-semibold hover:bg-red-100 hover:border-red-400 hover:shadow-lg transition-all duration-300 cursor-pointer"
