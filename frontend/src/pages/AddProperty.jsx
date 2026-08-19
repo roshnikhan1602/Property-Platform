@@ -224,7 +224,7 @@ function AddProperty() {
                   value={formData.title}
                   onChange={handleChange}
                   placeholder="Enter property title"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
@@ -239,7 +239,7 @@ function AddProperty() {
                   value={formData.price}
                   onChange={handleChange}
                   placeholder="Enter price"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
@@ -252,7 +252,7 @@ function AddProperty() {
                   name="listingType"
                   value={formData.listingType}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 >
                   <option value="">Select Listing Type</option>
                   <option value="Rent">Rent</option>
@@ -271,7 +271,7 @@ function AddProperty() {
                   name="propertyType"
                   value={formData.propertyType}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                 className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-none focus:border-gray-300 focus:ring-0"
                 >
                   <option value="">Select Property Type</option>
                   <option value="Apartment">Apartment</option>
@@ -292,7 +292,7 @@ function AddProperty() {
                   value={formData.bedrooms}
                   onChange={handleChange}
                   placeholder="Enter bedrooms"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                 className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
@@ -307,7 +307,7 @@ function AddProperty() {
                   value={formData.bathrooms}
                   onChange={handleChange}
                   placeholder="Enter bathrooms"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
@@ -322,7 +322,7 @@ function AddProperty() {
                   value={formData.area}
                   onChange={handleChange}
                   placeholder="Enter area"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
@@ -335,7 +335,7 @@ function AddProperty() {
                   name="furnishing"
                   value={formData.furnishing}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-none focus:border-gray-300 focus:ring-0"
                 >
                   <option value="Furnished">Furnished</option>
                   <option value="Semi-Furnished">Semi-Furnished</option>
@@ -355,7 +355,7 @@ function AddProperty() {
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Enter property description"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
               />
             </div>
 
@@ -370,7 +370,7 @@ function AddProperty() {
                   name="facing"
                   value={formData.facing}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-none focus:border-gray-300 focus:ring-0"
                 >
                   <option value="">Select Facing</option>
                   <option value="East">East</option>
@@ -393,7 +393,7 @@ function AddProperty() {
                   name="parking"
                   value={formData.parking}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-none focus:border-gray-300 focus:ring-0"
                 >
                   <option value="">Select Parking</option>
                   <option value="Car">Car</option>
@@ -414,7 +414,7 @@ function AddProperty() {
                   value={formData.floor}
                   onChange={handleChange}
                   placeholder="Current Floor"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
@@ -429,7 +429,7 @@ function AddProperty() {
                   value={formData.totalFloors}
                   onChange={handleChange}
                   placeholder="Total Floors"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                 className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
@@ -444,7 +444,7 @@ function AddProperty() {
                   value={formData.ageOfProperty}
                   onChange={handleChange}
                   placeholder="Example: 5 Years"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                 className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
@@ -458,7 +458,7 @@ function AddProperty() {
                   name="availableFrom"
                   value={formData.availableFrom}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
@@ -475,7 +475,7 @@ function AddProperty() {
                 value={formData.highlights}
                 onChange={handleChange}
                 placeholder="Corner Plot, Near Metro, Garden View"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
               />
 
               <p className="text-sm text-gray-500 mt-1">
@@ -494,7 +494,7 @@ function AddProperty() {
                 value={formData.amenities}
                 onChange={handleChange}
                 placeholder="Lift, Gym, CCTV, Club House"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
               />
 
               <p className="text-sm text-gray-500 mt-1">
@@ -513,7 +513,7 @@ function AddProperty() {
                 value={formData.address}
                 onChange={handleChange}
                 placeholder="Enter address"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
               />
             </div>
 
@@ -530,7 +530,7 @@ function AddProperty() {
                   value={formData.city}
                   onChange={handleChange}
                   placeholder="Enter city"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
               <div>
@@ -544,7 +544,7 @@ function AddProperty() {
                   value={formData.locality}
                   onChange={handleChange}
                   placeholder="Ex: Whitefield, BTM, HSR"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
@@ -559,7 +559,7 @@ function AddProperty() {
                   value={formData.state}
                   onChange={handleChange}
                   placeholder="Enter state"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
@@ -574,7 +574,7 @@ function AddProperty() {
                   value={formData.pincode}
                   onChange={handleChange}
                   placeholder="Enter pincode"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
               <div className="mt-8">
@@ -588,7 +588,7 @@ function AddProperty() {
                   onChange={(e) =>
                     setImages([...e.target.files])
                   }
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0 "
                 />
 
                 <p className="text-sm text-gray-500 mt-2">
@@ -626,7 +626,7 @@ function AddProperty() {
                     value={formData.ownerName}
                     onChange={handleChange}
                     placeholder="Enter owner name"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                   />
                 </div>
 
@@ -641,7 +641,7 @@ function AddProperty() {
                     value={formData.ownerPhone}
                     onChange={handleChange}
                     placeholder="Enter phone number"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                   />
                 </div>
 
@@ -656,7 +656,7 @@ function AddProperty() {
                     value={formData.ownerEmail}
                     onChange={handleChange}
                     placeholder="Enter email address"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                   />
                 </div>
 

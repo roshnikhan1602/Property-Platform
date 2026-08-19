@@ -160,7 +160,7 @@ function Login() {
               </label>
 
               <div className="flex gap-2">
-                <div className="flex items-center px-4 border rounded-lg bg-gray-100 text-gray-700">
+                <div className="flex items-center px-4 border border-gray-300 rounded-lg bg-gray-100 text-gray-700">
                   +91
                 </div>
 
@@ -175,7 +175,7 @@ function Login() {
                   }
                   placeholder="9876543210"
                   maxLength={10}
-                  className="flex-1 border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -195,7 +195,7 @@ function Login() {
                   handleChange
                 }
                 placeholder="Enter your password"
-                className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
 
               <div className="text-right mt-2">
@@ -211,7 +211,7 @@ function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-black hover:bg-gray-900 text-white py-3 rounded-lg transition disabled:opacity-60"
+             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition disabled:opacity-60"
             >
               {loading
                 ? "Logging In..."

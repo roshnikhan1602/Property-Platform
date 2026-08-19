@@ -16,12 +16,20 @@ export const getPGReviews = async (pgId) => {
 export const addReview = async (
   reviewData
 ) => {
-  const response = await axios.post(
-    API,
-    reviewData,
-    config
-  );
-  return response.data;
+  try {
+    const response = await axios.post(
+      API,
+      reviewData,
+      config
+    );
+
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message ||
+        "Failed to add review"
+    );
+  }
 };
 
 export const updateReview = async (

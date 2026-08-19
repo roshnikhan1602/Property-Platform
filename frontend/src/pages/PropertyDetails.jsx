@@ -371,18 +371,21 @@ function PropertyDetails({
               (item) => item._id !== data.property._id
             );
 
-          const updatedItems = [
-            {
-              ...data.property,
-              itemType: "property",
-            },
-            ...filteredItems,
-          ].slice(0, 5);
+          if (data.property.isApproved) {
 
-          localStorage.setItem(
-            "recentlyViewed",
-            JSON.stringify(updatedItems)
-          );
+  const updatedItems = [
+    {
+      ...data.property,
+      itemType: "property",
+    },
+    ...filteredItems,
+  ].slice(0, 5);
+
+  localStorage.setItem(
+    "recentlyViewed",
+    JSON.stringify(updatedItems)
+  );
+}
         }
       } catch (error) {
         console.error(

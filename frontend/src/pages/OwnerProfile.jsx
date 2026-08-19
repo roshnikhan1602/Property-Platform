@@ -127,7 +127,7 @@ setSuccessMessage(
 
         <div className="bg-white rounded-3xl shadow-lg p-8">
 
-          <div className="flex flex-col items-center text-center border-b pb-8">
+         <div className="flex flex-col items-center text-center border-b border-gray-200 pb-8">
 
             <div className="relative">
 
@@ -313,7 +313,7 @@ setSuccessMessage(
             {user?.role === "owner" && (
               <div className="grid md:grid-cols-2 gap-6">
 
-                <div className="bg-gray-50 border rounded-2xl p-6">
+               <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
                   <p className="text-gray-500">
                     Total Properties
                   </p>
@@ -323,7 +323,7 @@ setSuccessMessage(
                   </h2>
                 </div>
 
-                <div className="bg-gray-50 border rounded-2xl p-6">
+               <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
                   <p className="text-gray-500">
                     Total Views
                   </p>

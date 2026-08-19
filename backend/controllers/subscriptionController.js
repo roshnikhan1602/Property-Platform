@@ -94,19 +94,6 @@ let subscription =
     user: req.user.id,
   }).sort({ createdAt: -1 });
 
-// Brand new user -> create Free subscription
-if (!subscription) {
-  subscription =
-    await Subscription.create({
-      user: req.user.id,
-      plan: "Free",
-      amount: 0,
-      propertyLimit: 2,
-      pgLimit: 1,
-      status: "Active",
-    });
-}
-
 // Automatically expire subscription
 if (
   subscription.status === "Active" &&

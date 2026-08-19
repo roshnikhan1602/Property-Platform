@@ -4,6 +4,7 @@ const router = express.Router();
 
 const upload = require("../middleware/upload");
 const authMiddleware = require("../middleware/authMiddleware");
+const optionalAuthMiddleware = require("../middleware/optionalAuthMiddleware");
 
 const {
   addPG,
@@ -55,6 +56,7 @@ router.get("/", getAllPGs);
 
 router.get(
   "/:id",
+  optionalAuthMiddleware,
   getPGById
 );
 

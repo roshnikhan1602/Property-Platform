@@ -97,6 +97,36 @@ const addProperty = async (req, res) => {
       owner: req.user.id,
       images: imageUrls,
     });
+
+// Start 30-day Free plan when user adds their first property
+if (propertyCount === 0) {
+  const startDate = new Date();
+
+  const endDate = new Date();
+  endDate.setDate(endDate.getDate() + 30);
+
+  if (latestSubscription) {
+    latestSubscription.startDate = startDate;
+    latestSubscription.endDate = endDate;
+    latestSubscription.status = "Active";
+    latestSubscription.expiryReminderSent = false;
+    latestSubscription.expiredEmailSent = false;
+
+    await latestSubscription.save();
+  } else {
+    await Subscription.create({
+      user: req.user.id,
+      plan: "Free",
+      amount: 0,
+      propertyLimit: 2,
+      pgLimit: 1,
+      startDate,
+      endDate,
+      status: "Active",
+    });
+  }
+}
+
     const admins = await User.find({
       role: "admin",
     });
@@ -301,8 +331,9 @@ const getPropertyById = async (req, res) => {
       });
     }
     const isOwner =
-      req.user &&
-      property.owner.toString() === req.user.id;
+  req.user &&
+  property.owner &&
+  String(property.owner._id) === String(req.user.id);
 
     if (
       (!property.isApproved || !property.isActive) &&
@@ -318,10 +349,10 @@ const getPropertyById = async (req, res) => {
     const propertyData = property.toObject();
 
     // Get the owner's latest subscription
-    const latestSubscription =
-      await Subscription.findOne({
-        user: property.owner,
-      }).sort({ createdAt: -1 });
+   const latestSubscription =
+  await Subscription.findOne({
+    user: property.owner?._id,
+  }).sort({ createdAt: -1 });
 
     let contactAvailable = true;
     let listingAvailable = true;
@@ -574,8 +605,12 @@ const togglePropertyStatus = async (req, res) => {
 
 const incrementViews = async (req, res) => {
   try {
-    const property = await Property.findByIdAndUpdate(
-      req.params.id,
+    const property = await Property.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        isApproved: true,
+        isActive: true,
+      },
       {
         $inc: { views: 1 },
       },

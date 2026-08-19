@@ -4,6 +4,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ShareModal from "../share/ShareModal";
+import Toast from "../components/common/Toast";
 
 import {
   FaBed,
@@ -58,6 +59,11 @@ function PGDetails({ setShowLoginModal }) {
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [user, setUser] = useState(null);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [toast, setToast] = useState({
+  show: false,
+  message: "",
+  type: "success",
+});
 
   const handleNextImage = () => {
     const currentIndex = pg.images.indexOf(selectedImage);
@@ -94,30 +100,63 @@ function PGDetails({ setShowLoginModal }) {
     }
   };
 
-  const handleAddReview = async (reviewData) => {
-    try {
-      const data = await addReview({
-        pgId: id,
-        ...reviewData,
+ const handleAddReview = async (reviewData) => {
+  try {
+    if (!user) {
+      setToast({
+        show: true,
+        message: "Please login first.",
+        type: "error",
+      });
+      return;
+    }
+
+    const data = await addReview({
+      pgId: id,
+      ...reviewData,
+    });
+
+    if (data.success) {
+      setToast({
+        show: true,
+        message: "Review added successfully!",
+        type: "success",
       });
 
-      if (data.success) {
-        loadReviews();
+      loadReviews();
 
-        const response = await fetch(
-          `http://localhost:5000/api/pgs/${id}`
-        );
-
-        const result = await response.json();
-
-        if (result.success) {
-          setPg(result.pg);
+      const response = await fetch(
+        `http://localhost:5000/api/pgs/${id}`,
+        {
+          credentials: "include",
         }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        setPg(result.pg);
       }
-    } catch (error) {
-      console.error(error);
+    } else {
+      setToast({
+        show: true,
+        message: data.message,
+        type: "error",
+      });
     }
-  };
+  } catch (error) {
+    console.error(error);
+
+    setToast({
+      show: true,
+      message:
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to add review",
+      type: "error",
+    });
+  }
+};
 
   const handleDeleteReview = async (reviewId) => {
     try {
@@ -226,55 +265,60 @@ function PGDetails({ setShowLoginModal }) {
 
     const fetchPG = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/pgs/${id}`
-        );
+       const response = await fetch(
+  `http://localhost:5000/api/pgs/${id}`,
+  {
+    credentials: "include",
+  }
+);
 
         const data = await response.json();
 
-        if (data.success) {
-          const recentlyViewed =
-            JSON.parse(
-              localStorage.getItem("recentlyViewed")
-            ) || [];
+      if (data.success) {
+  if (data.pg.isApproved) {
+    const recentlyViewed =
+      JSON.parse(
+        localStorage.getItem("recentlyViewed")
+      ) || [];
 
-          const filteredItems =
-            recentlyViewed.filter(
-              (item) => item._id !== data.pg._id
-            );
+    const filteredItems =
+      recentlyViewed.filter(
+        (item) => item._id !== data.pg._id
+      );
 
-          const updatedItems = [
-            {
-              ...data.pg,
-              itemType: "pg",
-            },
-            ...filteredItems,
-          ].slice(0, 5);
+    const updatedItems = [
+      {
+        ...data.pg,
+        itemType: "pg",
+      },
+      ...filteredItems,
+    ].slice(0, 5);
 
-          localStorage.setItem(
-            "recentlyViewed",
-            JSON.stringify(updatedItems)
-          );
+    localStorage.setItem(
+      "recentlyViewed",
+      JSON.stringify(updatedItems)
+    );
+  }
 
-          setPg(data.pg);
+  setPg(data.pg);
 
-          setContactAvailable(
-            data.contactAvailable
-          );
+  setContactAvailable(
+    data.contactAvailable
+  );
 
-          setListingAvailable(
-            data.listingAvailable
-          );
+  setListingAvailable(
+    data.listingAvailable
+  );
 
-          loadReviews();
+  loadReviews();
 
-          if (
-            data.pg.images &&
-            data.pg.images.length > 0
-          ) {
-            setSelectedImage(data.pg.images[0]);
-          }
-        }
+  if (
+    data.pg.images &&
+    data.pg.images.length > 0
+  ) {
+    setSelectedImage(data.pg.images[0]);
+  }
+}
       } catch (error) {
         console.error(error);
       } finally {
@@ -296,6 +340,7 @@ function PGDetails({ setShowLoginModal }) {
         <div className="text-center py-20 text-gray-600">
           Loading PG Details...
         </div>
+
 
         <Footer />
       </>
@@ -437,10 +482,11 @@ function PGDetails({ setShowLoginModal }) {
     },
   ];
 
-  const isOwner =
-    user &&
-    pg.owner &&
-    String(pg.owner) === String(user._id);
+ const isOwner =
+  user &&
+  pg.owner &&
+  String(pg.owner._id || pg.owner) ===
+    String(user._id);
 
   return (
     <>
@@ -661,6 +707,112 @@ function PGDetails({ setShowLoginModal }) {
               {pg.description}
             </p>
           </div>
+
+{/* ================= BED & CHARGES ================= */}
+<div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mt-8">
+  <h2 className="text-xl font-bold text-gray-900 mb-5">
+    Bed & Charges
+  </h2>
+
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+      <p className="text-xs text-gray-500">
+        Total Beds
+      </p>
+      <p className="font-semibold text-gray-900 mt-1">
+        {pg.totalBeds || 0}
+      </p>
+    </div>
+
+    <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+      <p className="text-xs text-gray-500">
+        Available Beds
+      </p>
+      <p className="font-semibold text-green-600 mt-1">
+        {pg.availableBeds || 0}
+      </p>
+    </div>
+
+    <div className="rounded-xl bg-blue-50 border border-blue-200 p-4">
+      <p className="text-xs text-gray-500">
+        Maintenance Charges
+      </p>
+      <p className="font-semibold text-blue-600 mt-1">
+        ₹ {pg.maintenanceCharges?.toLocaleString() || 0}
+      </p>
+    </div>
+  </div>
+</div>
+
+{/* ================= PG RULES ================= */}
+<div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mt-8">
+  <h2 className="text-xl font-bold text-gray-900 mb-5">
+    PG Rules
+  </h2>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+      <p className="text-sm font-semibold text-gray-800">
+        Available Now
+      </p>
+      <p className={`text-xs font-medium mt-1 ${
+        pg.availableNow
+          ? "text-green-600"
+          : "text-red-600"
+      }`}>
+        {pg.availableNow
+          ? "Yes"
+          : "No"}
+      </p>
+    </div>
+
+    <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+      <p className="text-sm font-semibold text-gray-800">
+        Smoking
+      </p>
+      <p className={`text-xs font-medium mt-1 ${
+        pg.smokingAllowed
+          ? "text-green-600"
+          : "text-red-600"
+      }`}>
+        {pg.smokingAllowed
+          ? "Allowed"
+          : "Not Allowed"}
+      </p>
+    </div>
+
+    <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+      <p className="text-sm font-semibold text-gray-800">
+        Pets
+      </p>
+      <p className={`text-xs font-medium mt-1 ${
+        pg.petsAllowed
+          ? "text-green-600"
+          : "text-red-600"
+      }`}>
+        {pg.petsAllowed
+          ? "Allowed"
+          : "Not Allowed"}
+      </p>
+    </div>
+
+    <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+      <p className="text-sm font-semibold text-gray-800">
+        Visitors
+      </p>
+      <p className={`text-xs font-medium mt-1 ${
+        pg.visitorsAllowed
+          ? "text-green-600"
+          : "text-red-600"
+      }`}>
+        {pg.visitorsAllowed
+          ? "Allowed"
+          : "Not Allowed"}
+      </p>
+    </div>
+  </div>
+</div>
+
           {/* ================= AMENITIES ================= */}
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mt-8">
 
@@ -1054,6 +1206,20 @@ function PGDetails({ setShowLoginModal }) {
         price={pg.rent}
         url={window.location.href}
       />
+
+   {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({
+              show: false,
+              message: "",
+              type: "success",
+            })
+          }
+        />
+      )}
 
       <Footer />
     </>

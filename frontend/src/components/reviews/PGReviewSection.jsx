@@ -120,7 +120,7 @@ function PGReviewSection({
           </div>
 
           {/* ================= RIGHT : WRITE REVIEW ================= */}
-          {user && !isOwner && (
+          {user &&  (
             <div className="border-l border-gray-200 pl-7">
 
               <PGReviewForm

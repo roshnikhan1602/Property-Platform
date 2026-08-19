@@ -17,11 +17,14 @@ cron.schedule("0 9 * * *", async () => {
   try {
     console.log("Checking subscription expiry...");
 
-    const subscriptions = await Subscription.find({
-      plan: {
-        $in: ["Premium", "Elite"],
-      },
-    });
+   const subscriptions = await Subscription.find({
+  plan: {
+    $in: ["Premium", "Elite"],
+  },
+  endDate: {
+    $ne: null,
+  },
+});
 
     for (const subscription of subscriptions) {
       const user = await User.findById(subscription.user);

@@ -14,28 +14,27 @@ const addPG = async (req, res) => {
 
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
-        const uploadedImage =
-          await new Promise(
-            (resolve, reject) => {
-              const uploadStream =
-                cloudinary.uploader.upload_stream(
-                  {
-                    folder: "property-platform/pgs",
-                  },
-                  (error, result) => {
-                    if (error) {
-                      reject(error);
-                    } else {
-                      resolve(result);
-                    }
+        const uploadedImage = await new Promise(
+          (resolve, reject) => {
+            const uploadStream =
+              cloudinary.uploader.upload_stream(
+                {
+                  folder: "property-platform/pgs",
+                },
+                (error, result) => {
+                  if (error) {
+                    reject(error);
+                  } else {
+                    resolve(result);
                   }
-                );
+                }
+              );
 
-              streamifier
-                .createReadStream(file.buffer)
-                .pipe(uploadStream);
-            }
-          );
+            streamifier
+              .createReadStream(file.buffer)
+              .pipe(uploadStream);
+          }
+        );
 
         imageUrls.push(
           uploadedImage.secure_url
@@ -81,23 +80,89 @@ const addPG = async (req, res) => {
       });
     }
 
-    // Check limit
+    // Check PG limit
     if (
       pgLimit !== -1 &&
       pgCount >= pgLimit
     ) {
       return res.status(403).json({
         success: false,
-        message: `Your ${planName} plan allows only ${pgLimit} PG listing${pgLimit > 1 ? "s" : ""
-          }. Please upgrade your subscription to add more PG listings.`,
+        message: `Your ${planName} plan allows only ${pgLimit} PG listing${
+          pgLimit > 1 ? "s" : ""
+        }. Please upgrade your subscription to add more PG listings.`,
       });
     }
+
+const booleanFields = [
+  "availableNow",
+  "foodAvailable",
+  "wifiAvailable",
+  "acAvailable",
+  "gymAvailable",
+  "swimmingPoolAvailable",
+  "tvAvailable",
+  "cctvAvailable",
+  "attachedBathroom",
+  "laundryAvailable",
+  "housekeepingAvailable",
+  "liftAvailable",
+  "geyserAvailable",
+  "parkingAvailable",
+  "powerBackupAvailable",
+  "studyTableAvailable",
+  "cupboardAvailable",
+  "smokingAllowed",
+  "petsAllowed",
+  "visitorsAllowed",
+];
+
+booleanFields.forEach((field) => {
+  if (req.body[field] !== undefined) {
+    req.body[field] =
+      req.body[field] === "true";
+  }
+});
 
     const pg = await PG.create({
       ...req.body,
       owner: req.user.id,
       images: imageUrls,
     });
+
+ // Start 30-day Free plan when user adds
+    // their first Property OR first PG
+    if (
+      latestSubscription &&
+      latestSubscription.plan === "Free" &&
+      latestSubscription.status === "Active" &&
+      !latestSubscription.endDate &&
+      pgCount === 0
+    ) {
+      const startDate = new Date();
+
+      const endDate = new Date();
+      endDate.setDate(
+        endDate.getDate() + 30
+      );
+
+      latestSubscription.startDate =
+        startDate;
+
+      latestSubscription.endDate =
+        endDate;
+
+      latestSubscription.status =
+        "Active";
+
+      latestSubscription.expiryReminderSent =
+        false;
+
+      latestSubscription.expiredEmailSent =
+        false;
+
+      await latestSubscription.save();
+    }
+
     const admins = await User.find({
       role: "admin",
     });
@@ -128,7 +193,6 @@ const addPG = async (req, res) => {
     if (user && user.role === "user") {
       user.role = "owner";
       await user.save();
-
 
       // Send owner welcome email
       if (user.email) {
@@ -261,9 +325,9 @@ const getAllPGs = async (req, res) => {
       filters.laundryAvailable = true;
     }
 
-   if (powerBackupAvailable === "true") {
-  filters.powerBackupAvailable = true;
-}
+    if (powerBackupAvailable === "true") {
+      filters.powerBackupAvailable = true;
+    }
 
     if (housekeepingAvailable === "true") {
       filters.housekeepingAvailable = true;
@@ -288,6 +352,7 @@ const getAllPGs = async (req, res) => {
     if (cupboardAvailable === "true") {
       filters.cupboardAvailable = true;
     }
+
     let pgs = await PG.find(filters)
       .sort({ views: -1 })
       .skip(skip)
@@ -330,6 +395,7 @@ const getAllPGs = async (req, res) => {
     });
   }
 };
+
 const getMyPGs = async (req, res) => {
   try {
     const pgs = await PG.find({
@@ -365,10 +431,12 @@ const getMyPGs = async (req, res) => {
 
 const getPGById = async (req, res) => {
   try {
-    const pg = await PG.findById(req.params.id).populate(
-  "owner",
-  "name profileImage createdAt"
-);
+    const pg = await PG.findById(
+      req.params.id
+    ).populate(
+      "owner",
+      "name profileImage createdAt"
+    );
 
     if (!pg) {
       return res.status(404).json({
@@ -377,13 +445,29 @@ const getPGById = async (req, res) => {
       });
     }
 
-    // Clone PG object
+    // Check if the logged-in user is the owner
+    const isOwner =
+      req.user &&
+      String(pg.owner._id) ===
+        String(req.user.id);
+
+    // Unapproved/inactive PGs are not
+    // publicly accessible
+    if (
+      (!pg.isApproved || !pg.isActive) &&
+      !isOwner
+    ) {
+      return res.status(404).json({
+        success: false,
+        message: "PG not found",
+      });
+    }
+
     const pgData = pg.toObject();
 
-    // Get owner's latest subscription
     const latestSubscription =
       await Subscription.findOne({
-        user: pg.owner,
+        user: pg.owner._id,
       }).sort({ createdAt: -1 });
 
     let contactAvailable = true;
@@ -426,19 +510,29 @@ const updatePG = async (req, res) => {
         message: "PG not found",
       });
     }
-    if (pg.owner.toString() !== req.user.id) {
+
+    if (
+      pg.owner.toString() !== req.user.id
+    ) {
       return res.status(403).json({
         success: false,
-        message: "You are not authorized to update this PG",
+        message:
+          "You are not authorized to update this PG",
       });
     }
+
     let imageUrls = [];
 
     if (req.body.existingImages) {
-      imageUrls = JSON.parse(req.body.existingImages);
+      imageUrls = JSON.parse(
+        req.body.existingImages
+      );
     }
 
-    if (req.files && req.files.length > 0) {
+    if (
+      req.files &&
+      req.files.length > 0
+    ) {
       for (const file of req.files) {
         const uploadedImage =
           await new Promise(
@@ -446,7 +540,8 @@ const updatePG = async (req, res) => {
               const uploadStream =
                 cloudinary.uploader.upload_stream(
                   {
-                    folder: "property-platform/pgs",
+                    folder:
+                      "property-platform/pgs",
                   },
                   (error, result) => {
                     if (error) {
@@ -458,7 +553,9 @@ const updatePG = async (req, res) => {
                 );
 
               streamifier
-                .createReadStream(file.buffer)
+                .createReadStream(
+                  file.buffer
+                )
                 .pipe(uploadStream);
             }
           );
@@ -468,6 +565,36 @@ const updatePG = async (req, res) => {
         );
       }
     }
+
+const booleanFields = [
+  "availableNow",
+  "foodAvailable",
+  "wifiAvailable",
+  "acAvailable",
+  "gymAvailable",
+  "swimmingPoolAvailable",
+  "tvAvailable",
+  "cctvAvailable",
+  "attachedBathroom",
+  "laundryAvailable",
+  "housekeepingAvailable",
+  "liftAvailable",
+  "geyserAvailable",
+  "parkingAvailable",
+  "powerBackupAvailable",
+  "studyTableAvailable",
+  "cupboardAvailable",
+  "smokingAllowed",
+  "petsAllowed",
+  "visitorsAllowed",
+];
+
+booleanFields.forEach((field) => {
+  if (req.body[field] !== undefined) {
+    req.body[field] =
+      req.body[field] === "true";
+  }
+});
 
     const updatedPG =
       await PG.findByIdAndUpdate(
@@ -487,6 +614,7 @@ const updatePG = async (req, res) => {
       message: `"${updatedPG.title}" has been updated successfully.`,
       type: "general",
     });
+
     res.status(200).json({
       success: true,
       message:
@@ -503,9 +631,14 @@ const updatePG = async (req, res) => {
   }
 };
 
-const togglePGStatus = async (req, res) => {
+const togglePGStatus = async (
+  req,
+  res
+) => {
   try {
-    const pg = await PG.findById(req.params.id);
+    const pg = await PG.findById(
+      req.params.id
+    );
 
     if (!pg) {
       return res.status(404).json({
@@ -514,27 +647,32 @@ const togglePGStatus = async (req, res) => {
       });
     }
 
-    if (pg.owner.toString() !== req.user.id) {
+    if (
+      pg.owner.toString() !== req.user.id
+    ) {
       return res.status(403).json({
         success: false,
-        message: "You are not authorized to update this PG",
+        message:
+          "You are not authorized to update this PG",
       });
     }
 
-    // Deactivating
     if (pg.isActive) {
-      if (!req.body.reason || req.body.reason.trim() === "") {
+      if (
+        !req.body.reason ||
+        req.body.reason.trim() === ""
+      ) {
         return res.status(400).json({
           success: false,
-          message: "Please provide a reason for deactivation.",
+          message:
+            "Please provide a reason for deactivation.",
         });
       }
 
       pg.isActive = false;
-      pg.deactivationReason = req.body.reason.trim();
-    }
-    // Activating
-    else {
+      pg.deactivationReason =
+        req.body.reason.trim();
+    } else {
       pg.isActive = true;
       pg.deactivationReason = "";
     }
@@ -556,8 +694,11 @@ const togglePGStatus = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: `PG ${pg.isActive ? "activated" : "deactivated"
-        } successfully.`,
+      message: `PG ${
+        pg.isActive
+          ? "activated"
+          : "deactivated"
+      } successfully.`,
       pg,
     });
   } catch (error) {
@@ -581,10 +722,13 @@ const deletePG = async (req, res) => {
       });
     }
 
-    if (pg.owner.toString() !== req.user.id) {
+    if (
+      pg.owner.toString() !== req.user.id
+    ) {
       return res.status(403).json({
         success: false,
-        message: "You are not authorized to delete this PG",
+        message:
+          "You are not authorized to delete this PG",
       });
     }
 
@@ -634,15 +778,16 @@ const incrementPGViews = async (
   res
 ) => {
   try {
-    const pg = await PG.findByIdAndUpdate(
-      req.params.id,
-      {
-        $inc: { views: 1 },
-      },
-      {
-        new: true,
-      }
-    );
+    const pg =
+      await PG.findByIdAndUpdate(
+        req.params.id,
+        {
+          $inc: { views: 1 },
+        },
+        {
+          new: true,
+        }
+      );
 
     if (!pg) {
       return res.status(404).json({

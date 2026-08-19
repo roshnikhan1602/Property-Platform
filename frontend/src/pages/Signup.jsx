@@ -174,7 +174,7 @@ function Signup() {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your name"
-                className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -189,7 +189,7 @@ function Signup() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
-                className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -199,7 +199,7 @@ function Signup() {
               </label>
 
               <div className="flex gap-2">
-                <div className="flex items-center px-4 border rounded-lg bg-gray-100 text-gray-700">
+                <div className="flex items-center px-4 border border-gray-300 rounded-lg bg-gray-100 text-gray-700">
                   +91
                 </div>
 
@@ -211,7 +211,7 @@ function Signup() {
                   placeholder="9876543210"
                   maxLength={10}
                   disabled={otpVerified}
-                  className="flex-1 border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                  className="flex-1 border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                 />
               </div>
             </div>
@@ -240,7 +240,7 @@ function Signup() {
                     onChange={(e) => setOtp(e.target.value)}
                     placeholder="Enter OTP"
                     maxLength={6}
-                    className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -272,7 +272,7 @@ function Signup() {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter password"
-                className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 

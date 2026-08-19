@@ -225,7 +225,7 @@ useEffect(() => {
                 </label>
 
                 <div className="flex gap-2">
-                  <div className="flex items-center px-4 border rounded-lg bg-gray-100 text-gray-700">
+                  <div className="flex items-center px-4 border border-gray-300 rounded-lg bg-gray-100 text-gray-700">
                     +91
                   </div>
 
@@ -236,7 +236,7 @@ useEffect(() => {
                     onChange={handleChange}
                     placeholder="9876543210"
                     maxLength={10}
-                    className="flex-1 border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -244,7 +244,7 @@ useEffect(() => {
               <button
                 onClick={sendOTP}
                 disabled={loading}
-                className="w-full bg-black hover:bg-gray-900 text-white py-3 rounded-lg transition disabled:opacity-60"
+               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition disabled:opacity-60"
               >
                 {loading ? "Sending OTP..." : "Send OTP"}
               </button>
@@ -274,7 +274,7 @@ useEffect(() => {
                   onChange={handleChange}
                   placeholder="Enter 6-digit OTP"
                   maxLength={6}
-                  className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                 className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -313,7 +313,7 @@ useEffect(() => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter new password"
-                  className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -328,7 +328,7 @@ useEffect(() => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Confirm new password"
-                  className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 

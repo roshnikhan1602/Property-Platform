@@ -62,7 +62,12 @@ const addReview = async (req, res) => {
       });
     }
 
-    
+    if (String(property.owner) === String(userId)) {
+  return res.status(403).json({
+    success: false,
+    message: "You cannot review your own property.",
+  });
+}
 
     const alreadyReviewed =
       await Review.findOne({

@@ -32,7 +32,14 @@ function RecentlyViewed() {
 
 const data = await response.json();
 
-if (response.ok) {
+if (
+  response.ok &&
+  (
+    item.itemType === "pg"
+      ? data.pg?.isApproved && data.pg?.isActive
+      : data.property?.isApproved && data.property?.isActive
+  )
+) {
   validItems.push({
     ...item,
     listingAvailable:
