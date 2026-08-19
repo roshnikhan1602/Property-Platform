@@ -333,8 +333,6 @@ function PropertyDetails({
 
         if (data.success) {
           setProperty(data.property);
-          console.log(data.property.amenities);
-          console.log(data.property.highlights);
 
           setContactAvailable(
             data.contactAvailable ?? true

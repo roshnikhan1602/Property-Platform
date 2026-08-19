@@ -20,70 +20,86 @@ function RescheduleVisitModal({
 
   if (!isOpen || !visit) return null;
 
-  const handleReschedule = async () => {
-    if (!visitDate || !visitTime) {
-      setToast({
-        show: true,
-        message: "Please select date and time.",
-        type: "error",
-      });
-      return;
-    }
-
-    try {
-  setLoading(true);
-
-  const response = await fetch(
-    `http://localhost:5000/api/visits/reschedule/${visit._id}`,
-    {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        visitDate,
-        visitTime,
-        reason,
-      }),
-    }
-  );
-
-  const data = await response.json();
-
-  if (data.success) {
+ const handleReschedule = async () => {
+  if (!visitDate || !visitTime) {
     setToast({
       show: true,
-      message: "Visit rescheduled successfully.",
-      type: "success",
-    });
-
-    setTimeout(() => {
-      setVisitDate("");
-      setVisitTime("");
-      setReason("");
-      onRescheduled();
-      onClose();
-    }, 1000);
-  } else {
-    setToast({
-      show: true,
-      message: data.message,
+      message: "Please select date and time.",
       type: "error",
     });
+    return;
   }
-} catch (error) {
-  console.error(error);
 
-  setToast({
-    show: true,
-    message: "Something went wrong.",
-    type: "error",
-  });
-} finally {
-  setLoading(false);
-}
-  };
+  // Prevent past dates
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const selectedDate = new Date(`${visitDate}T00:00:00`);
+  selectedDate.setHours(0, 0, 0, 0);
+
+  if (selectedDate < today) {
+    setToast({
+      show: true,
+      message: "Please select today or a future date.",
+      type: "error",
+    });
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const response = await fetch(
+      `http://localhost:5000/api/visits/reschedule/${visit._id}`,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          visitDate,
+          visitTime,
+          reason,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+      setToast({
+        show: true,
+        message: "Visit rescheduled successfully.",
+        type: "success",
+      });
+
+      setTimeout(() => {
+        setVisitDate("");
+        setVisitTime("");
+        setReason("");
+        onRescheduled();
+        onClose();
+      }, 1000);
+    } else {
+      setToast({
+        show: true,
+        message: data.message,
+        type: "error",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+
+    setToast({
+      show: true,
+      message: "Something went wrong.",
+      type: "error",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
   <>
