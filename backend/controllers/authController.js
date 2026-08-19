@@ -356,7 +356,7 @@ const signup = async (req, res) => {
       isVerified: true,
     });
 
-<<<<<<< HEAD
+
  await Subscription.create({
   user: user._id,
   plan: "Free",
@@ -367,23 +367,6 @@ const signup = async (req, res) => {
   startDate: null,
   endDate: null,
 });
-=======
-    const startDate = new Date();
-
-    const endDate = new Date();
-    endDate.setMinutes(endDate.getMinutes() + 5);
-
-    await Subscription.create({
-      user: user._id,
-      plan: "Free",
-      amount: 0,
-      propertyLimit: 2,
-      pgLimit: 1,
-      status: "Active",
-      startDate,
-      endDate,
-    });
->>>>>>> c161617bc72ed78a43b510fd1f5d13b30a670722
 
     // Send welcome email
     if (user.email) {
