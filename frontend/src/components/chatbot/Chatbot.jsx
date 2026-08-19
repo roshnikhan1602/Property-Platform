@@ -135,10 +135,9 @@ function Chatbot() {
                 <div
                   key={index}
                   className={`max-w-[82%] px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap ${
-                    msg.sender ===
-                    "user"
+                    msg.sender === "user"
                       ? "bg-blue-600 text-white ml-auto"
-                      : "bg-white shadow"
+                      : "bg-white border border-gray-200 shadow-sm"
                   }`}
                 >
                   {msg.text}
@@ -147,7 +146,7 @@ function Chatbot() {
             )}
 
             {loading && (
-              <div className="bg-white shadow rounded-2xl px-4 py-3 text-sm w-fit animate-pulse">
+              <div className="bg-white border border-gray-200 shadow-sm rounded-2xl px-4 py-3 text-sm w-fit animate-pulse">
                 🤖 Thinking...
               </div>
             )}
@@ -156,7 +155,7 @@ function Chatbot() {
 
           </div>
 
-          <div className="flex border-t">
+          <div className="flex border-t border-gray-200">
 
             <input
               type="text"

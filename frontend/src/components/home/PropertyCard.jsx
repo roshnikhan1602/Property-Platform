@@ -15,6 +15,10 @@ function PropertyCard({
 }) {
   const navigate = useNavigate();
 
+  const propertyId =
+  property._id?.$oid ||
+  property._id?._id ||
+  property._id;
   const [saved, setSaved] = useState(false);
 
   const [toast, setToast] = useState({
@@ -118,7 +122,7 @@ function PropertyCard({
 
   <div
   onClick={() =>
-    navigate(`/properties/${property._id}`)
+    navigate(`/properties/${propertyId}`)
   }
   className="group bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer"
 >
@@ -132,7 +136,7 @@ function PropertyCard({
   src={property.images[0]}
   alt={property.title}
   onClick={() =>
-    navigate(`/properties/${property._id}`)
+    navigate(`/properties/${propertyId}`)
   }
   className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
 />
@@ -141,7 +145,7 @@ function PropertyCard({
 
    <div
   onClick={() =>
-    navigate(`/properties/${property._id}`)
+    navigate(`/properties/${propertyId}`)
   }
   className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center cursor-pointer"
 >

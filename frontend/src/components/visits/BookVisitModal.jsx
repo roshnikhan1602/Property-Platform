@@ -19,76 +19,95 @@ function BookVisitModal({
 
     if (!isOpen) return null;
 
+const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!visitDate || !visitTime) {
+    if (!visitDate || !visitTime) {
+        setToast({
+            show: true,
+            message: "Please select visit date and time.",
+            type: "error",
+        });
+        return;
+    }
+
+    // Prevent past dates
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const selectedDate = new Date(`${visitDate}T00:00:00`);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+        setToast({
+            show: true,
+            message: "Please select today or a future date.",
+            type: "error",
+        });
+        return;
+    }
+
+    try {
+        setLoading(true);
+
+        const response = await fetch(
+            "http://localhost:5000/api/visits/book",
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    propertyId: property._id,
+                    visitDate,
+                    visitTime,
+                    message,
+                }),
+            }
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
             setToast({
                 show: true,
-                message: "Please select visit date and time.",
-                type: "error",
+                message: "Visit booked successfully!",
+                type: "success",
             });
-            return;
-        }
-        try {
-            setLoading(true);
 
-            const response = await fetch(
-                "http://localhost:5000/api/visits/book",
-                {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        propertyId: property._id,
-                        visitDate,
-                        visitTime,
-                        message,
-                    }),
-                }
-            );
+            setTimeout(() => {
+                setVisitDate("");
+                setVisitTime("");
+                setMessage("");
 
-            const data = await response.json();
-
-            if (data.success) {
                 setToast({
-                    show: true,
-                    message: "Visit booked successfully!",
+                    show: false,
+                    message: "",
                     type: "success",
                 });
 
-                setTimeout(() => {
-                    setVisitDate("");
-                    setVisitTime("");
-                    setMessage("");
-                    setToast({
-                        show: false,
-                        message: "",
-                        type: "success",
-                    });
-                    onClose();
-                }, 1200);
-            } else {
-                setToast({
-                    show: true,
-                    message: data.message,
-                    type: "error",
-                });
-            }
-        } catch (error) {
-            console.error(error);
-
+                onClose();
+            }, 1200);
+        } else {
             setToast({
                 show: true,
-                message: "Something went wrong.",
+                message: data.message,
                 type: "error",
             });
-        } finally {
-            setLoading(false);
         }
-    };
+    } catch (error) {
+        console.error(error);
+
+        setToast({
+            show: true,
+            message: "Something went wrong.",
+            type: "error",
+        });
+    } finally {
+        setLoading(false);
+    }
+};
 
     return (
         <>

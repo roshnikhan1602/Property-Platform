@@ -70,6 +70,7 @@ function PropertyListing({
 
         const data = await response.json();
 
+
         if (data.success) {
           setProperties(data.properties);
           setTotalProperties(data.totalProperties);

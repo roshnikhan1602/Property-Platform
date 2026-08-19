@@ -160,7 +160,7 @@ const handleAddPG = () => {
         }`}
       >
         {/* Hamburger */}
-        <div className="h-16 flex items-center justify-center border-b">
+      <div className="h-16 flex items-center justify-center border-b border-white/20">
           <FaBars className="text-xl text-blue-600" />
         </div>
 
