@@ -22,106 +22,136 @@ function AdminSidebar({
         sidebarOpen ? "w-64" : "w-16"
       }`}
     >
-      <div className="h-16 flex items-center justify-center border-b">
+      {/* Hamburger - Go to Admin Dashboard Home */}
+      <div
+        onClick={() => setActiveTab("")}
+        className="h-16 flex items-center justify-center cursor-pointer hover:bg-blue-50"
+      >
         <FaBars className="text-xl text-blue-600" />
       </div>
 
       <div className="flex flex-col gap-3 pt-8 px-2">
 
+        {/* Users */}
         <button
           onClick={() => setActiveTab("users")}
           className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-100"
         >
-          <FaUsers className="min-w-[22px]" />
+          <FaUsers className="min-w-[22px] text-blue-600" />
+
           <span
             className={`transition-all duration-300 whitespace-nowrap ${
-              sidebarOpen ? "opacity-100" : "opacity-0"
+              sidebarOpen
+                ? "opacity-100"
+                : "opacity-0"
             }`}
           >
             Users
           </span>
         </button>
 
+        {/* Properties */}
         <button
           onClick={() => setActiveTab("properties")}
           className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-100"
         >
-          <FaBuilding className="min-w-[22px]" />
+          <FaBuilding className="min-w-[22px] text-blue-600" />
+
           <span
             className={`transition-all duration-300 whitespace-nowrap ${
-              sidebarOpen ? "opacity-100" : "opacity-0"
+              sidebarOpen
+                ? "opacity-100"
+                : "opacity-0"
             }`}
           >
             Properties
           </span>
         </button>
 
+        {/* Pending */}
         <button
           onClick={() => setActiveTab("pending")}
           className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-100"
         >
-          <FaClock className="min-w-[22px]" />
+          <FaClock className="min-w-[22px] text-blue-600" />
+
           <span
             className={`transition-all duration-300 whitespace-nowrap ${
-              sidebarOpen ? "opacity-100" : "opacity-0"
+              sidebarOpen
+                ? "opacity-100"
+                : "opacity-0"
             }`}
           >
             Pending
           </span>
         </button>
 
+        {/* Approved */}
         <button
           onClick={() => setActiveTab("approved")}
           className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-100"
         >
-          <FaBed className="min-w-[22px]" />
+          <FaBed className="min-w-[22px] text-blue-600" />
+
           <span
             className={`transition-all duration-300 whitespace-nowrap ${
-              sidebarOpen ? "opacity-100" : "opacity-0"
+              sidebarOpen
+                ? "opacity-100"
+                : "opacity-0"
             }`}
           >
             Approved
           </span>
         </button>
 
+        {/* Subscriptions */}
         <button
-          onClick={() =>
-            setActiveTab("subscriptions")
-          }
+          onClick={() => setActiveTab("subscriptions")}
           className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-100"
         >
-          <FaCreditCard className="min-w-[22px]" />
+          <FaCreditCard className="min-w-[22px] text-blue-600" />
+
           <span
             className={`transition-all duration-300 whitespace-nowrap ${
-              sidebarOpen ? "opacity-100" : "opacity-0"
+              sidebarOpen
+                ? "opacity-100"
+                : "opacity-0"
             }`}
           >
             Subscriptions
           </span>
         </button>
 
-<button
-  onClick={() => setActiveTab("visits")}
-  className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-100"
->
-  <FaCalendarCheck className="min-w-[22px]" />
-  <span
-    className={`transition-all duration-300 whitespace-nowrap ${
-      sidebarOpen ? "opacity-100" : "opacity-0"
-    }`}
-  >
-    Visits
-  </span>
-</button>
+        {/* Visits */}
+        <button
+          onClick={() => setActiveTab("visits")}
+          className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-100"
+        >
+          <FaCalendarCheck className="min-w-[22px] text-blue-600" />
 
+          <span
+            className={`transition-all duration-300 whitespace-nowrap ${
+              sidebarOpen
+                ? "opacity-100"
+                : "opacity-0"
+            }`}
+          >
+            Visits
+          </span>
+        </button>
+
+        {/* Support */}
         <button
           onClick={() => setActiveTab("support")}
           className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-100"
         >
-          <FaHeadset className="min-w-[22px]" />
+          <FaHeadset className="min-w-[22px] text-blue-600" />
+
           <span
             className={`transition-all duration-300 whitespace-nowrap ${
-              sidebarOpen ? "opacity-100" : "opacity-0"
+              sidebarOpen
+                ? "opacity-100"
+                : "opacity-0"
             }`}
           >
             Support

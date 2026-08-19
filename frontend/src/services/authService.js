@@ -1,65 +1,111 @@
 const BASE_URL = "http://localhost:5000/api/auth";
 
-export const sendOTP = async (mobileNumber) => {
-  const response = await fetch(`${BASE_URL}/send-otp`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      mobileNumber,
-    }),
-  });
+// ===============================
+// SEND SIGNUP OTP
+// ===============================
+
+export const sendOTP = async (
+  countryCode,
+  mobileNumber
+) => {
+  const response = await fetch(
+    `${BASE_URL}/send-otp`,
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        countryCode,
+        mobileNumber,
+      }),
+    }
+  );
 
   return response.json();
 };
 
-export const verifyOTP = async (mobileNumber, otp) => {
-  const response = await fetch(`${BASE_URL}/verify-otp`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      mobileNumber,
-      otp,
-    }),
-  });
+
+// ===============================
+// VERIFY SIGNUP OTP
+// ===============================
+
+export const verifyOTP = async (
+  countryCode,
+  mobileNumber,
+  otp
+) => {
+  const response = await fetch(
+    `${BASE_URL}/verify-otp`,
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        countryCode,
+        mobileNumber,
+        otp,
+      }),
+    }
+  );
 
   return response.json();
 };
+
+
+// ===============================
+// SIGNUP
+// ===============================
 
 export const signup = async (userData) => {
-  const response = await fetch(`${BASE_URL}/signup`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(userData),
-  });
+  const response = await fetch(
+    `${BASE_URL}/signup`,
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    }
+  );
 
   return response.json();
 };
+
+
+// ===============================
+// LOGIN
+// ===============================
 
 export const login = async (userData) => {
-  const response = await fetch(`${BASE_URL}/login`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(userData),
-  });
+  const response = await fetch(
+    `${BASE_URL}/login`,
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    }
+  );
 
   return response.json();
 };
 
-// Forgot Password
 
-export const sendForgotPasswordOTP = async (mobileNumber) => {
+// ===============================
+// FORGOT PASSWORD
+// ===============================
+
+export const sendForgotPasswordOTP = async (
+  countryCode,
+  mobileNumber
+) => {
   const response = await fetch(
     `${BASE_URL}/forgot-password/send-otp`,
     {
@@ -69,6 +115,7 @@ export const sendForgotPasswordOTP = async (mobileNumber) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        countryCode,
         mobileNumber,
       }),
     }
@@ -77,7 +124,13 @@ export const sendForgotPasswordOTP = async (mobileNumber) => {
   return response.json();
 };
 
+
+// ===============================
+// VERIFY FORGOT PASSWORD OTP
+// ===============================
+
 export const verifyForgotPasswordOTP = async (
+  countryCode,
   mobileNumber,
   otp
 ) => {
@@ -90,6 +143,7 @@ export const verifyForgotPasswordOTP = async (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        countryCode,
         mobileNumber,
         otp,
       }),
@@ -99,7 +153,13 @@ export const verifyForgotPasswordOTP = async (
   return response.json();
 };
 
+
+// ===============================
+// RESET PASSWORD
+// ===============================
+
 export const resetPassword = async (
+  countryCode,
   mobileNumber,
   password
 ) => {
@@ -112,6 +172,7 @@ export const resetPassword = async (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        countryCode,
         mobileNumber,
         password,
       }),

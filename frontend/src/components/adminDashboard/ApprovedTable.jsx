@@ -16,10 +16,8 @@ function ApprovedTable({
   handleDeletePG,
 }) {
   const [search, setSearch] = useState("");
-  const [cityFilter, setCityFilter] =
-    useState("All");
-  const [sortBy, setSortBy] =
-    useState("Newest");
+  const [cityFilter, setCityFilter] = useState("All");
+  const [sortBy, setSortBy] = useState("Newest");
 
   const cities = useMemo(() => {
     const cityList = [
@@ -70,16 +68,14 @@ function ApprovedTable({
       case "Most Views":
         data.sort(
           (a, b) =>
-            (b.views || 0) -
-            (a.views || 0)
+            (b.views || 0) - (a.views || 0)
         );
         break;
 
       case "Least Views":
         data.sort(
           (a, b) =>
-            (a.views || 0) -
-            (b.views || 0)
+            (a.views || 0) - (b.views || 0)
         );
         break;
 
@@ -89,7 +85,7 @@ function ApprovedTable({
 
     return data;
   }, [
-    paginatedApproved,
+    approvedData,
     search,
     cityFilter,
     sortBy,
@@ -102,10 +98,11 @@ function ApprovedTable({
           onClick={() =>
             setApprovedView("properties")
           }
-          className={`px-5 py-2 rounded-lg font-medium ${approvedView === "properties"
-            ? "bg-purple-600 text-white"
-            : "bg-gray-200"
-            }`}
+          className={`px-5 py-2 rounded-lg font-medium ${
+            approvedView === "properties"
+              ? "bg-purple-600 text-white"
+              : "bg-gray-200"
+          }`}
         >
           Properties
         </button>
@@ -114,17 +111,18 @@ function ApprovedTable({
           onClick={() =>
             setApprovedView("pgs")
           }
-          className={`px-5 py-2 rounded-lg font-medium ${approvedView === "pgs"
-            ? "bg-purple-600 text-white"
-            : "bg-gray-200"
-            }`}
+          className={`px-5 py-2 rounded-lg font-medium ${
+            approvedView === "pgs"
+              ? "bg-purple-600 text-white"
+              : "bg-gray-200"
+          }`}
         >
           PGs
         </button>
       </div>
 
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div className="p-6 border-b">
+        <div className="p-6 border-b border-gray-200">
           <h2 className="text-2xl font-bold">
             {approvedView === "properties"
               ? "Approved Properties"
@@ -134,26 +132,24 @@ function ApprovedTable({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <input
               type="text"
-              placeholder={`Search ${approvedView ===
-                "properties"
-                ? "Property"
-                : "PG"
-                }`}
+              placeholder={`Search ${
+                approvedView === "properties"
+                  ? "Property"
+                  : "PG"
+              }`}
               value={search}
               onChange={(e) =>
                 setSearch(e.target.value)
               }
-              className="border rounded-lg px-4 py-2"
+              className="border border-gray-200 rounded-lg px-4 py-2"
             />
 
             <select
               value={cityFilter}
               onChange={(e) =>
-                setCityFilter(
-                  e.target.value
-                )
+                setCityFilter(e.target.value)
               }
-              className="border rounded-lg px-4 py-2"
+              className="border border-gray-200 rounded-lg px-4 py-2"
             >
               <option value="All">
                 All Cities
@@ -174,7 +170,7 @@ function ApprovedTable({
               onChange={(e) =>
                 setSortBy(e.target.value)
               }
-              className="border rounded-lg px-4 py-2"
+              className="border border-gray-200 rounded-lg px-4 py-2"
             >
               <option>
                 Newest
@@ -201,7 +197,7 @@ function ApprovedTable({
               <tr>
                 <th className="text-left px-6 py-4">
                   {approvedView ===
-                    "properties"
+                  "properties"
                     ? "Property"
                     : "PG"}
                 </th>
@@ -225,7 +221,7 @@ function ApprovedTable({
                 (item) => (
                   <tr
                     key={item._id}
-                    className="border-t hover:bg-gray-50"
+                    className="border-t border-gray-200 hover:bg-gray-50"
                   >
                     <td className="px-6 py-4 font-semibold">
                       {item.title}
@@ -266,13 +262,13 @@ function ApprovedTable({
                         <button
                           onClick={() =>
                             approvedView ===
-                              "properties"
+                            "properties"
                               ? handleDisapprove(
-                                item._id
-                              )
+                                  item._id
+                                )
                               : handleDisapprovePG(
-                                item._id
-                              )
+                                  item._id
+                                )
                           }
                           className="bg-yellow-500 text-white px-3 py-2 rounded-lg"
                         >
@@ -282,13 +278,13 @@ function ApprovedTable({
                         <button
                           onClick={() =>
                             approvedView ===
-                              "properties"
+                            "properties"
                               ? handleDelete(
-                                item._id
-                              )
+                                  item._id
+                                )
                               : handleDeletePG(
-                                item._id
-                              )
+                                  item._id
+                                )
                           }
                           className="bg-red-600 text-white px-3 py-2 rounded-lg"
                         >
@@ -300,7 +296,8 @@ function ApprovedTable({
                 )
               )}
 
-              {filteredApproved.length === 0 && (
+              {filteredApproved.length ===
+                0 && (
                 <tr>
                   <td
                     colSpan="4"

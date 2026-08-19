@@ -46,10 +46,10 @@ function GuestSessionManager() {
     }
 
     // ---------- TEST ----------
-    const LIMIT = 10 * 1000;
+    // const LIMIT = 10 * 1000;
 
     // ---------- PRODUCTION ----------
-    // const LIMIT = 15 * 60 * 1000;
+    const LIMIT = 15 * 60 * 1000;
 
     const elapsed =
       Date.now() -

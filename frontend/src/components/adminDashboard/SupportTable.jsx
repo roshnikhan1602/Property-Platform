@@ -44,7 +44,7 @@ function SupportTable({
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
 
-      <div className="p-6 border-b">
+      <div className="p-6 border-b border-gray-200">
         <h2 className="text-2xl font-bold">
           Support Messages
         </h2>
@@ -52,7 +52,7 @@ function SupportTable({
 
       {/* Filters */}
 
-      <div className="p-6 border-b bg-gray-50">
+      <div className="p-6 border-b border-gray-200 bg-gray-50">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
           <input
@@ -64,7 +64,7 @@ function SupportTable({
                 e.target.value
               )
             }
-            className="border rounded-lg px-4 py-2"
+            className="border border-gray-200 rounded-lg px-4 py-2"
           />
 
           <select
@@ -74,7 +74,7 @@ function SupportTable({
                 e.target.value
               )
             }
-            className="border rounded-lg px-4 py-2"
+            className="border border-gray-200 rounded-lg px-4 py-2"
           >
             <option value="All">
               All Status
@@ -152,7 +152,7 @@ function SupportTable({
               filteredSupport.map((item) => (
                 <tr
                   key={item._id}
-                  className="border-t hover:bg-gray-50"
+                  className="border-t border-gray-200 hover:bg-gray-50"
                 >
                   <td className="px-6 py-4 font-medium">
                     {item.name}

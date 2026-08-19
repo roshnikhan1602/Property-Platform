@@ -29,10 +29,11 @@ function PendingTable({
           onClick={() =>
             setPendingView("properties")
           }
-          className={`px-5 py-2 rounded-lg font-medium ${pendingView === "properties"
-            ? "bg-orange-500 text-white"
-            : "bg-gray-200"
-            }`}
+          className={`px-5 py-2 rounded-lg font-medium ${
+            pendingView === "properties"
+              ? "bg-orange-500 text-white"
+              : "bg-gray-200"
+          }`}
         >
           Properties
         </button>
@@ -41,10 +42,11 @@ function PendingTable({
           onClick={() =>
             setPendingView("pgs")
           }
-          className={`px-5 py-2 rounded-lg font-medium ${pendingView === "pgs"
-            ? "bg-orange-500 text-white"
-            : "bg-gray-200"
-            }`}
+          className={`px-5 py-2 rounded-lg font-medium ${
+            pendingView === "pgs"
+              ? "bg-orange-500 text-white"
+              : "bg-gray-200"
+          }`}
         >
           PGs
         </button>
@@ -52,7 +54,7 @@ function PendingTable({
 
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
 
-        <div className="p-6 border-b">
+        <div className="p-6 border-b border-gray-200">
           <h2 className="text-2xl font-bold">
             {pendingView === "properties"
               ? "Pending Properties"
@@ -62,22 +64,23 @@ function PendingTable({
 
         {/* Filters */}
 
-        <div className="p-6 border-b bg-gray-50">
+        <div className="p-6 border-b border-gray-200 bg-gray-50">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
             <input
               type="text"
-              placeholder={`Search ${pendingView === "properties"
-                ? "Property"
-                : "PG"
-                }`}
+              placeholder={`Search ${
+                pendingView === "properties"
+                  ? "Property"
+                  : "PG"
+              }`}
               value={pendingSearch}
               onChange={(e) =>
                 setPendingSearch(
                   e.target.value
                 )
               }
-              className="border rounded-lg px-4 py-2"
+              className="border border-gray-200 rounded-lg px-4 py-2"
             />
 
             <input
@@ -93,7 +96,7 @@ function PendingTable({
                   e.target.value || "All"
                 )
               }
-              className="border rounded-lg px-4 py-2"
+              className="border border-gray-200 rounded-lg px-4 py-2"
             />
 
             <select
@@ -103,7 +106,7 @@ function PendingTable({
                   e.target.value
                 )
               }
-              className="border rounded-lg px-4 py-2"
+              className="border border-gray-200 rounded-lg px-4 py-2"
             >
               <option value="Newest">
                 Newest
@@ -142,7 +145,7 @@ function PendingTable({
               <tr>
                 <th className="text-left px-6 py-4">
                   {pendingView ===
-                    "properties"
+                  "properties"
                     ? "Property"
                     : "PG"}
                 </th>
@@ -153,7 +156,7 @@ function PendingTable({
 
                 <th className="text-left px-6 py-4">
                   {pendingView ===
-                    "properties"
+                  "properties"
                     ? "Price"
                     : "Rent"}
                 </th>
@@ -166,12 +169,12 @@ function PendingTable({
 
             <tbody>
               {paginatedPending.length >
-                0 ? (
+              0 ? (
                 paginatedPending.map(
                   (item) => (
                     <tr
                       key={item._id}
-                      className="border-t hover:bg-gray-50"
+                      className="border-t border-gray-200 hover:bg-gray-50"
                     >
                       <td className="px-6 py-4 font-semibold">
                         {item.title}
@@ -184,7 +187,7 @@ function PendingTable({
                       <td className="px-6 py-4">
                         ₹
                         {pendingView ===
-                          "properties"
+                        "properties"
                           ? item.price
                           : item.rent}
                       </td>
@@ -196,7 +199,7 @@ function PendingTable({
                             onClick={() =>
                               navigate(
                                 pendingView ===
-                                  "properties"
+                                "properties"
                                   ? `/properties/${item._id}`
                                   : `/pgs/${item._id}`,
                                 {
@@ -217,13 +220,13 @@ function PendingTable({
                           <button
                             onClick={() =>
                               pendingView ===
-                                "properties"
+                              "properties"
                                 ? handleApprove(
-                                  item._id
-                                )
+                                    item._id
+                                  )
                                 : handleApprovePG(
-                                  item._id
-                                )
+                                    item._id
+                                  )
                             }
                             className="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition cursor-pointer"
                           >

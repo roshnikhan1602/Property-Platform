@@ -10,17 +10,19 @@ const welcomeUserEmail = require("../templates/welcomeUserEmail");
 
 const sendOTPController = async (req, res) => {
   try {
-    const { mobileNumber } = req.body;
+    const { countryCode, mobileNumber } = req.body;
 
-    if (!mobileNumber) {
+    if (!countryCode || !mobileNumber) {
       return res.status(400).json({
         success: false,
-        message: "Mobile number is required",
+        message: "Country code and mobile number are required",
       });
     }
 
+    const fullMobileNumber = `${countryCode}${mobileNumber}`;
+
     const existingUser = await User.findOne({
-      mobileNumber,
+      mobileNumber: fullMobileNumber,
     });
 
     if (existingUser) {
@@ -35,7 +37,7 @@ const sendOTPController = async (req, res) => {
     ).toString();
 
     await OTP.findOneAndUpdate(
-      { mobileNumber },
+      { mobileNumber: fullMobileNumber },
       {
         otp,
         verified: false,
@@ -48,8 +50,9 @@ const sendOTPController = async (req, res) => {
       }
     );
 
-    console.log(`OTP for ${mobileNumber}: ${otp}`);
-
+    console.log(
+      `OTP for ${fullMobileNumber}: ${otp}`
+    );
 
     res.status(200).json({
       success: true,
@@ -65,17 +68,20 @@ const sendOTPController = async (req, res) => {
 
 const verifyOTPController = async (req, res) => {
   try {
-    const { mobileNumber, otp } = req.body;
+    const { countryCode, mobileNumber, otp } = req.body;
 
-    if (!mobileNumber || !otp) {
+    if (!countryCode || !mobileNumber || !otp) {
       return res.status(400).json({
         success: false,
-        message: "Mobile number and OTP are required",
+        message:
+          "Country code, mobile number and OTP are required",
       });
     }
 
+    const fullMobileNumber = `${countryCode}${mobileNumber}`;
+
     const otpData = await OTP.findOne({
-      mobileNumber,
+      mobileNumber: fullMobileNumber,
     });
 
     if (!otpData) {
@@ -118,16 +124,20 @@ const verifyOTPController = async (req, res) => {
 
 const sendForgotPasswordOTP = async (req, res) => {
   try {
-    const { mobileNumber } = req.body;
+    const { countryCode, mobileNumber } = req.body;
 
-    if (!mobileNumber) {
+    if (!countryCode || !mobileNumber) {
       return res.status(400).json({
         success: false,
-        message: "Mobile number is required",
+        message: "Country code and mobile number are required",
       });
     }
 
-    const user = await User.findOne({ mobileNumber });
+    const fullMobileNumber = `${countryCode}${mobileNumber}`;
+
+    const user = await User.findOne({
+      mobileNumber: fullMobileNumber,
+    });
 
     if (!user) {
       return res.status(404).json({
@@ -141,7 +151,7 @@ const sendForgotPasswordOTP = async (req, res) => {
     ).toString();
 
     await OTP.findOneAndUpdate(
-      { mobileNumber },
+      { mobileNumber: fullMobileNumber },
       {
         otp,
         verified: false,
@@ -154,7 +164,9 @@ const sendForgotPasswordOTP = async (req, res) => {
       }
     );
 
-    console.log(`Forgot Password OTP for ${mobileNumber}: ${otp}`);
+    console.log(
+      `Forgot Password OTP for ${fullMobileNumber}: ${otp}`
+    );
 
     res.status(200).json({
       success: true,
@@ -170,16 +182,21 @@ const sendForgotPasswordOTP = async (req, res) => {
 
 const verifyForgotPasswordOTP = async (req, res) => {
   try {
-    const { mobileNumber, otp } = req.body;
+    const { countryCode, mobileNumber, otp } = req.body;
 
-    if (!mobileNumber || !otp) {
+    if (!countryCode || !mobileNumber || !otp) {
       return res.status(400).json({
         success: false,
-        message: "Mobile number and OTP are required",
+        message:
+          "Country code, mobile number and OTP are required",
       });
     }
 
-    const otpData = await OTP.findOne({ mobileNumber });
+    const fullMobileNumber = `${countryCode}${mobileNumber}`;
+
+    const otpData = await OTP.findOne({
+      mobileNumber: fullMobileNumber,
+    });
 
     if (!otpData) {
       return res.status(400).json({
@@ -221,16 +238,21 @@ const verifyForgotPasswordOTP = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    const { mobileNumber, password } = req.body;
+    const { countryCode, mobileNumber, password } = req.body;
 
-    if (!mobileNumber || !password) {
+    if (!countryCode || !mobileNumber || !password) {
       return res.status(400).json({
         success: false,
-        message: "Mobile number and new password are required",
+        message:
+          "Country code, mobile number and new password are required",
       });
     }
 
-    const otpData = await OTP.findOne({ mobileNumber });
+    const fullMobileNumber = `${countryCode}${mobileNumber}`;
+
+    const otpData = await OTP.findOne({
+      mobileNumber: fullMobileNumber,
+    });
 
     if (!otpData || !otpData.verified) {
       return res.status(400).json({
@@ -239,7 +261,9 @@ const resetPassword = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ mobileNumber });
+    const user = await User.findOne({
+      mobileNumber: fullMobileNumber,
+    });
 
     if (!user) {
       return res.status(404).json({
@@ -248,12 +272,17 @@ const resetPassword = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(
+      password,
+      10
+    );
 
     user.password = hashedPassword;
     await user.save();
 
-    await OTP.deleteOne({ mobileNumber });
+    await OTP.deleteOne({
+      mobileNumber: fullMobileNumber,
+    });
 
     res.status(200).json({
       success: true,
@@ -269,17 +298,31 @@ const resetPassword = async (req, res) => {
 
 const signup = async (req, res) => {
   try {
-    const { name, email, mobileNumber, password } = req.body;
+    const {
+      name,
+      email,
+      countryCode,
+      mobileNumber,
+      password,
+    } = req.body;
 
-if (!name || !email || !mobileNumber || !password) {
+    if (
+      !name ||
+      !email ||
+      !countryCode ||
+      !mobileNumber ||
+      !password
+    ) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
+    const fullMobileNumber = `${countryCode}${mobileNumber}`;
+
     const existingUser = await User.findOne({
-      mobileNumber,
+      mobileNumber: fullMobileNumber,
     });
 
     if (existingUser) {
@@ -290,7 +333,7 @@ if (!name || !email || !mobileNumber || !password) {
     }
 
     const otpData = await OTP.findOne({
-      mobileNumber,
+      mobileNumber: fullMobileNumber,
     });
 
     if (!otpData || !otpData.verified) {
@@ -305,42 +348,41 @@ if (!name || !email || !mobileNumber || !password) {
       10
     );
 
-   const user = await User.create({
-  name,
-  email,
-  mobileNumber,
-  password: hashedPassword,
-  isVerified: true,
-});
-
+    const user = await User.create({
+      name,
+      email,
+      mobileNumber: fullMobileNumber,
+      password: hashedPassword,
+      isVerified: true,
+    });
 
     const startDate = new Date();
 
-const endDate = new Date();
-endDate.setMinutes(endDate.getMinutes() + 5);
+    const endDate = new Date();
+    endDate.setMinutes(endDate.getMinutes() + 5);
 
-await Subscription.create({
-  user: user._id,
-  plan: "Free",
-  amount: 0,
-  propertyLimit: 2,
-  pgLimit: 1,
-  status: "Active",
-  startDate,
-  endDate,
-});
+    await Subscription.create({
+      user: user._id,
+      plan: "Free",
+      amount: 0,
+      propertyLimit: 2,
+      pgLimit: 1,
+      status: "Active",
+      startDate,
+      endDate,
+    });
 
-// Send welcome email
-if (user.email) {
-  await sendEmail(
-  user.email,
-  "Welcome to PropertyHub 🏠",
-  welcomeUserEmail(user.name)
-);
-}
+    // Send welcome email
+    if (user.email) {
+      await sendEmail(
+        user.email,
+        "Welcome to PropertyHub 🏠",
+        welcomeUserEmail(user.name)
+      );
+    }
 
     await OTP.deleteOne({
-      mobileNumber,
+      mobileNumber: fullMobileNumber,
     });
 
     res.status(201).json({
@@ -358,17 +400,24 @@ if (user.email) {
 
 const login = async (req, res) => {
   try {
-    const { mobileNumber, password } = req.body;
+    const {
+      countryCode,
+      mobileNumber,
+      password,
+    } = req.body;
 
-    if (!mobileNumber || !password) {
+    if (!countryCode || !mobileNumber || !password) {
       return res.status(400).json({
         success: false,
-        message: "Mobile number and password are required",
+        message:
+          "Country code, mobile number and password are required",
       });
     }
 
+    const fullMobileNumber = `${countryCode}${mobileNumber}`;
+
     const user = await User.findOne({
-      mobileNumber,
+      mobileNumber: fullMobileNumber,
     });
 
     if (!user) {

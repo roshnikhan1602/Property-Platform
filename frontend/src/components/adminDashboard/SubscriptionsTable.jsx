@@ -10,153 +10,156 @@ function SubscriptionsTable({
   subscriptionStatus,
   setSubscriptionStatus,
   subscriptionSort,
-setSubscriptionSort,
+  setSubscriptionSort,
 
-handleExportSubscriptions,
+  handleExportSubscriptions,
 }) {
   const getDaysLeft = (endDate) => {
-  if (!endDate)
-    return {
-      text: "-",
-      className:
-        "bg-gray-100 text-gray-700",
-    };
+    if (!endDate)
+      return {
+        text: "-",
+        className:
+          "bg-gray-100 text-gray-700",
+      };
 
-  const today = new Date();
+    const today = new Date();
 
-  const expiry = new Date(endDate);
+    const expiry = new Date(endDate);
 
-  const diff = Math.ceil(
-    (expiry - today) /
-      (1000 * 60 * 60 * 24)
-  );
+    const diff = Math.ceil(
+      (expiry - today) /
+        (1000 * 60 * 60 * 24)
+    );
 
-  if (diff < 0)
-    return {
-      text: "Expired",
-      className:
-        "bg-red-100 text-red-700",
-    };
+    if (diff < 0)
+      return {
+        text: "Expired",
+        className:
+          "bg-red-100 text-red-700",
+      };
 
-  if (diff <= 7)
+    if (diff <= 7)
+      return {
+        text: `${diff} Days`,
+        className:
+          "bg-orange-100 text-orange-700",
+      };
+
+    if (diff <= 30)
+      return {
+        text: `${diff} Days`,
+        className:
+          "bg-yellow-100 text-yellow-700",
+      };
+
     return {
       text: `${diff} Days`,
       className:
-        "bg-orange-100 text-orange-700",
+        "bg-green-100 text-green-700",
     };
-
-  if (diff <= 30)
-    return {
-      text: `${diff} Days`,
-      className:
-        "bg-yellow-100 text-yellow-700",
-    };
-
-  return {
-    text: `${diff} Days`,
-    className:
-      "bg-green-100 text-green-700",
   };
-};
 
   return (
     <>
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-    <div className="p-6 border-b">
-  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-    <h2 className="text-2xl font-bold">
-      Subscription Management
-    </h2>
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <h2 className="text-2xl font-bold">
+              Subscription Management
+            </h2>
 
-<button
-  onClick={handleExportSubscriptions}
-  className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-medium transition cursor-pointer"
->
-  Export Excel
-</button>
+            <button
+              onClick={handleExportSubscriptions}
+              className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-medium transition cursor-pointer"
+            >
+              Export Excel
+            </button>
 
-    <div className="flex flex-col lg:flex-row gap-3 lg:ml-auto">
-      <input
-        type="text"
-        placeholder="Search by user..."
-        value={subscriptionSearch}
-        onChange={(e) =>
-          setSubscriptionSearch(
-            e.target.value
-          )
-        }
-        className="border rounded-lg px-4 py-2 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+            <div className="flex flex-col lg:flex-row gap-3 lg:ml-auto">
+              <input
+                type="text"
+                placeholder="Search by user..."
+                value={subscriptionSearch}
+                onChange={(e) =>
+                  setSubscriptionSearch(
+                    e.target.value
+                  )
+                }
+                className="border border-gray-200 rounded-lg px-4 py-2 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
 
-      <select
-        value={subscriptionPlan}
-        onChange={(e) =>
-          setSubscriptionPlan(
-            e.target.value
-          )
-        }
-        className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option value="All">
-          All Plans
-        </option>
-        <option value="Free">
-          Free
-        </option>
-        <option value="Premium">
-          Premium
-        </option>
-        <option value="Elite">
-          Elite
-        </option>
-      </select>
+              <select
+                value={subscriptionPlan}
+                onChange={(e) =>
+                  setSubscriptionPlan(
+                    e.target.value
+                  )
+                }
+                className="border border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="All">
+                  All Plans
+                </option>
 
-      <select
-  value={subscriptionStatus}
-  onChange={(e) =>
-    setSubscriptionStatus(
-      e.target.value
-    )
-  }
-  className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
->
-  <option value="All">
-    All Status
-  </option>
+                <option value="Free">
+                  Free
+                </option>
 
-  <option value="Active">
-    Active
-  </option>
+                <option value="Premium">
+                  Premium
+                </option>
 
-  <option value="Expired">
-    Expired
-  </option>
-</select>
+                <option value="Elite">
+                  Elite
+                </option>
+              </select>
 
-<select
-  value={subscriptionSort}
-  onChange={(e) =>
-    setSubscriptionSort(
-      e.target.value
-    )
-  }
-  className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
->
-  <option>Newest</option>
+              <select
+                value={subscriptionStatus}
+                onChange={(e) =>
+                  setSubscriptionStatus(
+                    e.target.value
+                  )
+                }
+                className="border border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="All">
+                  All Status
+                </option>
 
-  <option>Oldest</option>
+                <option value="Active">
+                  Active
+                </option>
 
-  <option>Highest Amount</option>
+                <option value="Expired">
+                  Expired
+                </option>
+              </select>
 
-  <option>Lowest Amount</option>
+              <select
+                value={subscriptionSort}
+                onChange={(e) =>
+                  setSubscriptionSort(
+                    e.target.value
+                  )
+                }
+                className="border border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option>Newest</option>
 
-  <option>Expiry Soon</option>
+                <option>Oldest</option>
 
-  <option>Latest Expiry</option>
-</select>
-    </div>
-  </div>
-</div>
+                <option>Highest Amount</option>
+
+                <option>Lowest Amount</option>
+
+                <option>Expiry Soon</option>
+
+                <option>Latest Expiry</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -211,7 +214,7 @@ handleExportSubscriptions,
                   (subscription) => (
                     <tr
                       key={subscription._id}
-                      className="border-t hover:bg-gray-50"
+                      className="border-t border-gray-200 hover:bg-gray-50"
                     >
                       <td className="px-6 py-4 font-semibold">
                         {subscription.user
@@ -256,82 +259,84 @@ handleExportSubscriptions,
                       <td className="px-6 py-4">
                         ₹{subscription.amount}
                       </td>
+
                       <td className="px-6 py-4">
-  {subscription.startDate
-    ? new Date(
-        subscription.startDate
-      ).toLocaleDateString()
-    : "-"}
-</td>
+                        {subscription.startDate
+                          ? new Date(
+                              subscription.startDate
+                            ).toLocaleDateString()
+                          : "-"}
+                      </td>
 
-<td className="px-6 py-4">
-  {subscription.endDate
-    ? new Date(
-        subscription.endDate
-      ).toLocaleDateString()
-    : "-"}
-</td>
+                      <td className="px-6 py-4">
+                        {subscription.endDate
+                          ? new Date(
+                              subscription.endDate
+                            ).toLocaleDateString()
+                          : "-"}
+                      </td>
 
-<td className="px-6 py-4">
-  <span
-    className={`px-3 py-1 rounded-full text-sm font-medium ${
-      getDaysLeft(
-        subscription.endDate
-      ).className
-    }`}
-  >
-    {
-      getDaysLeft(
-        subscription.endDate
-      ).text
-    }
-  </span>
-</td>
-</tr>
-)
-)
-)}
-</tbody>
-</table>
-</div>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-medium ${
+                            getDaysLeft(
+                              subscription.endDate
+                            ).className
+                          }`}
+                        >
+                          {
+                            getDaysLeft(
+                              subscription.endDate
+                            ).text
+                          }
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                )
+              )}
+            </tbody>
+          </table>
+        </div>
 
-<div className="flex justify-center items-center gap-3 mt-6 mb-6">
+        <div className="flex justify-center items-center gap-3 mt-6 mb-6">
 
-<button
-  disabled={subscriptionPage === 1}
-  onClick={() =>
-    setSubscriptionPage(
-      subscriptionPage - 1
-    )
-  }
-  className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
->
-  Previous
-</button>
+          <button
+            disabled={
+              subscriptionPage === 1
+            }
+            onClick={() =>
+              setSubscriptionPage(
+                subscriptionPage - 1
+              )
+            }
+            className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
+          >
+            Previous
+          </button>
 
-<span className="font-medium">
-  Page {subscriptionPage} of{" "}
-  {subscriptionTotalPages}
-</span>
+          <span className="font-medium">
+            Page {subscriptionPage} of{" "}
+            {subscriptionTotalPages}
+          </span>
 
-<button
-  disabled={
-    subscriptionPage ===
-    subscriptionTotalPages
-  }
-  onClick={() =>
-    setSubscriptionPage(
-      subscriptionPage + 1
-    )
-  }
-  className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
->
-  Next
-</button>
+          <button
+            disabled={
+              subscriptionPage ===
+              subscriptionTotalPages
+            }
+            onClick={() =>
+              setSubscriptionPage(
+                subscriptionPage + 1
+              )
+            }
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+          >
+            Next
+          </button>
 
-</div>
-
-</div>
+        </div>
+      </div>
     </>
   );
 }
