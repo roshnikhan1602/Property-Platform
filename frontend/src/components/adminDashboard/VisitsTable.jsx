@@ -39,6 +39,7 @@ function VisitsTable({
     };
 
     const [selectedVisit, setSelectedVisit] = useState(null);
+
     return (
         <>
             <div className="space-y-6">
@@ -111,7 +112,7 @@ function VisitsTable({
 
                 <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
 
-                    <div className="p-6 border-b">
+                    <div className="p-6 border-b border-gray-200">
 
                         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
@@ -128,7 +129,7 @@ function VisitsTable({
                                     onChange={(e) =>
                                         setVisitSearch(e.target.value)
                                     }
-                                    className="border rounded-lg px-4 py-2 w-full sm:w-72 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="border border-gray-200 rounded-lg px-4 py-2 w-full sm:w-72 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
 
                                 <select
@@ -136,7 +137,7 @@ function VisitsTable({
                                     onChange={(e) =>
                                         setVisitStatus(e.target.value)
                                     }
-                                    className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="border border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 >
                                     <option value="All">All Status</option>
                                     <option value="Pending">Pending</option>
@@ -152,7 +153,7 @@ function VisitsTable({
                                     onChange={(e) =>
                                         setVisitSort(e.target.value)
                                     }
-                                    className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="border border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 >
                                     <option>Newest</option>
                                     <option>Oldest</option>
@@ -163,6 +164,7 @@ function VisitsTable({
                         </div>
 
                     </div>
+
                     <div className="overflow-x-auto">
 
                         <table className="w-full">
@@ -202,6 +204,7 @@ function VisitsTable({
                                     <th className="text-left px-6 py-4">
                                         Action
                                     </th>
+
                                 </tr>
 
                             </thead>
@@ -227,7 +230,7 @@ function VisitsTable({
 
                                         <tr
                                             key={visit._id}
-                                            className="border-t hover:bg-gray-50 transition"
+                                            className="border-t border-gray-200 hover:bg-gray-50 transition"
                                         >
 
                                             <td className="px-6 py-4">
@@ -295,13 +298,16 @@ function VisitsTable({
                                                 </span>
 
                                             </td>
+
                                             <td className="px-6 py-4">
+
                                                 <button
                                                     onClick={() => setSelectedVisit(visit)}
                                                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition"
                                                 >
                                                     View
                                                 </button>
+
                                             </td>
 
                                         </tr>
@@ -315,6 +321,7 @@ function VisitsTable({
                         </table>
 
                     </div>
+
                     <div className="flex justify-center items-center gap-3 mt-6 mb-6">
 
                         <button
@@ -348,6 +355,7 @@ function VisitsTable({
                 </div>
 
             </div>
+
             {selectedVisit && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
@@ -448,6 +456,7 @@ function VisitsTable({
 
                 </div>
             )}
+
         </>
     );
 }

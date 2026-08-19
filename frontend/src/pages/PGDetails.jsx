@@ -20,6 +20,14 @@ import {
   FaSwimmingPool,
   FaParking,
   FaBath,
+  FaArrowLeft,
+  FaArrowRight,
+  FaShareAlt,
+  FaExternalLinkAlt,
+  FaLock,
+  FaStar,
+  FaTimes,
+  FaCheckCircle,
 } from "react-icons/fa";
 
 import {
@@ -356,8 +364,8 @@ function PGDetails({ setShowLoginModal }) {
 
         <div className="max-w-3xl mx-auto py-24 px-6">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 text-center p-10">
-            <div className="text-6xl mb-5">
-              🔒
+            <div className="text-5xl text-gray-500 mb-5 flex justify-center">
+              <FaLock />
             </div>
 
             <h2 className="text-3xl font-bold">
@@ -506,9 +514,10 @@ function PGDetails({ setShowLoginModal }) {
                 navigate(-1);
               }
             }}
-            className="mb-6 text-sm font-medium text-gray-600 hover:text-blue-600 transition"
+            className="mb-6 flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition"
           >
-            ← Back to PGs
+            <FaArrowLeft className="text-xs" />
+            Back to PGs
           </button>
 
           {/* ================= TOP SECTION ================= */}
@@ -576,8 +585,8 @@ function PGDetails({ setShowLoginModal }) {
                             setSelectedImage(image)
                           }
                           className={`w-24 h-16 rounded-lg object-cover cursor-pointer border-2 flex-shrink-0 transition ${selectedImage === image
-                              ? "border-blue-600"
-                              : "border-gray-200"
+                            ? "border-blue-600"
+                            : "border-gray-200"
                             }`}
                         />
                       )
@@ -615,9 +624,7 @@ function PGDetails({ setShowLoginModal }) {
                   </div>
 
                   <div className="flex items-center gap-3 mt-4">
-                    <span className="text-yellow-500">
-                      ★
-                    </span>
+                    <FaStar className="text-yellow-500" />
 
                     <span className="font-semibold">
                       {pg.averageRating?.toFixed(1) ||
@@ -632,9 +639,9 @@ function PGDetails({ setShowLoginModal }) {
 
                 <button
                   onClick={() => setShowShareModal(true)}
-                  className="border border-gray-200 hover:border-blue-300 hover:bg-blue-50 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 transition"
+                  className="flex items-center gap-2 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 transition"
                 >
-                  <span className="text-blue-600 text-base">↗</span>
+                  <FaShareAlt className="text-blue-600" />
                   Share
                 </button>
               </div>
@@ -835,8 +842,8 @@ function PGDetails({ setShowLoginModal }) {
                   <div
                     key={amenity.name}
                     className={`flex items-center gap-4 p-4 border-gray-100 ${index % 4 !== 3
-                        ? "lg:border-r"
-                        : ""
+                      ? "lg:border-r"
+                      : ""
                       } ${index < 12
                         ? "border-b"
                         : ""
@@ -854,15 +861,15 @@ function PGDetails({ setShowLoginModal }) {
                       <div className="flex items-center gap-1.5 mt-1">
                         <span
                           className={`w-2 h-2 rounded-full ${amenity.available
-                              ? "bg-green-500"
-                              : "bg-red-500"
+                            ? "bg-green-500"
+                            : "bg-red-500"
                             }`}
                         />
 
                         <span
                           className={`text-xs font-medium ${amenity.available
-                              ? "text-green-600"
-                              : "text-red-600"
+                            ? "text-green-600"
+                            : "text-red-600"
                             }`}
                         >
                           {amenity.available
@@ -905,9 +912,10 @@ function PGDetails({ setShowLoginModal }) {
                 )}`}
                 target="_blank"
                 rel="noreferrer"
-                className="border border-blue-200 text-blue-600 hover:bg-blue-50 px-5 py-2.5 rounded-lg text-sm font-medium transition text-center"
+                className="flex items-center justify-center gap-2 border border-blue-200 text-blue-600 hover:bg-blue-50 px-5 py-2.5 rounded-lg text-sm font-medium transition text-center"
               >
-                View on Google Maps ↗
+                View on Google Maps
+                <FaExternalLinkAlt className="text-xs" />
               </a>
             </div>
 
@@ -1024,8 +1032,8 @@ function PGDetails({ setShowLoginModal }) {
                     /* CONTACT UNAVAILABLE */
                     <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
 
-                      <div className="text-3xl mb-3">
-                        🔒
+                      <div className="text-3xl text-yellow-600 mb-3 flex justify-center">
+                        <FaLock />
                       </div>
 
                       <h3 className="text-lg font-bold text-gray-900">
@@ -1095,16 +1103,14 @@ function PGDetails({ setShowLoginModal }) {
               {user && contactAvailable && (
                 <div className="bg-blue-50/60 border border-gray-200 rounded-xl p-5 self-center">
 
+                  {/* VERIFIED PG HEADER */}
                   <div className="flex items-center gap-3 mb-4">
 
                     <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <span className="text-lg">
-                        🛡️
-                      </span>
+                      <FaShieldAlt className="text-blue-600 text-lg" />
                     </div>
 
                     <div>
-
                       <h3 className="font-bold text-gray-900">
                         Verified PG
                       </h3>
@@ -1112,15 +1118,15 @@ function PGDetails({ setShowLoginModal }) {
                       <p className="text-xs text-gray-500 mt-0.5">
                         Trusted listing
                       </p>
-
                     </div>
 
                   </div>
 
+                  {/* VERIFICATION DETAILS */}
                   <div className="space-y-3">
 
                     <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                      <FaCheckCircle className="text-green-500 text-lg flex-shrink-0" />
 
                       <span className="text-sm text-gray-700">
                         Identity Verified
@@ -1128,7 +1134,7 @@ function PGDetails({ setShowLoginModal }) {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                      <FaCheckCircle className="text-green-500 text-lg flex-shrink-0" />
 
                       <span className="text-sm text-gray-700">
                         Property Verified
@@ -1136,7 +1142,7 @@ function PGDetails({ setShowLoginModal }) {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                      <FaCheckCircle className="text-green-500 text-lg flex-shrink-0" />
 
                       <span className="text-sm text-gray-700">
                         Trusted Listing
@@ -1180,9 +1186,9 @@ function PGDetails({ setShowLoginModal }) {
             <button
               type="button"
               onClick={() => setShowFullImage(false)}
-              className="absolute top-5 right-6 text-white text-3xl hover:text-gray-300"
+              className="absolute top-5 right-6 w-10 h-10 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition"
             >
-              ×
+              <FaTimes />
             </button>
 
             <img

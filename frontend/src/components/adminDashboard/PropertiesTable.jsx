@@ -17,10 +17,10 @@ function PropertiesTable({
   handleDelete,
   handleDeletePG,
 
- handleExportProperties,
-handleExportPGs,
+  handleExportProperties,
+  handleExportPGs,
 
-propertySearch,
+  propertySearch,
   setPropertySearch,
 
   propertyCity,
@@ -74,28 +74,28 @@ propertySearch,
       </div>
 
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-       <div className="p-6 border-b flex items-center justify-between">
-  <h2 className="text-2xl font-bold">
-    {propertyView === "properties"
-      ? "All Properties"
-      : "All PGs"}
-  </h2>
+        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+          <h2 className="text-2xl font-bold">
+            {propertyView === "properties"
+              ? "All Properties"
+              : "All PGs"}
+          </h2>
 
-  <button
-  onClick={
-    propertyView === "properties"
-      ? handleExportProperties
-      : handleExportPGs
-  }
-  className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-medium transition cursor-pointer"
->
-  Export Excel
-</button>
-</div>
+          <button
+            onClick={
+              propertyView === "properties"
+                ? handleExportProperties
+                : handleExportPGs
+            }
+            className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-medium transition cursor-pointer"
+          >
+            Export Excel
+          </button>
+        </div>
 
         {/* Filters */}
 
-        <div className="p-6 border-b bg-gray-50">
+        <div className="p-6 border-b border-gray-200 bg-gray-50">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
             <input
@@ -112,7 +112,7 @@ propertySearch,
                   e.target.value
                 )
               }
-              className="border rounded-lg px-4 py-2"
+              className="border border-gray-200 rounded-lg px-4 py-2"
             />
 
             <select
@@ -122,7 +122,7 @@ propertySearch,
                   e.target.value
                 )
               }
-              className="border rounded-lg px-4 py-2"
+              className="border border-gray-200 rounded-lg px-4 py-2"
             >
               {cities.map((city) => (
                 <option
@@ -143,7 +143,7 @@ propertySearch,
                   e.target.value
                 )
               }
-              className="border rounded-lg px-4 py-2"
+              className="border border-gray-200 rounded-lg px-4 py-2"
             >
               <option value="Newest">
                 Newest
@@ -213,7 +213,7 @@ propertySearch,
                   (item) => (
                     <tr
                       key={item._id}
-                      className="border-t hover:bg-gray-50"
+                      className="border-t border-gray-200 hover:bg-gray-50"
                     >
                       <td className="px-6 py-4 font-semibold">
                         {item.title}
