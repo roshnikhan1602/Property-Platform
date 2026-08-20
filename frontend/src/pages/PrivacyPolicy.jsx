@@ -13,15 +13,15 @@ function PrivacyPolicy() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-gray-100 py-12 px-4">
+      <div className="min-h-screen bg-gray-100 py-8 sm:py-10 md:py-12 px-3 sm:px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg p-8 md:p-10">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-5 sm:p-6 md:p-10">
 
-            <h1 className="text-4xl font-bold text-gray-800 text-center">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 text-center">
               Privacy Policy
             </h1>
 
-            <p className="text-gray-600 text-center mt-4 max-w-3xl mx-auto">
+            <p className="text-gray-600 text-center mt-4 max-w-3xl mx-auto text-sm sm:text-base leading-6 sm:leading-7">
               At <span className="font-semibold">PropertyHub</span>,
               we value your privacy and are committed to protecting
               your personal information. This Privacy Policy explains
@@ -30,15 +30,16 @@ function PrivacyPolicy() {
             </p>
 
             {/* Information We Collect */}
-            <div className="mt-10">
-              <div className="flex items-center gap-3 mb-4">
-                <FaDatabase className="text-blue-600 text-2xl" />
-                <h2 className="text-2xl font-semibold">
+            <div className="mt-8 sm:mt-10">
+              <div className="flex items-start sm:items-center gap-3 mb-4">
+                <FaDatabase className="text-blue-600 text-xl sm:text-2xl flex-shrink-0 mt-1 sm:mt-0" />
+
+                <h2 className="text-xl sm:text-2xl font-semibold">
                   Information We Collect
                 </h2>
               </div>
 
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
+              <ul className="list-disc list-inside text-gray-600 space-y-2 text-sm sm:text-base leading-6">
                 <li>Name and profile information</li>
                 <li>Mobile number and email address</li>
                 <li>Property and PG listings</li>
@@ -48,15 +49,16 @@ function PrivacyPolicy() {
             </div>
 
             {/* How We Use Your Information */}
-            <div className="mt-10">
-              <div className="flex items-center gap-3 mb-4">
-                <FaUserShield className="text-blue-600 text-2xl" />
-                <h2 className="text-2xl font-semibold">
+            <div className="mt-8 sm:mt-10">
+              <div className="flex items-start sm:items-center gap-3 mb-4">
+                <FaUserShield className="text-blue-600 text-xl sm:text-2xl flex-shrink-0 mt-1 sm:mt-0" />
+
+                <h2 className="text-xl sm:text-2xl font-semibold">
                   How We Use Your Information
                 </h2>
               </div>
 
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
+              <ul className="list-disc list-inside text-gray-600 space-y-2 text-sm sm:text-base leading-6">
                 <li>Create and manage your account.</li>
                 <li>Verify your identity using OTP.</li>
                 <li>Allow you to post and manage listings.</li>
@@ -66,15 +68,16 @@ function PrivacyPolicy() {
             </div>
 
             {/* Data Security */}
-            <div className="mt-10">
-              <div className="flex items-center gap-3 mb-4">
-                <FaLock className="text-blue-600 text-2xl" />
-                <h2 className="text-2xl font-semibold">
+            <div className="mt-8 sm:mt-10">
+              <div className="flex items-start sm:items-center gap-3 mb-4">
+                <FaLock className="text-blue-600 text-xl sm:text-2xl flex-shrink-0 mt-1 sm:mt-0" />
+
+                <h2 className="text-xl sm:text-2xl font-semibold">
                   Data Security
                 </h2>
               </div>
 
-              <p className="text-gray-600 leading-7">
+              <p className="text-gray-600 leading-6 sm:leading-7 text-sm sm:text-base">
                 We take appropriate security measures to protect your
                 information. Authentication is secured using HTTP-only
                 cookies, property images are stored securely through
@@ -84,15 +87,16 @@ function PrivacyPolicy() {
             </div>
 
             {/* Third Party Services */}
-            <div className="mt-10">
-              <div className="flex items-center gap-3 mb-4">
-                <FaGlobe className="text-blue-600 text-2xl" />
-                <h2 className="text-2xl font-semibold">
+            <div className="mt-8 sm:mt-10">
+              <div className="flex items-start sm:items-center gap-3 mb-4">
+                <FaGlobe className="text-blue-600 text-xl sm:text-2xl flex-shrink-0 mt-1 sm:mt-0" />
+
+                <h2 className="text-xl sm:text-2xl font-semibold">
                   Third-Party Services
                 </h2>
               </div>
 
-              <p className="text-gray-600 leading-7">
+              <p className="text-gray-600 leading-6 sm:leading-7 text-sm sm:text-base">
                 PropertyHub integrates trusted third-party services,
                 including Cloudinary for image storage and Razorpay
                 for secure payment processing.
@@ -100,20 +104,21 @@ function PrivacyPolicy() {
             </div>
 
             {/* Contact */}
-            <div className="mt-10">
-              <div className="flex items-center gap-3 mb-4">
-                <FaEnvelope className="text-blue-600 text-2xl" />
-                <h2 className="text-2xl font-semibold">
+            <div className="mt-8 sm:mt-10">
+              <div className="flex items-start sm:items-center gap-3 mb-4">
+                <FaEnvelope className="text-blue-600 text-xl sm:text-2xl flex-shrink-0 mt-1 sm:mt-0" />
+
+                <h2 className="text-xl sm:text-2xl font-semibold">
                   Contact Us
                 </h2>
               </div>
 
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-sm sm:text-base leading-6">
                 If you have any questions regarding this Privacy
                 Policy, please contact us at:
               </p>
 
-              <p className="mt-3 font-semibold text-blue-600">
+              <p className="mt-3 font-semibold text-blue-600 text-sm sm:text-base break-all">
                 support@propertyhub.com
               </p>
             </div>

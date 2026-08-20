@@ -49,8 +49,6 @@ function MyProperties() {
 
   const navigate = useNavigate();
 
-
-
   const fetchMyProperties = async () => {
     try {
       const response = await fetch(
@@ -91,7 +89,6 @@ function MyProperties() {
         }
       );
 
-
       const data = await response.json();
 
       if (data.success) {
@@ -113,9 +110,6 @@ function MyProperties() {
           setSuccessMessage("");
         }, 3000);
 
-
-
-        // Fetch remaining PGs
         const pgResponse = await fetch(
           `${import.meta.env.VITE_API_URL}/api/pgs/my-pgs`,
           {
@@ -131,7 +125,6 @@ function MyProperties() {
             ? pgData.pgs.length
             : 0;
 
-        // Downgrade owner only when BOTH properties and PGs are zero
         if (
           updatedProperties.length === 0 &&
           totalPGs === 0
@@ -156,6 +149,7 @@ function MyProperties() {
       }, 3000);
     }
   };
+
   const handleToggleStatus = async (id) => {
     try {
       const response = await fetch(
@@ -217,6 +211,7 @@ function MyProperties() {
           credentials: "include",
         }
       );
+
       const data = await response.json();
 
       if (data.success) {
@@ -234,17 +229,17 @@ function MyProperties() {
     <>
       <Navbar />
 
-      <section className="max-w-7xl mx-auto px-6 pt-28 pb-10">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-8 sm:pb-10">
 
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
 
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-3xl sm:text-4xl font-bold">
             My Properties
           </h1>
 
           <Link
             to="/add-property"
-            className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition flex items-center gap-2"
+            className="w-full sm:w-auto bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition flex items-center justify-center gap-2"
           >
             <FaPlus />
             Add Property
@@ -282,15 +277,15 @@ function MyProperties() {
 
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
 
             {properties.map((property) => (
               <div
                 key={property._id}
-                className="bg-white rounded-xl shadow-md border border-gray-100 p-5 hover:shadow-lg transition"
+                className="bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-5 hover:shadow-lg transition"
               >
 
-                <h2 className="text-xl font-bold text-gray-800">
+                <h2 className="text-xl font-bold text-gray-800 break-words">
                   {property.title}
                 </h2>
 
@@ -307,9 +302,11 @@ function MyProperties() {
                 </div>
 
                 <p className="text-gray-500 mt-2 flex items-center gap-2">
-                  <FaMapMarkerAlt className="text-red-500" />
-                  {property.city},{" "}
-                  {property.state}
+                  <FaMapMarkerAlt className="text-red-500 shrink-0" />
+                  <span className="break-words">
+                    {property.city},{" "}
+                    {property.state}
+                  </span>
                 </p>
 
                 <div className="mt-4">
@@ -332,14 +329,16 @@ function MyProperties() {
                 </div>
 
                 <button
-                  onClick={() => fetchInterestedUsers(property._id)}
-                  className="w-full mb-4 bg-pink-100 text-pink-700 py-2 rounded-lg hover:bg-pink-200 transition flex items-center justify-center gap-2"
+                  onClick={() =>
+                    fetchInterestedUsers(property._id)
+                  }
+                  className="w-full mb-4 bg-pink-100 text-pink-700 py-2 rounded-lg hover:bg-pink-200 transition flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                   <FaUsers />
                   View Interested Users
                 </button>
 
-                <div className="flex gap-2 mt-5">
+                <div className="grid grid-cols-2 gap-2 mt-5">
 
                   <button
                     onClick={() => {
@@ -350,10 +349,11 @@ function MyProperties() {
                         handleToggleStatus(property._id);
                       }
                     }}
-                    className={`flex-1 py-2 rounded-lg text-sm transition cursor-pointer ${property.isActive
-                      ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
-                      : "bg-green-100 text-green-700 hover:bg-green-200"
-                      }`}
+                    className={`py-2 rounded-lg text-sm transition cursor-pointer ${
+                      property.isActive
+                        ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+                        : "bg-green-100 text-green-700 hover:bg-green-200"
+                    }`}
                   >
                     {property.isActive
                       ? "Deactivate"
@@ -362,7 +362,7 @@ function MyProperties() {
 
                   <Link
                     to={`/properties/${property._id}`}
-                    className="flex-1 bg-blue-600 text-white text-center py-2 rounded-lg text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2"
+                    className="bg-blue-600 text-white text-center py-2 rounded-lg text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2"
                   >
                     <FaExternalLinkAlt />
                     View
@@ -370,7 +370,7 @@ function MyProperties() {
 
                   <Link
                     to={`/edit-property/${property._id}`}
-                    className="flex-1 bg-gray-100 text-gray-700 text-center py-2 rounded-lg text-sm hover:bg-gray-200 transition flex items-center justify-center gap-2"
+                    className="bg-gray-100 text-gray-700 text-center py-2 rounded-lg text-sm hover:bg-gray-200 transition flex items-center justify-center gap-2"
                   >
                     <FaEdit />
                     Edit
@@ -383,7 +383,7 @@ function MyProperties() {
                       );
                       setShowDeleteModal(true);
                     }}
-                    className="flex-1 bg-red-100 text-red-600 py-2 rounded-lg text-sm hover:bg-red-200 transition flex items-center justify-center gap-2 cursor-pointer"
+                    className="bg-red-100 text-red-600 py-2 rounded-lg text-sm hover:bg-red-200 transition flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <FaTrash />
                     Delete
@@ -398,11 +398,13 @@ function MyProperties() {
         )}
 
       </section>
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md">
 
-            <h2 className="text-2xl font-bold text-gray-800">
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+
+          <div className="bg-white rounded-2xl shadow-xl p-5 sm:p-6 w-full max-w-md">
+
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
               Delete Property
             </h2>
 
@@ -411,14 +413,14 @@ function MyProperties() {
               This action cannot be undone.
             </p>
 
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-6">
 
               <button
                 onClick={() => {
                   setShowDeleteModal(false);
                   setSelectedPropertyId(null);
                 }}
-                className="px-5 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition cursor-pointer"
+                className="w-full sm:w-auto px-5 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -427,7 +429,7 @@ function MyProperties() {
                 onClick={() =>
                   handleDelete(selectedPropertyId)
                 }
-                className="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition cursor-pointer"
+                className="w-full sm:w-auto px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition cursor-pointer"
               >
                 Delete
               </button>
@@ -439,10 +441,11 @@ function MyProperties() {
       )}
 
       {showDeactivateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
 
-            <h2 className="text-2xl font-bold text-gray-800">
+          <div className="bg-white rounded-2xl shadow-xl p-5 sm:p-6 w-full max-w-md">
+
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
               Deactivate Property
             </h2>
 
@@ -465,14 +468,14 @@ function MyProperties() {
               <option>Other</option>
             </select>
 
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-6">
 
               <button
                 onClick={() => {
                   setShowDeactivateModal(false);
                   setSelectedPropertyId(null);
                 }}
-                className="px-5 py-2 border rounded-lg hover:bg-gray-100"
+                className="w-full sm:w-auto px-5 py-2 border rounded-lg hover:bg-gray-100"
               >
                 Cancel
               </button>
@@ -483,7 +486,7 @@ function MyProperties() {
                   setShowDeactivateModal(false);
                   setSelectedPropertyId(null);
                 }}
-                className="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                className="w-full sm:w-auto px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
               >
                 Deactivate
               </button>
@@ -495,20 +498,25 @@ function MyProperties() {
       )}
 
       {showInterestedModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-xl w-[90%] max-w-2xl max-h-[80vh] overflow-y-auto p-6">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-3 sm:px-4">
 
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[85vh] overflow-y-auto p-4 sm:p-6">
+
+            <div className="flex justify-between items-center mb-6 gap-3">
+
+              <h2 className="text-xl sm:text-2xl font-bold">
                 Interested Users
               </h2>
 
               <button
-                onClick={() => setShowInterestedModal(false)}
-                className="text-gray-500 hover:text-black text-2xl"
+                onClick={() =>
+                  setShowInterestedModal(false)
+                }
+                className="text-gray-500 hover:text-black text-2xl shrink-0"
               >
                 ×
               </button>
+
             </div>
 
             {loadingInterestedUsers ? (
@@ -517,19 +525,24 @@ function MyProperties() {
               </p>
             ) : interestedUsers.length === 0 ? (
               <div className="text-center py-10">
+
                 <FaHeart className="mx-auto text-4xl text-pink-400 mb-3" />
+
                 <p className="text-gray-500">
                   No users have wishlisted this property yet.
                 </p>
+
               </div>
             ) : (
               <div className="space-y-4">
+
                 {interestedUsers.map((user) => (
                   <div
                     key={user._id}
-                    className="border rounded-xl p-4 shadow-sm hover:shadow-md transition"
+                    className="border rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition"
                   >
-                    <div className="flex items-center gap-4">
+
+                    <div className="flex items-start sm:items-center gap-3 sm:gap-4">
 
                       <img
                         src={
@@ -538,44 +551,51 @@ function MyProperties() {
                           encodeURIComponent(user.name)
                         }
                         alt={user.name}
-                        className="w-16 h-16 rounded-full object-cover border"
+                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover border shrink-0"
                       />
 
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
 
-                        <h3 className="text-lg font-semibold">
+                        <h3 className="text-base sm:text-lg font-semibold break-words">
                           {user.name}
                         </h3>
 
-                        <p className="flex items-center gap-2 text-gray-600 mt-1">
-                          <FaPhone />
+                        <p className="flex items-start gap-2 text-gray-600 mt-1 break-all">
+                          <FaPhone className="mt-1 shrink-0" />
                           {user.mobileNumber}
                         </p>
 
                         {user.email && (
-                          <p className="flex items-center gap-2 text-gray-600 mt-1">
-                            <FaEnvelope />
+                          <p className="flex items-start gap-2 text-gray-600 mt-1 break-all">
+                            <FaEnvelope className="mt-1 shrink-0" />
                             {user.email}
                           </p>
                         )}
 
-                        <p className="flex items-center gap-2 text-gray-500 text-sm mt-2">
-                          <FaCalendarAlt />
-                          Wishlisted on{" "}
-                          {new Date(user.wishlistedAt).toLocaleDateString()}
+                        <p className="flex items-start gap-2 text-gray-500 text-sm mt-2">
+                          <FaCalendarAlt className="mt-0.5 shrink-0" />
+                          <span>
+                            Wishlisted on{" "}
+                            {new Date(
+                              user.wishlistedAt
+                            ).toLocaleDateString()}
+                          </span>
                         </p>
 
                       </div>
 
                     </div>
+
                   </div>
                 ))}
+
               </div>
             )}
 
           </div>
         </div>
       )}
+
       <Footer />
     </>
   );

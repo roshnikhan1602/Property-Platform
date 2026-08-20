@@ -14,86 +14,72 @@ import {
 } from "../services/notificationService";
 
 function Notifications() {
-  const [notifications, setNotifications] =
-    useState([]);
+  const [notifications, setNotifications] = useState([]);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [filter, setFilter] =
-    useState("all");
+  const [filter, setFilter] = useState("all");
 
   const [showConfirmModal, setShowConfirmModal] =
-  useState(false);
+    useState(false);
 
-  const loadNotifications =
-    async () => {
-      try {
-        setLoading(true);
-  
+  const loadNotifications = async () => {
+    try {
+      setLoading(true);
 
-        const data =
-          await getNotifications();
+      const data = await getNotifications();
 
-        if (data.success) {
-          setNotifications(
-            data.notifications
-          );
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
+      if (data.success) {
+        setNotifications(data.notifications);
       }
-    };
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     loadNotifications();
 
-    const interval =
-      setInterval(() => {
-        loadNotifications();
-      }, 30000);
+    const interval = setInterval(() => {
+      loadNotifications();
+    }, 30000);
 
-    return () =>
-      clearInterval(interval);
+    return () => clearInterval(interval);
   }, []);
 
-  const handleMarkRead =
-    async (id) => {
-      try {
-        await markAsRead(id);
+  const handleMarkRead = async (id) => {
+    try {
+      await markAsRead(id);
 
-        loadNotifications();
-      } catch (error) {
-        console.error(error);
-      }
-    };
+      loadNotifications();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const handleDelete =
-    async (id) => {
-      try {
-        await deleteNotification(id);
+  const handleDelete = async (id) => {
+    try {
+      await deleteNotification(id);
 
-        loadNotifications();
-      } catch (error) {
-        console.error(error);
-      }
-    };
+      loadNotifications();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const handleMarkAll =
-    async () => {
-      try {
-        await markAllAsRead();
+  const handleMarkAll = async () => {
+    try {
+      await markAllAsRead();
 
-        loadNotifications();
-      } catch (error) {
-        console.error(error);
-      }
-    };
+      loadNotifications();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
- const handleClear =
-  async () => {
+  const handleClear = async () => {
     try {
       await clearNotifications();
 
@@ -105,8 +91,8 @@ function Notifications() {
     }
   };
 
-  const filteredNotifications =
-    notifications.filter((item) => {
+  const filteredNotifications = notifications.filter(
+    (item) => {
       if (filter === "unread")
         return !item.isRead;
 
@@ -114,34 +100,39 @@ function Notifications() {
         return item.isRead;
 
       return true;
-    });
+    }
+  );
 
   return (
     <>
       <Navbar />
 
-      <section className="max-w-6xl mx-auto px-6 pt-28 pb-12">
+      <section className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 pt-24 sm:pt-28 pb-10 sm:pb-12">
 
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        {/* HEADER */}
+
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 sm:gap-4 mb-6 sm:mb-8">
 
           <div>
-            <h1 className="text-4xl font-bold">
+            <h1 className="text-3xl sm:text-4xl font-bold">
               Notifications
             </h1>
 
-            <p className="text-gray-500 mt-2">
+            <p className="text-gray-500 mt-2 text-sm sm:text-base">
               Stay updated with your
               latest activities.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          {/* FILTER BUTTONS */}
+
+          <div className="flex flex-wrap gap-2 sm:gap-3">
 
             <button
               onClick={() =>
                 setFilter("all")
               }
-              className={`px-4 py-2 rounded-lg ${
+              className={`px-4 py-2 rounded-lg text-sm sm:text-base ${
                 filter === "all"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100"
@@ -154,9 +145,8 @@ function Notifications() {
               onClick={() =>
                 setFilter("unread")
               }
-              className={`px-4 py-2 rounded-lg ${
-                filter ===
-                "unread"
+              className={`px-4 py-2 rounded-lg text-sm sm:text-base ${
+                filter === "unread"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100"
               }`}
@@ -168,7 +158,7 @@ function Notifications() {
               onClick={() =>
                 setFilter("read")
               }
-              className={`px-4 py-2 rounded-lg ${
+              className={`px-4 py-2 rounded-lg text-sm sm:text-base ${
                 filter === "read"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100"
@@ -181,11 +171,13 @@ function Notifications() {
 
         </div>
 
-        <div className="flex flex-wrap gap-3 mb-8">
+        {/* ACTION BUTTONS */}
+
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3 mb-6 sm:mb-8">
 
           <button
             onClick={handleMarkAll}
-            className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition"
+            className="bg-green-600 text-white px-5 py-2.5 rounded-lg hover:bg-green-700 transition text-sm sm:text-base w-full sm:w-auto"
           >
             Mark All Read
           </button>
@@ -194,22 +186,27 @@ function Notifications() {
             onClick={() =>
               setShowConfirmModal(true)
             }
-            className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition"
+            className="bg-red-600 text-white px-5 py-2.5 rounded-lg hover:bg-red-700 transition text-sm sm:text-base w-full sm:w-auto"
           >
             Clear All
           </button>
 
         </div>
-                {loading ? (
-          <div className="text-center py-16">
-            <h2 className="text-xl text-gray-500">
+
+        {/* NOTIFICATIONS */}
+
+        {loading ? (
+          <div className="text-center py-12 sm:py-16">
+
+            <h2 className="text-lg sm:text-xl text-gray-500">
               Loading notifications...
             </h2>
+
           </div>
         ) : filteredNotifications.length === 0 ? (
           <EmptyNotifications />
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
 
             {filteredNotifications.map(
               (notification) => (
@@ -237,16 +234,18 @@ function Notifications() {
 
       </section>
 
+      {/* CONFIRM MODAL */}
+
       {showConfirmModal && (
         <ConfirmModal
-        title="Clear Notifications"
-        message="Are you sure you want to clear all notifications?"
-        confirmText="Clear All"
-        onConfirm={handleClear}
-        onCancel={() =>
-          setShowConfirmModal(false)
-        }
-      />
+          title="Clear Notifications"
+          message="Are you sure you want to clear all notifications?"
+          confirmText="Clear All"
+          onConfirm={handleClear}
+          onCancel={() =>
+            setShowConfirmModal(false)
+          }
+        />
       )}
 
       <Footer />

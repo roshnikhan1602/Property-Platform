@@ -251,29 +251,31 @@ function EditProperty() {
         />
       )}
 
-      <section className="max-w-5xl mx-auto px-6 pt-28 pb-10">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-8 sm:pb-10 overflow-x-hidden">
 
-        <div className="bg-white shadow-lg rounded-2xl p-8">
+        <div className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 md:p-8">
 
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-3xl sm:text-4xl font-bold">
             Edit Property
           </h1>
 
           <p className="mt-2 text-sm text-gray-500">
-            <span className="text-red-500">*</span> indicates required fields
+            <span className="text-red-500">*</span>{" "}
+            indicates required fields
           </p>
 
           <form
             onSubmit={handleSubmit}
-            className="mt-8"
+            className="mt-6 sm:mt-8"
           >
 
             {/* ================= BASIC INFORMATION ================= */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
 
               <div>
                 <label className="block mb-2 font-medium">
-                  Property Title <span className="text-red-500">*</span>
+                  Property Title{" "}
+                  <span className="text-red-500">*</span>
                 </label>
 
                 <input
@@ -288,7 +290,8 @@ function EditProperty() {
 
               <div>
                 <label className="block mb-2 font-medium">
-                  Price <span className="text-red-500">*</span>
+                  Price{" "}
+                  <span className="text-red-500">*</span>
                 </label>
 
                 <input
@@ -303,7 +306,8 @@ function EditProperty() {
 
               <div>
                 <label className="block mb-2 font-medium">
-                  Listing Type <span className="text-red-500">*</span>
+                  Listing Type{" "}
+                  <span className="text-red-500">*</span>
                 </label>
 
                 <select
@@ -312,16 +316,25 @@ function EditProperty() {
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 >
-                  <option value="">Select Listing Type</option>
-                  <option value="Rent">Rent</option>
-                  <option value="Sale">Sale</option>
-                  <option value="Lease">Lease</option>
+                  <option value="">
+                    Select Listing Type
+                  </option>
+                  <option value="Rent">
+                    Rent
+                  </option>
+                  <option value="Sale">
+                    Sale
+                  </option>
+                  <option value="Lease">
+                    Lease
+                  </option>
                 </select>
               </div>
 
               <div>
                 <label className="block mb-2 font-medium">
-                  Property Type <span className="text-red-500">*</span>
+                  Property Type{" "}
+                  <span className="text-red-500">*</span>
                 </label>
 
                 <select
@@ -330,11 +343,21 @@ function EditProperty() {
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 >
-                  <option value="">Select Property Type</option>
-                  <option value="Apartment">Apartment</option>
-                  <option value="House">House</option>
-                  <option value="Villa">Villa</option>
-                  <option value="Plot">Plot</option>
+                  <option value="">
+                    Select Property Type
+                  </option>
+                  <option value="Apartment">
+                    Apartment
+                  </option>
+                  <option value="House">
+                    House
+                  </option>
+                  <option value="Villa">
+                    Villa
+                  </option>
+                  <option value="Plot">
+                    Plot
+                  </option>
                 </select>
               </div>
 
@@ -370,7 +393,8 @@ function EditProperty() {
 
               <div>
                 <label className="block mb-2 font-medium">
-                  Area (sq.ft) <span className="text-red-500">*</span>
+                  Area (sq.ft){" "}
+                  <span className="text-red-500">*</span>
                 </label>
 
                 <input
@@ -394,7 +418,9 @@ function EditProperty() {
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 >
-                  <option value="Furnished">Furnished</option>
+                  <option value="Furnished">
+                    Furnished
+                  </option>
                   <option value="Semi-Furnished">
                     Semi-Furnished
                   </option>
@@ -425,7 +451,7 @@ function EditProperty() {
             </div>
 
             {/* ================= PROPERTY DETAILS ================= */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 mt-6">
 
               <div>
                 <label className="block mb-2 font-medium">
@@ -438,15 +464,33 @@ function EditProperty() {
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 >
-                  <option value="">Select Facing</option>
-                  <option value="East">East</option>
-                  <option value="West">West</option>
-                  <option value="North">North</option>
-                  <option value="South">South</option>
-                  <option value="North-East">North-East</option>
-                  <option value="North-West">North-West</option>
-                  <option value="South-East">South-East</option>
-                  <option value="South-West">South-West</option>
+                  <option value="">
+                    Select Facing
+                  </option>
+                  <option value="East">
+                    East
+                  </option>
+                  <option value="West">
+                    West
+                  </option>
+                  <option value="North">
+                    North
+                  </option>
+                  <option value="South">
+                    South
+                  </option>
+                  <option value="North-East">
+                    North-East
+                  </option>
+                  <option value="North-West">
+                    North-West
+                  </option>
+                  <option value="South-East">
+                    South-East
+                  </option>
+                  <option value="South-West">
+                    South-West
+                  </option>
                 </select>
               </div>
 
@@ -461,11 +505,21 @@ function EditProperty() {
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 >
-                  <option value="">Select Parking</option>
-                  <option value="Car">Car</option>
-                  <option value="Bike">Bike</option>
-                  <option value="Car & Bike">Car & Bike</option>
-                  <option value="No Parking">No Parking</option>
+                  <option value="">
+                    Select Parking
+                  </option>
+                  <option value="Car">
+                    Car
+                  </option>
+                  <option value="Bike">
+                    Bike
+                  </option>
+                  <option value="Car & Bike">
+                    Car & Bike
+                  </option>
+                  <option value="No Parking">
+                    No Parking
+                  </option>
                 </select>
               </div>
 
@@ -578,7 +632,8 @@ function EditProperty() {
             <div className="mt-6">
 
               <label className="block mb-2 font-medium">
-                Address <span className="text-red-500">*</span>
+                Address{" "}
+                <span className="text-red-500">*</span>
               </label>
 
               <input
@@ -593,11 +648,12 @@ function EditProperty() {
             </div>
 
             {/* ================= LOCATION ================= */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6 mt-6">
 
               <div>
                 <label className="block mb-2 font-medium">
-                  City <span className="text-red-500">*</span>
+                  City{" "}
+                  <span className="text-red-500">*</span>
                 </label>
 
                 <input
@@ -612,7 +668,8 @@ function EditProperty() {
 
               <div>
                 <label className="block mb-2 font-medium">
-                  Locality <span className="text-red-500">*</span>
+                  Locality{" "}
+                  <span className="text-red-500">*</span>
                 </label>
 
                 <input
@@ -627,7 +684,8 @@ function EditProperty() {
 
               <div>
                 <label className="block mb-2 font-medium">
-                  State <span className="text-red-500">*</span>
+                  State{" "}
+                  <span className="text-red-500">*</span>
                 </label>
 
                 <input
@@ -642,7 +700,8 @@ function EditProperty() {
 
               <div>
                 <label className="block mb-2 font-medium">
-                  Pincode <span className="text-red-500">*</span>
+                  Pincode{" "}
+                  <span className="text-red-500">*</span>
                 </label>
 
                 <input
@@ -660,15 +719,16 @@ function EditProperty() {
             {/* ================= OWNER INFORMATION ================= */}
             <div className="mt-8">
 
-              <h2 className="text-2xl font-semibold mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-4">
                 Owner Information
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
 
                 <div>
                   <label className="block mb-2 font-medium">
-                    Owner Name <span className="text-red-500">*</span>
+                    Owner Name{" "}
+                    <span className="text-red-500">*</span>
                   </label>
 
                   <input
@@ -683,7 +743,8 @@ function EditProperty() {
 
                 <div>
                   <label className="block mb-2 font-medium">
-                    Phone Number <span className="text-red-500">*</span>
+                    Phone Number{" "}
+                    <span className="text-red-500">*</span>
                   </label>
 
                   <input
@@ -698,7 +759,8 @@ function EditProperty() {
 
                 <div>
                   <label className="block mb-2 font-medium">
-                    Email <span className="text-red-500">*</span>
+                    Email{" "}
+                    <span className="text-red-500">*</span>
                   </label>
 
                   <input
@@ -719,7 +781,8 @@ function EditProperty() {
             <div className="mt-8">
 
               <label className="block mb-2 font-medium">
-                Property Images <span className="text-red-500">*</span>
+                Property Images{" "}
+                <span className="text-red-500">*</span>
               </label>
 
               <input
@@ -732,7 +795,7 @@ function EditProperty() {
                     ...Array.from(e.target.files),
                   ])
                 }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 text-sm sm:text-base"
               />
 
               <p className="text-sm text-gray-500 mt-2">
@@ -756,7 +819,7 @@ function EditProperty() {
                             : URL.createObjectURL(image)
                         }
                         alt={`Property ${index + 1}`}
-                        className="w-28 h-20 rounded-lg object-cover border border-gray-200"
+                        className="w-24 h-20 sm:w-28 rounded-lg object-cover border border-gray-200"
                       />
 
                       <button
@@ -786,7 +849,7 @@ function EditProperty() {
             <button
               type="submit"
               disabled={submitting}
-              className={`w-full mt-8 py-4 rounded-xl font-medium transition ${
+              className={`w-full mt-8 py-3.5 sm:py-4 rounded-xl font-medium transition ${
                 submitting
                   ? "bg-blue-400 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700 cursor-pointer"

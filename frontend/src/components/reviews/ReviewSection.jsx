@@ -34,12 +34,12 @@ function ReviewSection({
     <section className="mt-2">
 
       {/* ================= RATING SUMMARY ================= */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-5">
 
         {/* Header */}
         <div className="mb-5">
 
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900">
             Reviews & Ratings
           </h2>
 
@@ -53,14 +53,14 @@ function ReviewSection({
         <div className="grid grid-cols-1 lg:grid-cols-[42%_58%] items-start">
 
           {/* ================= LEFT : RATINGS ================= */}
-          <div className="pr-7">
+          <div className="pr-0 lg:pr-7">
 
-            <div className="flex items-center min-h-[250px]">
+            <div className="flex flex-col sm:flex-row items-center min-h-0 lg:min-h-[250px]">
 
               {/* Overall Rating */}
-              <div className="w-[150px] text-center border-r border-gray-200 pr-6">
+              <div className="w-full sm:w-[150px] text-center border-b sm:border-b-0 sm:border-r border-gray-200 pb-5 sm:pb-0 sm:pr-6">
 
-                <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   {property.averageRating?.toFixed(1) || "0.0"}
                 </h1>
 
@@ -79,7 +79,7 @@ function ReviewSection({
               </div>
 
               {/* Rating Breakdown */}
-              <div className="flex-1 pl-6 space-y-3">
+              <div className="w-full flex-1 pl-0 sm:pl-6 pt-5 sm:pt-0 space-y-3">
 
                 {[5, 4, 3, 2, 1].map((rating) => {
 
@@ -127,7 +127,7 @@ function ReviewSection({
 
           {/* ================= RIGHT : WRITE REVIEW ================= */}
           {user && !isOwner && (
-            <div className="border-l border-gray-200 pl-7">
+            <div className="border-t lg:border-t-0 lg:border-l border-gray-200 mt-6 lg:mt-0 pt-6 lg:pt-0 pl-0 lg:pl-7">
 
               <ReviewForm
                 onSubmit={handleAddReview}
@@ -144,14 +144,14 @@ function ReviewSection({
       {/* ================= CUSTOMER REVIEWS ================= */}
       <div
         id="customer-reviews"
-        className="mt-8"
+        className="mt-6 sm:mt-8"
       >
 
-        <div className="flex justify-between items-center mb-5">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-5">
 
           <div>
 
-            <h2 className="text-2xl font-semibold text-gray-900">
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
               Customer Reviews
             </h2>
 
@@ -166,23 +166,23 @@ function ReviewSection({
 
         {loadingReviews ? (
 
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-10 text-center text-gray-500">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sm:p-10 text-center text-gray-500">
             Loading reviews...
           </div>
 
         ) : reviews.length === 0 ? (
 
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 sm:p-12 text-center">
 
-            <div className="text-5xl mb-3">
+            <div className="text-4xl sm:text-5xl mb-3">
               💬
             </div>
 
-            <h3 className="text-xl font-semibold">
+            <h3 className="text-lg sm:text-xl font-semibold">
               No Reviews Yet
             </h3>
 
-            <p className="text-gray-500 mt-2">
+            <p className="text-gray-500 mt-2 text-sm sm:text-base">
               Be the first to share your experience.
             </p>
 

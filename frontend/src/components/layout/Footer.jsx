@@ -8,15 +8,16 @@ import {
 function Footer() {
   return (
     <footer className="bg-gray-900 text-white mt-10">
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-10">
+
           {/* Brand */}
           <div>
             <h2 className="text-2xl font-bold">
               PropertyHub
             </h2>
 
-            <p className="text-gray-400 mt-3">
+            <p className="text-gray-400 mt-3 text-sm sm:text-base leading-relaxed">
               Find, buy, rent and manage
               properties across India with
               ease.
@@ -122,7 +123,7 @@ function Footer() {
 
             <a
               href="mailto:support@propertyhub.com"
-              className="block text-gray-400 hover:text-white transition mt-2"
+              className="block text-gray-400 hover:text-white transition mt-2 break-words"
             >
               support@propertyhub.com
             </a>
@@ -134,9 +135,10 @@ function Footer() {
               +91 1234567890
             </a>
           </div>
+
         </div>
 
-        <div className="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+        <div className="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400 text-sm sm:text-base">
           © 2026 PropertyHub. All Rights Reserved.
         </div>
       </div>

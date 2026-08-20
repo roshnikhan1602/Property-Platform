@@ -89,13 +89,13 @@ function PGReviewCard({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 p-5">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 p-4 sm:p-5">
 
       {/* User Information */}
 
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
 
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-3 min-w-0">
 
           {review.user?.profileImage ? (
             <img
@@ -104,20 +104,20 @@ function PGReviewCard({
                 review.user?.name ||
                 review.userName
               }
-              className="w-11 h-11 rounded-full object-cover border border-gray-200"
+              className="w-11 h-11 rounded-full object-cover border border-gray-200 shrink-0"
             />
           ) : (
             <FaUserCircle
               size={42}
-              className="text-gray-400"
+              className="text-gray-400 shrink-0"
             />
           )}
 
-          <div>
+          <div className="min-w-0">
 
             <div className="flex items-center gap-2 flex-wrap">
 
-              <h3 className="font-semibold text-gray-900">
+              <h3 className="font-semibold text-gray-900 break-words">
                 {review.user?.name ||
                   review.userName}
               </h3>
@@ -154,7 +154,7 @@ function PGReviewCard({
         {/* Edit / Delete */}
 
         {isReviewOwner && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
 
             {editing ? (
               <>
@@ -228,7 +228,7 @@ function PGReviewCard({
 
         </div>
       ) : (
-        <p className="mt-4 text-gray-700 leading-6 text-sm">
+        <p className="mt-4 text-gray-700 leading-6 text-sm break-words">
           {review.comment}
         </p>
       )}
@@ -236,11 +236,11 @@ function PGReviewCard({
       {/* Owner Reply */}
 
       {review.ownerReply && (
-        <div className="mt-4 rounded-lg border-l-4 border-blue-600 bg-blue-50 p-4">
+        <div className="mt-4 rounded-lg border-l-4 border-blue-600 bg-blue-50 p-3 sm:p-4">
 
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
 
-            <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+            <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full w-fit">
               OWNER REPLY
             </span>
 
@@ -249,7 +249,7 @@ function PGReviewCard({
                 onClick={
                   handleDeleteReply
                 }
-                className="text-red-600 text-sm hover:underline"
+                className="text-red-600 text-sm hover:underline text-left sm:text-right"
               >
                 Delete Reply
               </button>
@@ -257,7 +257,7 @@ function PGReviewCard({
 
           </div>
 
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 break-words">
             {review.ownerReply}
           </p>
 
@@ -281,7 +281,7 @@ function PGReviewCard({
               className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none outline-none focus:ring-2 focus:ring-blue-500"
             />
 
-            <div className="flex gap-2 mt-3">
+            <div className="flex flex-col sm:flex-row gap-2 mt-3">
 
               <button
                 onClick={handleReply}

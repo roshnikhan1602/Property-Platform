@@ -52,7 +52,6 @@ function Login() {
     }
 
     // USA / CANADA
-    // Example: (206) 342-8631
     if (countryCode === "+1") {
       const limited = digits.slice(0, 10);
 
@@ -541,14 +540,14 @@ function Login() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 sm:px-6 py-8 sm:py-12 overflow-x-hidden">
+        <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-5 sm:p-8">
 
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-2">
             Welcome Back
           </h2>
 
-          <p className="text-center text-gray-500 mb-8">
+          <p className="text-center text-gray-500 mb-6 sm:mb-8">
             Login to continue
           </p>
 
@@ -563,14 +562,14 @@ function Login() {
                 Mobile Number
               </label>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full">
 
                 {/* COUNTRY CODE */}
                 <select
                   name="countryCode"
                   value={formData.countryCode}
                   onChange={handleCountryChange}
-                  className="w-28 border border-gray-300 rounded-lg px-3 py-3 bg-white outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-[92px] sm:w-28 shrink-0 border border-gray-300 rounded-lg px-2 sm:px-3 py-3 bg-white outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                 >
                   <option value="+91">
                     🇮🇳 +91
@@ -651,7 +650,7 @@ function Login() {
                       : "Enter mobile number"
                   }
                   inputMode="numeric"
-                 className="flex-1 border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="min-w-0 flex-1 w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                 />
 
               </div>
@@ -669,7 +668,7 @@ function Login() {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter your password"
-               className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               />
 
               <div className="text-right mt-2">

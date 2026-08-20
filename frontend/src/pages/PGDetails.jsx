@@ -21,7 +21,6 @@ import {
   FaParking,
   FaBath,
   FaArrowLeft,
-  FaArrowRight,
   FaShareAlt,
   FaExternalLinkAlt,
   FaLock,
@@ -67,11 +66,12 @@ function PGDetails({ setShowLoginModal }) {
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [user, setUser] = useState(null);
   const [showShareModal, setShowShareModal] = useState(false);
+
   const [toast, setToast] = useState({
-  show: false,
-  message: "",
-  type: "success",
-});
+    show: false,
+    message: "",
+    type: "success",
+  });
 
   const handleNextImage = () => {
     const currentIndex = pg.images.indexOf(selectedImage);
@@ -108,63 +108,63 @@ function PGDetails({ setShowLoginModal }) {
     }
   };
 
- const handleAddReview = async (reviewData) => {
-  try {
-    if (!user) {
-      setToast({
-        show: true,
-        message: "Please login first.",
-        type: "error",
-      });
-      return;
-    }
-
-    const data = await addReview({
-      pgId: id,
-      ...reviewData,
-    });
-
-    if (data.success) {
-      setToast({
-        show: true,
-        message: "Review added successfully!",
-        type: "success",
-      });
-
-      loadReviews();
-
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/pgs/${id}`,
-        {
-          credentials: "include",
-        }
-      );
-
-      const result = await response.json();
-
-      if (result.success) {
-        setPg(result.pg);
+  const handleAddReview = async (reviewData) => {
+    try {
+      if (!user) {
+        setToast({
+          show: true,
+          message: "Please login first.",
+          type: "error",
+        });
+        return;
       }
-    } else {
+
+      const data = await addReview({
+        pgId: id,
+        ...reviewData,
+      });
+
+      if (data.success) {
+        setToast({
+          show: true,
+          message: "Review added successfully!",
+          type: "success",
+        });
+
+        loadReviews();
+
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/pgs/${id}`,
+          {
+            credentials: "include",
+          }
+        );
+
+        const result = await response.json();
+
+        if (result.success) {
+          setPg(result.pg);
+        }
+      } else {
+        setToast({
+          show: true,
+          message: data.message,
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+
       setToast({
         show: true,
-        message: data.message,
+        message:
+          error.response?.data?.message ||
+          error.message ||
+          "Failed to add review",
         type: "error",
       });
     }
-  } catch (error) {
-    console.error(error);
-
-    setToast({
-      show: true,
-      message:
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to add review",
-      type: "error",
-    });
-  }
-};
+  };
 
   const handleDeleteReview = async (reviewId) => {
     try {
@@ -273,60 +273,60 @@ function PGDetails({ setShowLoginModal }) {
 
     const fetchPG = async () => {
       try {
-       const response = await fetch(
-  `${import.meta.env.VITE_API_URL}/api/pgs/${id}`,
-  {
-    credentials: "include",
-  }
-);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/pgs/${id}`,
+          {
+            credentials: "include",
+          }
+        );
 
         const data = await response.json();
 
-      if (data.success) {
-  if (data.pg.isApproved) {
-    const recentlyViewed =
-      JSON.parse(
-        localStorage.getItem("recentlyViewed")
-      ) || [];
+        if (data.success) {
+          if (data.pg.isApproved) {
+            const recentlyViewed =
+              JSON.parse(
+                localStorage.getItem("recentlyViewed")
+              ) || [];
 
-    const filteredItems =
-      recentlyViewed.filter(
-        (item) => item._id !== data.pg._id
-      );
+            const filteredItems =
+              recentlyViewed.filter(
+                (item) => item._id !== data.pg._id
+              );
 
-    const updatedItems = [
-      {
-        ...data.pg,
-        itemType: "pg",
-      },
-      ...filteredItems,
-    ].slice(0, 5);
+            const updatedItems = [
+              {
+                ...data.pg,
+                itemType: "pg",
+              },
+              ...filteredItems,
+            ].slice(0, 5);
 
-    localStorage.setItem(
-      "recentlyViewed",
-      JSON.stringify(updatedItems)
-    );
-  }
+            localStorage.setItem(
+              "recentlyViewed",
+              JSON.stringify(updatedItems)
+            );
+          }
 
-  setPg(data.pg);
+          setPg(data.pg);
 
-  setContactAvailable(
-    data.contactAvailable
-  );
+          setContactAvailable(
+            data.contactAvailable
+          );
 
-  setListingAvailable(
-    data.listingAvailable
-  );
+          setListingAvailable(
+            data.listingAvailable
+          );
 
-  loadReviews();
+          loadReviews();
 
-  if (
-    data.pg.images &&
-    data.pg.images.length > 0
-  ) {
-    setSelectedImage(data.pg.images[0]);
-  }
-}
+          if (
+            data.pg.images &&
+            data.pg.images.length > 0
+          ) {
+            setSelectedImage(data.pg.images[0]);
+          }
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -345,10 +345,9 @@ function PGDetails({ setShowLoginModal }) {
           setShowLoginModal={setShowLoginModal}
         />
 
-        <div className="text-center py-20 text-gray-600">
+        <div className="text-center py-16 sm:py-20 px-4 text-gray-600">
           Loading PG Details...
         </div>
-
 
         <Footer />
       </>
@@ -362,24 +361,24 @@ function PGDetails({ setShowLoginModal }) {
           setShowLoginModal={setShowLoginModal}
         />
 
-        <div className="max-w-3xl mx-auto py-24 px-6">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 text-center p-10">
-            <div className="text-5xl text-gray-500 mb-5 flex justify-center">
+        <div className="max-w-3xl mx-auto py-16 sm:py-24 px-4 sm:px-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 text-center p-6 sm:p-10">
+            <div className="text-4xl sm:text-5xl text-gray-500 mb-5 flex justify-center">
               <FaLock />
             </div>
 
-            <h2 className="text-3xl font-bold">
+            <h2 className="text-2xl sm:text-3xl font-bold">
               Listing Temporarily Unavailable
             </h2>
 
-            <p className="text-gray-600 mt-4">
+            <p className="text-gray-600 mt-4 text-sm sm:text-base">
               This PG listing is currently unavailable
               because the owner's subscription has expired.
             </p>
 
             <button
               onClick={() => navigate(-1)}
-              className="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+              className="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-5 sm:px-6 py-3 rounded-lg text-sm sm:text-base"
             >
               Back to PG Listings
             </button>
@@ -398,7 +397,7 @@ function PGDetails({ setShowLoginModal }) {
           setShowLoginModal={setShowLoginModal}
         />
 
-        <div className="text-center py-20">
+        <div className="text-center py-20 px-4">
           PG Not Found
         </div>
 
@@ -490,11 +489,11 @@ function PGDetails({ setShowLoginModal }) {
     },
   ];
 
- const isOwner =
-  user &&
-  pg.owner &&
-  String(pg.owner._id || pg.owner) ===
-    String(user._id);
+  const isOwner =
+    user &&
+    pg.owner &&
+    String(pg.owner._id || pg.owner) ===
+      String(user._id);
 
   return (
     <>
@@ -503,7 +502,7 @@ function PGDetails({ setShowLoginModal }) {
       />
 
       <main className="bg-gray-50 min-h-screen">
-        <section className="max-w-7xl mx-auto px-6 pt-24 pb-12">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-20 sm:pt-24 pb-8 sm:pb-12">
 
           {/* BACK BUTTON */}
           <button
@@ -514,18 +513,18 @@ function PGDetails({ setShowLoginModal }) {
                 navigate(-1);
               }
             }}
-            className="mb-6 flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition"
+            className="mb-5 sm:mb-6 flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition"
           >
             <FaArrowLeft className="text-xs" />
             Back to PGs
           </button>
 
           {/* ================= TOP SECTION ================= */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-8">
 
             {/* IMAGE GALLERY */}
-            <div>
-              <div className="relative h-[430px] bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
+            <div className="min-w-0">
+              <div className="relative h-[280px] sm:h-[350px] lg:h-[430px] bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
 
                 {selectedImage ? (
                   <>
@@ -541,30 +540,30 @@ function PGDetails({ setShowLoginModal }) {
                         <>
                           <button
                             onClick={handlePreviousImage}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 shadow flex items-center justify-center text-xl hover:bg-white transition"
+                            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 shadow flex items-center justify-center text-xl hover:bg-white transition"
                           >
                             ‹
                           </button>
 
                           <button
                             onClick={handleNextImage}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 shadow flex items-center justify-center text-xl hover:bg-white transition"
+                            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 shadow flex items-center justify-center text-xl hover:bg-white transition"
                           >
                             ›
                           </button>
                         </>
                       )}
 
-                    <div className="absolute bottom-4 left-4 bg-black/60 text-white px-3 py-1.5 rounded-full text-sm">
+                    <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 bg-black/60 text-white px-3 py-1.5 rounded-full text-xs sm:text-sm">
                       {pg.images.indexOf(selectedImage) + 1} /{" "}
                       {pg.images.length}
                     </div>
                   </>
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center bg-blue-50 text-blue-600">
-                    <FaBed className="text-6xl" />
+                    <FaBed className="text-5xl sm:text-6xl" />
 
-                    <p className="mt-4 text-gray-600">
+                    <p className="mt-4 text-gray-600 text-sm sm:text-base">
                       PG Image Coming Soon
                     </p>
                   </div>
@@ -574,7 +573,7 @@ function PGDetails({ setShowLoginModal }) {
               {/* THUMBNAILS */}
               {pg.images &&
                 pg.images.length > 1 && (
-                  <div className="flex gap-3 mt-3 overflow-x-auto pb-1">
+                  <div className="flex gap-2 sm:gap-3 mt-3 overflow-x-auto pb-1">
                     {pg.images.map(
                       (image, index) => (
                         <img
@@ -584,10 +583,11 @@ function PGDetails({ setShowLoginModal }) {
                           onClick={() =>
                             setSelectedImage(image)
                           }
-                          className={`w-24 h-16 rounded-lg object-cover cursor-pointer border-2 flex-shrink-0 transition ${selectedImage === image
-                            ? "border-blue-600"
-                            : "border-gray-200"
-                            }`}
+                          className={`w-20 h-14 sm:w-24 sm:h-16 rounded-lg object-cover cursor-pointer border-2 flex-shrink-0 transition ${
+                            selectedImage === image
+                              ? "border-blue-600"
+                              : "border-gray-200"
+                          }`}
                         />
                       )
                     )}
@@ -596,11 +596,11 @@ function PGDetails({ setShowLoginModal }) {
             </div>
 
             {/* PG INFORMATION */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-7">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-7">
 
-              <div className="flex justify-between items-start gap-5">
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-5">
 
-                <div>
+                <div className="min-w-0">
                   <span className="inline-block bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-semibold mb-3">
                     PG for{" "}
                     {pg.genderPreference ===
@@ -609,14 +609,14 @@ function PGDetails({ setShowLoginModal }) {
                       : pg.genderPreference}
                   </span>
 
-                  <h1 className="text-4xl font-bold text-gray-900">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 break-words">
                     {pg.title}
                   </h1>
 
-                  <div className="flex items-center gap-2 text-gray-500 mt-3">
-                    <FaMapMarkerAlt className="text-blue-600 flex-shrink-0" />
+                  <div className="flex items-start gap-2 text-gray-500 mt-3">
+                    <FaMapMarkerAlt className="text-blue-600 flex-shrink-0 mt-1" />
 
-                    <span>
+                    <span className="text-sm sm:text-base">
                       {pg.locality},{" "}
                       {pg.city},{" "}
                       {pg.state}
@@ -639,20 +639,20 @@ function PGDetails({ setShowLoginModal }) {
 
                 <button
                   onClick={() => setShowShareModal(true)}
-                  className="flex items-center gap-2 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 transition"
+                  className="flex items-center gap-2 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 transition flex-shrink-0"
                 >
                   <FaShareAlt className="text-blue-600" />
                   Share
                 </button>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-gray-100">
+              <div className="mt-7 sm:mt-8 pt-5 sm:pt-6 border-t border-gray-100">
                 <p className="text-sm text-gray-500">
                   Monthly Rent
                 </p>
 
-                <div className="flex items-end gap-2">
-                  <h2 className="text-4xl font-bold text-blue-600">
+                <div className="flex items-end gap-2 flex-wrap">
+                  <h2 className="text-3xl sm:text-4xl font-bold text-blue-600">
                     ₹ {pg.rent?.toLocaleString()}
                   </h2>
 
@@ -663,7 +663,7 @@ function PGDetails({ setShowLoginModal }) {
               </div>
 
               {/* ================= OVERVIEW ================= */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-7">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 sm:mt-7">
 
                 {/* Gender */}
                 <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
@@ -705,123 +705,138 @@ function PGDetails({ setShowLoginModal }) {
           </div>
 
           {/* ================= DESCRIPTION ================= */}
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mt-8">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-6 mt-6 sm:mt-8">
             <h2 className="text-xl font-bold text-gray-900 mb-3">
               About this PG
             </h2>
 
-            <p className="text-gray-600 leading-7">
+            <p className="text-gray-600 leading-7 text-sm sm:text-base">
               {pg.description}
             </p>
           </div>
 
-{/* ================= BED & CHARGES ================= */}
-<div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mt-8">
-  <h2 className="text-xl font-bold text-gray-900 mb-5">
-    Bed & Charges
-  </h2>
+          {/* ================= BED & CHARGES ================= */}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-6 mt-6 sm:mt-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-5">
+              Bed & Charges
+            </h2>
 
-  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
-      <p className="text-xs text-gray-500">
-        Total Beds
-      </p>
-      <p className="font-semibold text-gray-900 mt-1">
-        {pg.totalBeds || 0}
-      </p>
-    </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+                <p className="text-xs text-gray-500">
+                  Total Beds
+                </p>
 
-    <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
-      <p className="text-xs text-gray-500">
-        Available Beds
-      </p>
-      <p className="font-semibold text-green-600 mt-1">
-        {pg.availableBeds || 0}
-      </p>
-    </div>
+                <p className="font-semibold text-gray-900 mt-1">
+                  {pg.totalBeds || 0}
+                </p>
+              </div>
 
-    <div className="rounded-xl bg-blue-50 border border-blue-200 p-4">
-      <p className="text-xs text-gray-500">
-        Maintenance Charges
-      </p>
-      <p className="font-semibold text-blue-600 mt-1">
-        ₹ {pg.maintenanceCharges?.toLocaleString() || 0}
-      </p>
-    </div>
-  </div>
-</div>
+              <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+                <p className="text-xs text-gray-500">
+                  Available Beds
+                </p>
 
-{/* ================= PG RULES ================= */}
-<div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mt-8">
-  <h2 className="text-xl font-bold text-gray-900 mb-5">
-    PG Rules
-  </h2>
+                <p className="font-semibold text-green-600 mt-1">
+                  {pg.availableBeds || 0}
+                </p>
+              </div>
 
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-    <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
-      <p className="text-sm font-semibold text-gray-800">
-        Available Now
-      </p>
-      <p className={`text-xs font-medium mt-1 ${
-        pg.availableNow
-          ? "text-green-600"
-          : "text-red-600"
-      }`}>
-        {pg.availableNow
-          ? "Yes"
-          : "No"}
-      </p>
-    </div>
+              <div className="rounded-xl bg-blue-50 border border-blue-200 p-4">
+                <p className="text-xs text-gray-500">
+                  Maintenance Charges
+                </p>
 
-    <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
-      <p className="text-sm font-semibold text-gray-800">
-        Smoking
-      </p>
-      <p className={`text-xs font-medium mt-1 ${
-        pg.smokingAllowed
-          ? "text-green-600"
-          : "text-red-600"
-      }`}>
-        {pg.smokingAllowed
-          ? "Allowed"
-          : "Not Allowed"}
-      </p>
-    </div>
+                <p className="font-semibold text-blue-600 mt-1">
+                  ₹ {pg.maintenanceCharges?.toLocaleString() || 0}
+                </p>
+              </div>
+            </div>
+          </div>
 
-    <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
-      <p className="text-sm font-semibold text-gray-800">
-        Pets
-      </p>
-      <p className={`text-xs font-medium mt-1 ${
-        pg.petsAllowed
-          ? "text-green-600"
-          : "text-red-600"
-      }`}>
-        {pg.petsAllowed
-          ? "Allowed"
-          : "Not Allowed"}
-      </p>
-    </div>
+          {/* ================= PG RULES ================= */}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-6 mt-6 sm:mt-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-5">
+              PG Rules
+            </h2>
 
-    <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
-      <p className="text-sm font-semibold text-gray-800">
-        Visitors
-      </p>
-      <p className={`text-xs font-medium mt-1 ${
-        pg.visitorsAllowed
-          ? "text-green-600"
-          : "text-red-600"
-      }`}>
-        {pg.visitorsAllowed
-          ? "Allowed"
-          : "Not Allowed"}
-      </p>
-    </div>
-  </div>
-</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+              <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+                <p className="text-sm font-semibold text-gray-800">
+                  Available Now
+                </p>
+
+                <p
+                  className={`text-xs font-medium mt-1 ${
+                    pg.availableNow
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {pg.availableNow ? "Yes" : "No"}
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+                <p className="text-sm font-semibold text-gray-800">
+                  Smoking
+                </p>
+
+                <p
+                  className={`text-xs font-medium mt-1 ${
+                    pg.smokingAllowed
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {pg.smokingAllowed
+                    ? "Allowed"
+                    : "Not Allowed"}
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+                <p className="text-sm font-semibold text-gray-800">
+                  Pets
+                </p>
+
+                <p
+                  className={`text-xs font-medium mt-1 ${
+                    pg.petsAllowed
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {pg.petsAllowed
+                    ? "Allowed"
+                    : "Not Allowed"}
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+                <p className="text-sm font-semibold text-gray-800">
+                  Visitors
+                </p>
+
+                <p
+                  className={`text-xs font-medium mt-1 ${
+                    pg.visitorsAllowed
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {pg.visitorsAllowed
+                    ? "Allowed"
+                    : "Not Allowed"}
+                </p>
+              </div>
+
+            </div>
+          </div>
 
           {/* ================= AMENITIES ================= */}
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mt-8">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-6 mt-6 sm:mt-8">
 
             <div className="flex justify-between items-center mb-6">
               <div>
@@ -841,36 +856,40 @@ function PGDetails({ setShowLoginModal }) {
                 (amenity, index) => (
                   <div
                     key={amenity.name}
-                    className={`flex items-center gap-4 p-4 border-gray-100 ${index % 4 !== 3
-                      ? "lg:border-r"
-                      : ""
-                      } ${index < 12
+                    className={`flex items-center gap-4 p-4 border-gray-100 ${
+                      index % 4 !== 3
+                        ? "lg:border-r"
+                        : ""
+                    } ${
+                      index < 12
                         ? "border-b"
                         : ""
-                      }`}
+                    }`}
                   >
                     <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-lg flex-shrink-0">
                       {amenity.icon}
                     </div>
 
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-semibold text-gray-800">
                         {amenity.name}
                       </p>
 
                       <div className="flex items-center gap-1.5 mt-1">
                         <span
-                          className={`w-2 h-2 rounded-full ${amenity.available
-                            ? "bg-green-500"
-                            : "bg-red-500"
-                            }`}
+                          className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                            amenity.available
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}
                         />
 
                         <span
-                          className={`text-xs font-medium ${amenity.available
-                            ? "text-green-600"
-                            : "text-red-600"
-                            }`}
+                          className={`text-xs font-medium ${
+                            amenity.available
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
                         >
                           {amenity.available
                             ? "Available"
@@ -881,23 +900,24 @@ function PGDetails({ setShowLoginModal }) {
                   </div>
                 )
               )}
+
             </div>
           </div>
 
           {/* ================= LOCATION ================= */}
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mt-8">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-6 mt-6 sm:mt-8">
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
 
-              <div>
+              <div className="min-w-0">
                 <h2 className="text-xl font-bold text-gray-900">
                   PG Location
                 </h2>
 
-                <div className="flex items-center gap-2 text-gray-600 mt-2">
-                  <FaMapMarkerAlt className="text-blue-600" />
+                <div className="flex items-start gap-2 text-gray-600 mt-2">
+                  <FaMapMarkerAlt className="text-blue-600 flex-shrink-0 mt-1" />
 
-                  <span>
+                  <span className="text-sm sm:text-base">
                     {pg.locality},{" "}
                     {pg.city},{" "}
                     {pg.state}{" "}
@@ -912,7 +932,7 @@ function PGDetails({ setShowLoginModal }) {
                 )}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center gap-2 border border-blue-200 text-blue-600 hover:bg-blue-50 px-5 py-2.5 rounded-lg text-sm font-medium transition text-center"
+                className="flex items-center justify-center gap-2 border border-blue-200 text-blue-600 hover:bg-blue-50 px-5 py-2.5 rounded-lg text-sm font-medium transition text-center w-full sm:w-auto"
               >
                 View on Google Maps
                 <FaExternalLinkAlt className="text-xs" />
@@ -926,6 +946,7 @@ function PGDetails({ setShowLoginModal }) {
                 height="350"
                 loading="lazy"
                 allowFullScreen
+                className="w-full h-[280px] sm:h-[350px]"
                 src={`https://maps.google.com/maps?q=${encodeURIComponent(
                   `${pg.locality}, ${pg.city}, ${pg.state}`
                 )}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
@@ -934,12 +955,12 @@ function PGDetails({ setShowLoginModal }) {
           </div>
 
           {/* ================= OWNER CONTACT ================= */}
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mt-7">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-6 mt-6 sm:mt-7">
 
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_180px_260px] gap-5 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_180px_260px] gap-6 lg:gap-5 items-start">
 
               {/* ================= OWNER DETAILS ================= */}
-              <div>
+              <div className="min-w-0">
 
                 <h2 className="text-xl font-bold text-gray-900 mb-4">
                   Owner Contact
@@ -947,12 +968,12 @@ function PGDetails({ setShowLoginModal }) {
 
                 {user ? (
                   contactAvailable ? (
-                    <div className="flex items-center gap-5">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
 
                       {/* PROFILE + NAME */}
-                      <div className="flex items-center gap-4 min-w-[250px]">
+                      <div className="flex items-center gap-4 min-w-0 sm:min-w-[250px]">
 
-                        <div className="w-16 h-16 rounded-full overflow-hidden bg-blue-50 border border-gray-200 flex-shrink-0">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-blue-50 border border-gray-200 flex-shrink-0">
 
                           {pg.owner?.profileImage ? (
                             <img
@@ -970,11 +991,11 @@ function PGDetails({ setShowLoginModal }) {
 
                         </div>
 
-                        <div>
+                        <div className="min-w-0">
 
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
 
-                            <h3 className="text-lg font-bold text-gray-900">
+                            <h3 className="text-lg font-bold text-gray-900 break-words">
                               {pg.ownerName}
                             </h3>
 
@@ -987,10 +1008,15 @@ function PGDetails({ setShowLoginModal }) {
                           <p className="text-sm text-gray-500 mt-1">
                             PG Owner since{" "}
                             {pg.owner?.createdAt
-                              ? new Date(pg.owner.createdAt).toLocaleDateString("en-US", {
-                                month: "short",
-                                year: "numeric",
-                              })
+                              ? new Date(
+                                  pg.owner.createdAt
+                                ).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    month: "short",
+                                    year: "numeric",
+                                  }
+                                )
                               : "N/A"}
                           </p>
 
@@ -998,15 +1024,13 @@ function PGDetails({ setShowLoginModal }) {
 
                       </div>
 
-
                       {/* SEPARATOR */}
                       <div className="hidden sm:block h-14 w-px bg-gray-200"></div>
-
 
                       {/* CONTACT INFORMATION */}
                       <div className="space-y-2 min-w-0">
 
-                        <p className="text-sm text-gray-700 whitespace-nowrap">
+                        <p className="text-sm text-gray-700 break-all">
                           <FaPhoneAlt className="inline mr-2 text-gray-700" />
 
                           <span className="font-medium">
@@ -1015,7 +1039,7 @@ function PGDetails({ setShowLoginModal }) {
                           {pg.ownerPhone}
                         </p>
 
-                        <p className="text-sm text-gray-700 whitespace-nowrap">
+                        <p className="text-sm text-gray-700 break-all">
                           <FaEnvelope className="inline mr-2 text-gray-700" />
 
                           <span className="font-medium">
@@ -1030,7 +1054,7 @@ function PGDetails({ setShowLoginModal }) {
                   ) : (
 
                     /* CONTACT UNAVAILABLE */
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 sm:p-6 text-center">
 
                       <div className="text-3xl text-yellow-600 mb-3 flex justify-center">
                         <FaLock />
@@ -1074,10 +1098,9 @@ function PGDetails({ setShowLoginModal }) {
 
               </div>
 
-
               {/* ================= CONTACT BUTTONS ================= */}
               {user && contactAvailable && (
-                <div className="flex flex-col gap-3 self-center">
+                <div className="flex flex-col gap-3 self-center w-full lg:w-auto">
 
                   <a
                     href={`tel:${pg.ownerPhone}`}
@@ -1098,10 +1121,9 @@ function PGDetails({ setShowLoginModal }) {
                 </div>
               )}
 
-
               {/* ================= VERIFIED PG ================= */}
               {user && contactAvailable && (
-                <div className="bg-blue-50/60 border border-gray-200 rounded-xl p-5 self-center">
+                <div className="bg-blue-50/60 border border-gray-200 rounded-xl p-5 self-center w-full">
 
                   {/* VERIFIED PG HEADER */}
                   <div className="flex items-center gap-3 mb-4">
@@ -1158,8 +1180,9 @@ function PGDetails({ setShowLoginModal }) {
 
           </div>
         </section>
+
         {/* ================= REVIEWS ================= */}
-        <div className="max-w-7xl mx-auto px-6 pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-8 sm:pb-12">
           <PGReviewSection
             pg={pg}
             user={user}
@@ -1178,15 +1201,16 @@ function PGDetails({ setShowLoginModal }) {
           />
         </div>
 
+        {/* ================= FULL IMAGE ================= */}
         {showFullImage && selectedImage && (
           <div
-            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-6"
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-3 sm:p-6"
             onClick={() => setShowFullImage(false)}
           >
             <button
               type="button"
               onClick={() => setShowFullImage(false)}
-              className="absolute top-5 right-6 w-10 h-10 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition"
+              className="absolute top-4 right-4 sm:top-5 sm:right-6 w-10 h-10 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition"
             >
               <FaTimes />
             </button>
@@ -1194,8 +1218,10 @@ function PGDetails({ setShowLoginModal }) {
             <img
               src={selectedImage}
               alt={pg.title}
-              onClick={(e) => e.stopPropagation()}
-              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+              onClick={(e) =>
+                e.stopPropagation()
+              }
+              className="max-w-full max-h-[85vh] sm:max-h-[90vh] object-contain rounded-lg"
             />
           </div>
         )}
@@ -1213,7 +1239,7 @@ function PGDetails({ setShowLoginModal }) {
         url={window.location.href}
       />
 
-   {toast.show && (
+      {toast.show && (
         <Toast
           message={toast.message}
           type={toast.type}

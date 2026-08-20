@@ -20,202 +20,215 @@ function RescheduleVisitModal({
 
   if (!isOpen || !visit) return null;
 
- const handleReschedule = async () => {
-  if (!visitDate || !visitTime) {
-    setToast({
-      show: true,
-      message: "Please select date and time.",
-      type: "error",
-    });
-    return;
-  }
-
-if (visitTime < "09:00" || visitTime > "19:00") {
-  setToast({
-    show: true,
-    message: "Visit time must be between 9:00 AM and 7:00 PM.",
-    type: "error",
-  });
-  return;
-}
-
-  // Prevent past dates
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const selectedDate = new Date(`${visitDate}T00:00:00`);
-  selectedDate.setHours(0, 0, 0, 0);
-
-  if (selectedDate < today) {
-    setToast({
-      show: true,
-      message: "Please select today or a future date.",
-      type: "error",
-    });
-    return;
-  }
-
-  try {
-    setLoading(true);
-
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/visits/reschedule/${visit._id}`,
-      {
-        method: "PUT",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          visitDate,
-          visitTime,
-          reason,
-        }),
-      }
-    );
-
-    const data = await response.json();
-
-    if (data.success) {
+  const handleReschedule = async () => {
+    if (!visitDate || !visitTime) {
       setToast({
         show: true,
-        message: "Visit rescheduled successfully.",
-        type: "success",
-      });
-
-      setTimeout(() => {
-        setVisitDate("");
-        setVisitTime("");
-        setReason("");
-        onRescheduled();
-        onClose();
-      }, 1000);
-    } else {
-      setToast({
-        show: true,
-        message: data.message,
+        message: "Please select date and time.",
         type: "error",
       });
+      return;
     }
-  } catch (error) {
-    console.error(error);
 
-    setToast({
-      show: true,
-      message: "Something went wrong.",
-      type: "error",
-    });
-  } finally {
-    setLoading(false);
-  }
-};
+    if (visitTime < "09:00" || visitTime > "19:00") {
+      setToast({
+        show: true,
+        message:
+          "Visit time must be between 9:00 AM and 7:00 PM.",
+        type: "error",
+      });
+      return;
+    }
+
+    // Prevent past dates
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const selectedDate = new Date(
+      `${visitDate}T00:00:00`
+    );
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      setToast({
+        show: true,
+        message:
+          "Please select today or a future date.",
+        type: "error",
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/visits/reschedule/${visit._id}`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            visitDate,
+            visitTime,
+            reason,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setToast({
+          show: true,
+          message: "Visit rescheduled successfully.",
+          type: "success",
+        });
+
+        setTimeout(() => {
+          setVisitDate("");
+          setVisitTime("");
+          setReason("");
+          onRescheduled();
+          onClose();
+        }, 1000);
+      } else {
+        setToast({
+          show: true,
+          message: data.message,
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+
+      setToast({
+        show: true,
+        message: "Something went wrong.",
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-  <>
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 py-6 overflow-y-auto">
+    <>
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto">
 
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-lg max-h-[92vh] sm:max-h-[90vh] overflow-y-auto">
 
-        <div className="flex justify-between items-center border-b border-gray-300 p-5">
-          <h2 className="text-2xl font-bold">
-            📅 Reschedule Visit
-          </h2>
+          <div className="flex justify-between items-center gap-3 border-b border-gray-300 p-4 sm:p-5">
 
-          <button
-            onClick={onClose}
-            className="text-2xl hover:text-red-500"
-          >
-            ×
-          </button>
-        </div>
-
-        <div className="p-6 space-y-5">
-
-          <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-
-            <h3 className="font-semibold text-lg">
-              {visit.propertyTitle}
-            </h3>
-
-            <p className="text-sm text-gray-600 mt-1">
-              Current Schedule
-            </p>
-
-            <p className="font-medium mt-1">
-              {new Date(
-                visit.visitDate
-              ).toLocaleDateString()} • {visit.visitTime}
-            </p>
-
-          </div>
-
-          <div>
-            <label className="block font-medium mb-2">
-              New Visit Date
-            </label>
-
-            <input
-              type="date"
-              value={visitDate}
-              min={new Date().toISOString().split("T")[0]}
-              onChange={(e) =>
-                setVisitDate(e.target.value)
-              }
-             className="w-full border border-gray-300 rounded-lg p-3"
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium mb-2">
-              New Visit Time
-            </label>
-
-        <input
-  type="time"
-  value={visitTime}
-  min="09:00"
-  max="19:00"
-  onChange={(e) =>
-    setVisitTime(e.target.value)
-  }
-  className="w-full border border-gray-300 rounded-lg p-3"
-/>
-          </div>
-
-          <div>
-            <label className="block font-medium mb-2">
-              Reason (Optional)
-            </label>
-
-            <textarea
-              rows={3}
-              value={reason}
-              onChange={(e) =>
-                setReason(e.target.value)
-              }
-              placeholder="Reason for rescheduling..."
-             className="w-full border border-gray-300 rounded-lg p-3 resize-none"
-            />
-          </div>
-
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-300">
+            <h2 className="text-xl sm:text-2xl font-bold">
+              📅 Reschedule Visit
+            </h2>
 
             <button
               onClick={onClose}
-              className="border border-gray-300 px-5 py-3 rounded-lg"
+              className="text-2xl hover:text-red-500 shrink-0"
             >
-              Cancel
+              ×
             </button>
 
-            <button
-              onClick={handleReschedule}
-              disabled={loading}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg"
-            >
-              {loading
-                ? "Rescheduling..."
-                : "Reschedule Visit"}
-            </button>
+          </div>
+
+          <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
+
+            <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 sm:p-4">
+
+              <h3 className="font-semibold text-base sm:text-lg break-words">
+                {visit.propertyTitle}
+              </h3>
+
+              <p className="text-sm text-gray-600 mt-1">
+                Current Schedule
+              </p>
+
+              <p className="font-medium mt-1 text-sm sm:text-base break-words">
+                {new Date(
+                  visit.visitDate
+                ).toLocaleDateString()}{" "}
+                • {visit.visitTime}
+              </p>
+
+            </div>
+
+            <div>
+              <label className="block font-medium mb-2">
+                New Visit Date
+              </label>
+
+              <input
+                type="date"
+                value={visitDate}
+                min={
+                  new Date()
+                    .toISOString()
+                    .split("T")[0]
+                }
+                onChange={(e) =>
+                  setVisitDate(e.target.value)
+                }
+                className="w-full border border-gray-300 rounded-lg p-3 text-sm sm:text-base"
+              />
+            </div>
+
+            <div>
+              <label className="block font-medium mb-2">
+                New Visit Time
+              </label>
+
+              <input
+                type="time"
+                value={visitTime}
+                min="09:00"
+                max="19:00"
+                onChange={(e) =>
+                  setVisitTime(e.target.value)
+                }
+                className="w-full border border-gray-300 rounded-lg p-3 text-sm sm:text-base"
+              />
+            </div>
+
+            <div>
+              <label className="block font-medium mb-2">
+                Reason (Optional)
+              </label>
+
+              <textarea
+                rows={3}
+                value={reason}
+                onChange={(e) =>
+                  setReason(e.target.value)
+                }
+                placeholder="Reason for rescheduling..."
+                className="w-full border border-gray-300 rounded-lg p-3 resize-none text-sm sm:text-base"
+              />
+            </div>
+
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-4 border-t border-gray-300">
+
+              <button
+                onClick={onClose}
+                className="w-full sm:w-auto border border-gray-300 px-5 py-3 rounded-lg"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleReschedule}
+                disabled={loading}
+                className="w-full sm:w-auto bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg"
+              >
+                {loading
+                  ? "Rescheduling..."
+                  : "Reschedule Visit"}
+              </button>
+
+            </div>
 
           </div>
 
@@ -223,23 +236,21 @@ if (visitTime < "09:00" || visitTime > "19:00") {
 
       </div>
 
-    </div>
-
-    {toast.show && (
-      <Toast
-        message={toast.message}
-        type={toast.type}
-        onClose={() =>
-          setToast({
-            show: false,
-            message: "",
-            type: "success",
-          })
-        }
-      />
-    )}
-  </>
-);
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({
+              show: false,
+              message: "",
+              type: "success",
+            })
+          }
+        />
+      )}
+    </>
+  );
 }
 
 export default RescheduleVisitModal;

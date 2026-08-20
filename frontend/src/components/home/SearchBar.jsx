@@ -42,13 +42,13 @@ function SearchBar() {
   };
 
   return (
-    <section className="relative -mt-12 z-10">
+    <section className="relative -mt-8 sm:-mt-12 z-10">
 
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
 
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-6">
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
 
             <input
               type="text"
@@ -62,7 +62,7 @@ function SearchBar() {
               onKeyDown={
                 handleKeyDown
               }
-              className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
             />
 
             <select
@@ -72,7 +72,7 @@ function SearchBar() {
                   e.target.value
                 )
               }
-              className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
             >
               <option value="">
                 Property Type
@@ -102,7 +102,7 @@ function SearchBar() {
                   e.target.value
                 )
               }
-              className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
             >
               <option value="">
                 Listing Type
@@ -121,7 +121,7 @@ function SearchBar() {
               onClick={
                 handleSearch
               }
-              className="bg-blue-600 text-white rounded-lg px-6 py-3 font-medium hover:bg-blue-700 transition flex items-center justify-center gap-2 cursor-pointer"
+              className="bg-blue-600 text-white rounded-lg px-6 py-3 font-medium hover:bg-blue-700 transition flex items-center justify-center gap-2 cursor-pointer w-full"
             >
               <FaSearch />
               Search

@@ -6,6 +6,7 @@ import Footer from "../components/layout/Footer";
 
 import Toast from "../components/common/Toast";
 import { FaTimes } from "react-icons/fa";
+
 function AddPG() {
   const navigate = useNavigate();
 
@@ -55,8 +56,10 @@ function AddPG() {
     ownerPhone: "",
     ownerEmail: "",
   });
+
   const [images, setImages] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -81,6 +84,7 @@ function AddPG() {
     if (submitting) return;
 
     setSubmitting(true);
+
     if (
       !formData.title ||
       !formData.rent ||
@@ -117,6 +121,7 @@ function AddPG() {
     images.forEach((image) => {
       form.append("images", image);
     });
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/pgs`,
@@ -175,7 +180,9 @@ function AddPG() {
       }
     } catch (error) {
       console.error(error);
+
       setSubmitting(false);
+
       setToast({
         show: true,
         message:
@@ -203,24 +210,24 @@ function AddPG() {
         />
       )}
 
-      <section className="max-w-5xl mx-auto px-6 pt-28 pb-10">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-8 sm:pb-10">
 
-        <div className="bg-white shadow-lg rounded-2xl p-8">
+        <div className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 md:p-8">
 
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
             Add PG Accommodation
           </h1>
 
           <p className="mt-2 text-gray-600">
-            List your PG on
-            PropertyHub.
+            List your PG on PropertyHub.
           </p>
 
           <form
             onSubmit={handleSubmit}
-            className="mt-8"
+            className="mt-6 sm:mt-8"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
 
               <div>
                 <label className="block mb-2 font-medium">
@@ -231,9 +238,7 @@ function AddPG() {
                   type="text"
                   name="title"
                   value={formData.title}
-                  onChange={
-                    handleChange
-                  }
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 />
               </div>
@@ -247,9 +252,7 @@ function AddPG() {
                   type="number"
                   name="rent"
                   value={formData.rent}
-                  onChange={
-                    handleChange
-                  }
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 />
               </div>
@@ -291,12 +294,8 @@ function AddPG() {
 
                 <select
                   name="sharingType"
-                  value={
-                    formData.sharingType
-                  }
-                  onChange={
-                    handleChange
-                  }
+                  value={formData.sharingType}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 >
                   <option value="">
@@ -324,12 +323,8 @@ function AddPG() {
 
                 <select
                   name="genderPreference"
-                  value={
-                    formData.genderPreference
-                  }
-                  onChange={
-                    handleChange
-                  }
+                  value={formData.genderPreference}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 >
                   <option value="">
@@ -343,6 +338,7 @@ function AddPG() {
                   <option value="Girls">
                     Girls
                   </option>
+
                   <option value="Co-live">
                     Co-live
                   </option>
@@ -379,7 +375,7 @@ function AddPG() {
 
             </div>
 
-            <div className="mt-6">
+            <div className="mt-5 sm:mt-6">
               <label className="block mb-2 font-medium">
                 Description
               </label>
@@ -387,34 +383,26 @@ function AddPG() {
               <textarea
                 rows="4"
                 name="description"
-                value={
-                  formData.description
-                }
-                onChange={
-                  handleChange
-                }
+                value={formData.description}
+                onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
             </div>
 
-            <div className="mt-6">
+            <div className="mt-5 sm:mt-6">
 
               <h2 className="text-xl font-semibold mb-4">
                 Amenities
               </h2>
 
-              <div className="flex flex-wrap gap-6">
+              <div className="flex flex-wrap gap-4 sm:gap-6">
 
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     name="foodAvailable"
-                    checked={
-                      formData.foodAvailable
-                    }
-                    onChange={
-                      handleChange
-                    }
+                    checked={formData.foodAvailable}
+                    onChange={handleChange}
                   />
                   Food
                 </label>
@@ -423,12 +411,8 @@ function AddPG() {
                   <input
                     type="checkbox"
                     name="wifiAvailable"
-                    checked={
-                      formData.wifiAvailable
-                    }
-                    onChange={
-                      handleChange
-                    }
+                    checked={formData.wifiAvailable}
+                    onChange={handleChange}
                   />
                   WiFi
                 </label>
@@ -437,64 +421,48 @@ function AddPG() {
                   <input
                     type="checkbox"
                     name="acAvailable"
-                    checked={
-                      formData.acAvailable
-                    }
-                    onChange={
-                      handleChange
-                    }
+                    checked={formData.acAvailable}
+                    onChange={handleChange}
                   />
                   AC
                 </label>
+
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     name="gymAvailable"
-                    checked={
-                      formData.gymAvailable
-                    }
-                    onChange={
-                      handleChange
-                    }
+                    checked={formData.gymAvailable}
+                    onChange={handleChange}
                   />
                   Gym
                 </label>
+
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     name="swimmingPoolAvailable"
-                    checked={
-                      formData.swimmingPoolAvailable
-                    }
-                    onChange={
-                      handleChange
-                    }
+                    checked={formData.swimmingPoolAvailable}
+                    onChange={handleChange}
                   />
                   Swimming Pool
                 </label>
+
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     name="tvAvailable"
-                    checked={
-                      formData.tvAvailable
-                    }
-                    onChange={
-                      handleChange
-                    }
+                    checked={formData.tvAvailable}
+                    onChange={handleChange}
                   />
                   TV
                 </label>
+
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     name="cctvAvailable"
-                    checked={
-                      formData.cctvAvailable
-                    }
-                    onChange={
-                      handleChange
-                    }
+                    checked={formData.cctvAvailable}
+                    onChange={handleChange}
                   />
                   CCTV
                 </label>
@@ -588,11 +556,12 @@ function AddPG() {
                   />
                   Cupboard
                 </label>
+
               </div>
 
             </div>
 
-            <div className="mt-6">
+            <div className="mt-5 sm:mt-6">
               <label className="block mb-2 font-medium">
                 Address *
               </label>
@@ -600,77 +569,59 @@ function AddPG() {
               <input
                 type="text"
                 name="address"
-                value={
-                  formData.address
-                }
-                onChange={
-                  handleChange
-                }
+                value={formData.address}
+                onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 sm:gap-6 mt-5 sm:mt-6">
 
               <input
                 type="text"
                 name="city"
                 value={formData.city}
-                onChange={
-                  handleChange
-                }
+                onChange={handleChange}
                 placeholder="City"
-                className="border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
 
               <input
                 type="text"
                 name="locality"
-                value={
-                  formData.locality
-                }
-                onChange={
-                  handleChange
-                }
+                value={formData.locality}
+                onChange={handleChange}
                 placeholder="Locality"
-                className="border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
 
               <input
                 type="text"
                 name="state"
-                value={
-                  formData.state
-                }
-                onChange={
-                  handleChange
-                }
+                value={formData.state}
+                onChange={handleChange}
                 placeholder="State"
-                className="border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
 
               <input
                 type="text"
                 name="pincode"
-                value={
-                  formData.pincode
-                }
-                onChange={
-                  handleChange
-                }
+                value={formData.pincode}
+                onChange={handleChange}
                 placeholder="Pincode"
-                className="border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
 
             </div>
 
-            <div className="mt-8">
+            <div className="mt-7 sm:mt-8">
 
-              <h2 className="text-2xl font-semibold mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-4">
                 PG Rules
               </h2>
 
-              <div className="flex flex-wrap gap-6">
+              <div className="flex flex-wrap gap-4 sm:gap-6">
 
                 <label className="flex items-center gap-2">
                   <input
@@ -716,57 +667,47 @@ function AddPG() {
 
             </div>
 
-            <div className="mt-8">
+            <div className="mt-7 sm:mt-8">
 
-              <h2 className="text-2xl font-semibold mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-4">
                 Owner Information
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
 
                 <input
                   type="text"
                   name="ownerName"
-                  value={
-                    formData.ownerName
-                  }
-                  onChange={
-                    handleChange
-                  }
+                  value={formData.ownerName}
+                  onChange={handleChange}
                   placeholder="Owner Name"
-                  className="border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 />
 
                 <input
                   type="tel"
                   name="ownerPhone"
-                  value={
-                    formData.ownerPhone
-                  }
-                  onChange={
-                    handleChange
-                  }
+                  value={formData.ownerPhone}
+                  onChange={handleChange}
                   placeholder="Phone Number"
-                  className="border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 />
 
                 <input
                   type="email"
                   name="ownerEmail"
-                  value={
-                    formData.ownerEmail
-                  }
-                  onChange={
-                    handleChange
-                  }
+                  value={formData.ownerEmail}
+                  onChange={handleChange}
                   placeholder="Email"
-                  className="border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 />
 
               </div>
 
             </div>
-            <div className="mt-8">
+
+            <div className="mt-7 sm:mt-8">
+
               <label className="block mb-2 font-medium">
                 PG Images <span className="text-red-500">*</span>
               </label>
@@ -781,7 +722,7 @@ function AddPG() {
                     ...Array.from(e.target.files),
                   ])
                 }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 text-sm sm:text-base"
               />
 
               <p className="text-sm text-gray-500 mt-2">
@@ -790,15 +731,17 @@ function AddPG() {
 
               {images.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-3">
+
                   {images.map((image, index) => (
                     <div
                       key={index}
                       className="relative"
                     >
+
                       <img
                         src={URL.createObjectURL(image)}
                         alt={`PG ${index + 1}`}
-                        className="w-28 h-20 rounded-lg object-cover border"
+                        className="w-24 sm:w-28 h-20 rounded-lg object-cover border"
                       />
 
                       <button
@@ -814,21 +757,29 @@ function AddPG() {
                       >
                         <FaTimes size={12} />
                       </button>
+
                     </div>
                   ))}
+
                 </div>
               )}
+
             </div>
+
             <button
               type="submit"
               disabled={submitting}
-              className={`w-full mt-8 py-4 rounded-xl font-medium transition ${submitting
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                } text-white`}
+              className={`w-full mt-7 sm:mt-8 py-3.5 sm:py-4 rounded-xl font-medium transition ${
+                submitting
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+              } text-white`}
             >
-              {submitting ? "Submitting..." : "Submit PG"}
+              {submitting
+                ? "Submitting..."
+                : "Submit PG"}
             </button>
+
           </form>
 
         </div>

@@ -19,7 +19,8 @@ function PropertyListing({
   const [wishlistIds, setWishlistIds] =
     useState([]);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] =
+    useSearchParams();
 
   const city = searchParams.get("city");
 
@@ -53,14 +54,25 @@ function PropertyListing({
         params.append("limit", 9);
 
         if (city) params.append("city", city);
+
         if (locality)
           params.append("locality", locality);
+
         if (propertyType)
-          params.append("propertyType", propertyType);
+          params.append(
+            "propertyType",
+            propertyType
+          );
+
         if (listingType)
-          params.append("listingType", listingType);
+          params.append(
+            "listingType",
+            listingType
+          );
+
         if (minPrice)
           params.append("minPrice", minPrice);
+
         if (maxPrice)
           params.append("maxPrice", maxPrice);
 
@@ -70,10 +82,11 @@ function PropertyListing({
 
         const data = await response.json();
 
-
         if (data.success) {
           setProperties(data.properties);
-          setTotalProperties(data.totalProperties);
+          setTotalProperties(
+            data.totalProperties
+          );
           setTotalPages(data.totalPages);
         }
       } catch (error) {
@@ -131,97 +144,113 @@ function PropertyListing({
         }
       />
 
-      <section className="max-w-7xl mx-auto px-6 py-10">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
 
-        <div className="mb-6">
+        {/* ================= BACK BUTTON ================= */}
+        <div className="mb-5 sm:mb-6">
           <BackButton />
         </div>
 
-        <h1 className="text-4xl font-bold">
-          All Properties
-        </h1>
+        {/* ================= PAGE HEADER ================= */}
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
+            All Properties
+          </h1>
 
-        <p className="mt-2 text-gray-600">
-          Browse available properties.
-        </p>
+          <p className="mt-2 text-sm sm:text-base text-gray-600">
+            Browse available properties.
+          </p>
+        </div>
 
-        <PropertyFilterBar />
+        {/* ================= FILTER BAR ================= */}
+        <div className="w-full">
+          <PropertyFilterBar />
+        </div>
 
+        {/* ================= ACTIVE FILTERS ================= */}
         {(city ||
           locality ||
           propertyType ||
           listingType ||
           minPrice ||
           maxPrice) && (
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+          <div className="mt-5 sm:mt-6 flex flex-wrap items-center gap-2 sm:gap-3">
 
-              {city && (
-                <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full">
-                  📍 {city}
-                </span>
-              )}
+            {city && (
+              <span className="bg-blue-100 text-blue-700 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm whitespace-nowrap">
+                📍 {city}
+              </span>
+            )}
 
-              {locality && (
-                <span className="bg-orange-100 text-orange-700 px-4 py-2 rounded-full">
-                  🏘️ {locality}
-                </span>
-              )}
+            {locality && (
+              <span className="bg-orange-100 text-orange-700 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm whitespace-nowrap">
+                🏘️ {locality}
+              </span>
+            )}
 
-              {propertyType && (
-                <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full">
-                  🏠 {propertyType}
-                </span>
-              )}
+            {propertyType && (
+              <span className="bg-green-100 text-green-700 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm whitespace-nowrap">
+                🏠 {propertyType}
+              </span>
+            )}
 
-              {listingType && (
-                <span className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full">
-                  📋 {listingType}
-                </span>
-              )}
+            {listingType && (
+              <span className="bg-purple-100 text-purple-700 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm whitespace-nowrap">
+                📋 {listingType}
+              </span>
+            )}
 
-              {(minPrice || maxPrice) && (
-                <span className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full">
-                  💰 Price Filter Applied
-                </span>
-              )}
+            {(minPrice || maxPrice) && (
+              <span className="bg-yellow-100 text-yellow-700 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm whitespace-nowrap">
+                💰 Price Filter Applied
+              </span>
+            )}
 
-              <button
-                onClick={() => setSearchParams({})}
-                className="bg-red-100 text-red-600 px-4 py-2 rounded-full hover:bg-red-200 transition"
-              >
-                Clear Filters
-              </button>
+            <button
+              onClick={() => setSearchParams({})}
+              className="bg-red-100 text-red-600 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm hover:bg-red-200 transition whitespace-nowrap"
+            >
+              Clear Filters
+            </button>
 
-            </div>
-          )}
+          </div>
+        )}
 
+        {/* ================= CONTENT ================= */}
         {loading ? (
-          <p className="mt-10 text-center text-gray-500">
-            Loading properties...
-          </p>
+          <div className="mt-10 sm:mt-14 text-center py-10">
+            <p className="text-sm sm:text-base text-gray-500">
+              Loading properties...
+            </p>
+          </div>
         ) : properties.length === 0 ? (
-          <div className="mt-16 text-center">
+          <div className="mt-12 sm:mt-16 text-center px-4">
 
-            <div className="text-6xl mb-4">
+            <div className="text-5xl sm:text-6xl mb-4">
               🔍
             </div>
 
-            <h2 className="text-2xl font-bold text-gray-700">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-700">
               No Properties Found
             </h2>
 
-            <p className="mt-2 text-gray-500">
+            <p className="mt-2 text-sm sm:text-base text-gray-500">
               Try changing your filters.
             </p>
 
           </div>
         ) : (
           <>
-            <p className="mt-6 text-gray-600 font-medium">
-              Showing {properties.length} of {totalProperties} Properties
-            </p>
+            {/* ================= RESULT COUNT ================= */}
+            <div className="mt-6 sm:mt-8">
+              <p className="text-sm sm:text-base text-gray-600 font-medium">
+                Showing {properties.length} of{" "}
+                {totalProperties} Properties
+              </p>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            {/* ================= PROPERTY GRID ================= */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 mt-5 sm:mt-6">
 
               {properties.map((property) => (
                 <PropertyCard
@@ -233,38 +262,56 @@ function PropertyListing({
 
             </div>
 
-            <div className="flex justify-center items-center gap-3 mt-10">
+            {/* ================= PAGINATION ================= */}
+            <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 mt-8 sm:mt-10">
 
               <button
                 disabled={page === 1}
                 onClick={() => {
-                  const params = new URLSearchParams(searchParams);
-                  params.set("page", page - 1);
+                  const params =
+                    new URLSearchParams(
+                      searchParams
+                    );
+
+                  params.set(
+                    "page",
+                    page - 1
+                  );
+
                   setSearchParams(params);
                 }}
-                className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 cursor-pointer"
+                className="px-3 sm:px-4 py-2 text-sm sm:text-base bg-gray-200 rounded-lg disabled:opacity-50 cursor-pointer hover:bg-gray-300 transition"
               >
                 Previous
               </button>
 
-              <span className="font-medium">
+              <span className="font-medium text-sm sm:text-base px-2">
                 Page {page} of {totalPages}
               </span>
 
               <button
-                disabled={page === totalPages}
+                disabled={
+                  page === totalPages
+                }
                 onClick={() => {
-                  const params = new URLSearchParams(searchParams);
-                  params.set("page", page + 1);
+                  const params =
+                    new URLSearchParams(
+                      searchParams
+                    );
+
+                  params.set(
+                    "page",
+                    page + 1
+                  );
+
                   setSearchParams(params);
                 }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
+                className="px-3 sm:px-4 py-2 text-sm sm:text-base bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer hover:bg-blue-700 transition"
               >
                 Next
               </button>
 
             </div>
-
           </>
         )}
 

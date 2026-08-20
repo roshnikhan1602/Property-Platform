@@ -23,68 +23,68 @@ function PlanCard({
   const isCurrentPlan =
     currentPlan?.plan === plan.name;
 
-    const planPrices = {
-  Free: 0,
-  Premium: 299,
-  Elite: 999,
-};
+  const planPrices = {
+    Free: 0,
+    Premium: 299,
+    Elite: 999,
+  };
 
-const isDowngrade =
-  currentPlan &&
-  planPrices[plan.name] <
-    planPrices[currentPlan.plan];
+  const isDowngrade =
+    currentPlan &&
+    planPrices[plan.name] <
+      planPrices[currentPlan.plan];
 
-    const isExpired =
-  currentPlan?.status === "Expired";
+  const isExpired =
+    currentPlan?.status === "Expired";
 
-const disableFreePlan =
-  currentPlan &&
-  currentPlan.plan !== "Free" &&
-  plan.name === "Free";
+  const disableFreePlan =
+    currentPlan &&
+    currentPlan.plan !== "Free" &&
+    plan.name === "Free";
 
-const disableExpiredFree =
-  isExpired &&
-  currentPlan?.plan === "Free" &&
-  plan.name === "Free";
+  const disableExpiredFree =
+    isExpired &&
+    currentPlan?.plan === "Free" &&
+    plan.name === "Free";
 
-const disableButton =
-  loading ||
-  (isCurrentPlan && !isExpired) ||
-  disableFreePlan ||
-  disableExpiredFree;
+  const disableButton =
+    loading ||
+    (isCurrentPlan && !isExpired) ||
+    disableFreePlan ||
+    disableExpiredFree;
 
-const handlePayment = async () => {
-  try {
-    setLoading(true);
+  const handlePayment = async () => {
+    try {
+      setLoading(true);
 
-    // Downgrade without payment
-if (isDowngrade) {
-      const response =
-        await downgradeSubscription(
-          plan.name
-        );
+      // Downgrade without payment
+      if (isDowngrade) {
+        const response =
+          await downgradeSubscription(
+            plan.name
+          );
 
-      if (response.success) {
-        setToast({
-          show: true,
-          message:
-            "Subscription updated successfully.",
-          type: "success",
-        });
+        if (response.success) {
+          setToast({
+            show: true,
+            message:
+              "Subscription updated successfully.",
+            type: "success",
+          });
 
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
-      } else {
-        setToast({
-          show: true,
-          message: response.message,
-          type: "error",
-        });
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        } else {
+          setToast({
+            show: true,
+            message: response.message,
+            type: "error",
+          });
+        }
+
+        return;
       }
-
-      return;
-    }  
 
       const orderResponse =
         await createOrder(
@@ -102,6 +102,7 @@ if (isDowngrade) {
 
         return;
       }
+
       const options = {
         key: import.meta.env
           .VITE_RAZORPAY_KEY_ID,
@@ -218,37 +219,37 @@ if (isDowngrade) {
       )}
 
       <div
-        className={`rounded-3xl shadow-lg border p-8 transition hover:shadow-2xl ${
+        className={`rounded-3xl shadow-lg border p-5 sm:p-6 md:p-8 transition hover:shadow-2xl ${
           plan.name === "Premium"
-            ? "border-blue-600 scale-105"
+            ? "border-blue-600 sm:scale-105"
             : "border-gray-200"
         }`}
       >
         {plan.name ===
           "Premium" && (
-          <div className="bg-blue-600 text-white text-center py-2 rounded-full mb-6 font-semibold">
+          <div className="bg-blue-600 text-white text-center py-2 px-3 rounded-full mb-5 sm:mb-6 font-semibold text-sm sm:text-base">
             Most Popular
           </div>
         )}
 
-        <h2 className="text-3xl font-bold text-center">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center">
           {plan.name}
         </h2>
 
-        <div className="text-center mt-6">
-          <span className="text-5xl font-bold text-blue-600">
+        <div className="text-center mt-5 sm:mt-6">
+          <span className="text-4xl sm:text-5xl font-bold text-blue-600">
             ₹{plan.price}
           </span>
 
           {plan.price > 0 && (
-            <span className="text-gray-500">
+            <span className="text-gray-500 text-sm sm:text-base">
               {" "}
               /month
             </span>
           )}
         </div>
 
-        <div className="mt-8 space-y-3">
+        <div className="mt-6 sm:mt-8 space-y-3">
           {plan.features.map(
             (
               feature,
@@ -256,13 +257,13 @@ if (isDowngrade) {
             ) => (
               <div
                 key={index}
-                className="flex items-center gap-3"
+                className="flex items-start gap-3"
               >
-                <span className="text-green-600">
+                <span className="text-green-600 flex-shrink-0">
                   ✓
                 </span>
 
-                <span>
+                <span className="text-sm sm:text-base break-words">
                   {feature}
                 </span>
               </div>
@@ -270,26 +271,26 @@ if (isDowngrade) {
           )}
         </div>
 
-      <button
-  disabled={disableButton}
-  onClick={handlePayment}
-  className={`w-full mt-10 py-3 rounded-xl font-semibold transition ${
-    disableButton
-      ? "bg-gray-300 cursor-not-allowed"
-      : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
-  }`}
->
-       {loading
-  ? "Processing..."
-  : disableExpiredFree
-  ? "Free Trial Ended"
-  : disableFreePlan
-  ? "Not Available"
-  : isCurrentPlan
-  ? isExpired
-    ? "Renew Plan"
-    : "Current Plan"
-  : "Buy Now"}
+        <button
+          disabled={disableButton}
+          onClick={handlePayment}
+          className={`w-full mt-8 sm:mt-10 py-3 rounded-xl font-semibold transition text-sm sm:text-base ${
+            disableButton
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+          }`}
+        >
+          {loading
+            ? "Processing..."
+            : disableExpiredFree
+            ? "Free Trial Ended"
+            : disableFreePlan
+            ? "Not Available"
+            : isCurrentPlan
+            ? isExpired
+              ? "Renew Plan"
+              : "Current Plan"
+            : "Buy Now"}
         </button>
       </div>
     </>

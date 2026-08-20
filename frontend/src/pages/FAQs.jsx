@@ -14,22 +14,29 @@ function FAQItem({ question, answer, isOpen, onClick }) {
         <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
             <button
                 onClick={onClick}
-                className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition"
+                className="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-gray-50 transition"
             >
-                <span className="font-semibold text-gray-800">{question}</span>
+                <span className="font-semibold text-gray-800 text-sm sm:text-base leading-6">
+                    {question}
+                </span>
 
                 {isOpen ? (
-                    <FaChevronUp className="text-[#8B5CF6]" />
+                    <FaChevronUp className="text-[#8B5CF6] flex-shrink-0" />
                 ) : (
-                    <FaChevronDown className="text-gray-500" />
+                    <FaChevronDown className="text-gray-500 flex-shrink-0" />
                 )}
             </button>
 
             <div
-                className={`transition-all duration-300 overflow-hidden ${isOpen ? "max-h-96 px-5 pb-5" : "max-h-0"
-                    }`}
+                className={`transition-all duration-300 overflow-hidden ${
+                    isOpen
+                        ? "max-h-96 px-4 sm:px-5 pb-5"
+                        : "max-h-0"
+                }`}
             >
-                <p className="text-gray-600 leading-7">{answer}</p>
+                <p className="text-gray-600 leading-7 text-sm sm:text-base">
+                    {answer}
+                </p>
             </div>
         </div>
     );
@@ -37,10 +44,12 @@ function FAQItem({ question, answer, isOpen, onClick }) {
 
 function FAQSection({ title, items, openItem, setOpenItem }) {
     return (
-        <section className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">{title}</h2>
+        <section className="mb-10 sm:mb-12">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-5 sm:mb-6">
+                {title}
+            </h2>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
                 {items.map((faq, index) => {
                     const key = `${title}-${index}`;
 
@@ -51,7 +60,9 @@ function FAQSection({ title, items, openItem, setOpenItem }) {
                             answer={faq.answer}
                             isOpen={openItem === key}
                             onClick={() =>
-                                setOpenItem(openItem === key ? null : key)
+                                setOpenItem(
+                                    openItem === key ? null : key
+                                )
                             }
                         />
                     );
@@ -132,6 +143,7 @@ function FAQs() {
                 "Yes. Multiple high-quality images can be uploaded to provide better visibility for your listing.",
         },
     ];
+
     const subscriptionFaqs = [
         {
             question: "What subscription plans are available?",
@@ -221,24 +233,29 @@ function FAQs() {
             <Navbar />
 
             <div className="min-h-screen bg-gray-50">
-                {/* Hero Section */}
-                <section className="bg-gradient-to-r from-[#7C3AED] to-[#8B5CF6] text-white py-16">
-                    <div className="max-w-6xl mx-auto px-6 text-center">
-                        <FaQuestionCircle className="mx-auto text-5xl mb-5" />
 
-                        <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                {/* Hero Section */}
+                <section className="bg-gradient-to-r from-[#7C3AED] to-[#8B5CF6] text-white py-12 sm:py-16">
+                    <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+
+                        <FaQuestionCircle className="mx-auto text-4xl sm:text-5xl mb-4 sm:mb-5" />
+
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">
                             Help Center
                         </h1>
 
-                        <p className="max-w-3xl mx-auto text-lg text-purple-100">
+                        <p className="max-w-3xl mx-auto text-sm sm:text-base md:text-lg text-purple-100 leading-6 sm:leading-7">
                             Find answers to the most commonly asked questions about
                             accounts, properties, PG listings, subscriptions,
                             payments, reviews, and more.
                         </p>
+
                     </div>
                 </section>
 
-                <div className="max-w-6xl mx-auto px-6 py-14">
+                {/* FAQ Content */}
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+
                     <FAQSection
                         title="Account & Login"
                         items={accountFaqs}
@@ -280,54 +297,72 @@ function FAQs() {
                         openItem={openItem}
                         setOpenItem={setOpenItem}
                     />
+
                     {/* Still Need Help */}
-                    <section className="mt-16">
-                        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 md:p-10 text-center">
-                            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                    <section className="mt-12 sm:mt-16">
+
+                        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-5 sm:p-8 md:p-10 text-center">
+
+                            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">
                                 Still Need Help?
                             </h2>
 
-                            <p className="text-gray-600 max-w-2xl mx-auto leading-7">
-                                Couldn't find the answer you were looking for? Our support team
-                                is always happy to assist you. Feel free to reach out through
-                                email or phone, and we'll get back to you as soon as possible.
+                            <p className="text-gray-600 max-w-2xl mx-auto leading-6 sm:leading-7 text-sm sm:text-base">
+                                Couldn't find the answer you were looking for?
+                                Our support team is always happy to assist you.
+                                Feel free to reach out through email or phone,
+                                and we'll get back to you as soon as possible.
                             </p>
 
-                            <div className="grid md:grid-cols-2 gap-6 mt-10">
+                            {/* Contact Cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-8 sm:mt-10">
+
+                                {/* Email */}
                                 <a
                                     href="mailto:support@propertyplatform.com"
-                                    className="flex items-center justify-center gap-4 bg-purple-50 border border-purple-200 rounded-xl p-5 hover:bg-purple-100 transition"
+                                    className="flex items-center justify-center gap-3 sm:gap-4 bg-purple-50 border border-purple-200 rounded-xl p-4 sm:p-5 hover:bg-purple-100 transition"
                                 >
-                                    <div className="w-12 h-12 rounded-full bg-[#8B5CF6] text-white flex items-center justify-center">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#8B5CF6] text-white flex items-center justify-center flex-shrink-0">
                                         <FaEnvelope />
                                     </div>
 
-                                    <div className="text-left">
-                                        <p className="text-sm text-gray-500">Email Support</p>
-                                        <p className="font-semibold text-gray-800">
+                                    <div className="text-left min-w-0">
+                                        <p className="text-xs sm:text-sm text-gray-500">
+                                            Email Support
+                                        </p>
+
+                                        <p className="font-semibold text-gray-800 text-sm sm:text-base break-all">
                                             support@propertyplatform.com
                                         </p>
                                     </div>
                                 </a>
 
+                                {/* Phone */}
                                 <a
                                     href="tel:+919876543210"
-                                    className="flex items-center justify-center gap-4 bg-purple-50 border border-purple-200 rounded-xl p-5 hover:bg-purple-100 transition"
+                                    className="flex items-center justify-center gap-3 sm:gap-4 bg-purple-50 border border-purple-200 rounded-xl p-4 sm:p-5 hover:bg-purple-100 transition"
                                 >
-                                    <div className="w-12 h-12 rounded-full bg-[#8B5CF6] text-white flex items-center justify-center">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#8B5CF6] text-white flex items-center justify-center flex-shrink-0">
                                         <FaPhoneAlt />
                                     </div>
 
                                     <div className="text-left">
-                                        <p className="text-sm text-gray-500">Call Us</p>
-                                        <p className="font-semibold text-gray-800">
+                                        <p className="text-xs sm:text-sm text-gray-500">
+                                            Call Us
+                                        </p>
+
+                                        <p className="font-semibold text-gray-800 text-sm sm:text-base">
                                             +91 98765 43210
                                         </p>
                                     </div>
                                 </a>
+
                             </div>
+
                         </div>
+
                     </section>
+
                 </div>
             </div>
 

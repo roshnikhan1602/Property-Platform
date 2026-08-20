@@ -37,8 +37,10 @@ function AddProperty() {
     ageOfProperty: "",
     amenities: "",
   });
+
   const [images, setImages] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -58,6 +60,7 @@ function AddProperty() {
     if (submitting) return;
 
     setSubmitting(true);
+
     if (
       !formData.title ||
       !formData.price ||
@@ -75,6 +78,7 @@ function AddProperty() {
       images.length === 0
     ) {
       setSubmitting(false);
+
       setToast({
         show: true,
         message:
@@ -100,10 +104,10 @@ function AddProperty() {
       }
     });
 
-
     images.forEach((image) => {
       form.append("images", image);
     });
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/properties`,
@@ -117,7 +121,6 @@ function AddProperty() {
       const data = await response.json();
 
       if (data.success) {
-
         setFormData({
           title: "",
           description: "",
@@ -146,6 +149,8 @@ function AddProperty() {
           amenities: "",
         });
 
+        setImages([]);
+
         setToast({
           show: true,
           message: "Property added successfully",
@@ -157,16 +162,18 @@ function AddProperty() {
         }, 1200);
       } else {
         setSubmitting(false);
+
         setToast({
           show: true,
-          message: data.message ||
-            "Failed to add Property",
+          message: data.message || "Failed to add Property",
           type: "error",
         });
       }
     } catch (error) {
       setSubmitting(false);
+
       console.error(error);
+
       setToast({
         show: true,
         message: "Something went wrong",
@@ -178,6 +185,7 @@ function AddProperty() {
   return (
     <>
       <Navbar />
+
       {toast.show && (
         <Toast
           message={toast.message}
@@ -191,30 +199,30 @@ function AddProperty() {
           }
         />
       )}
-      <section className="max-w-5xl mx-auto px-6 pt-28 pb-10">
-        <div className="bg-white shadow-lg rounded-2xl p-8">
 
-          <h1 className="text-4xl font-bold flex items-center gap-3">
-            <FaHome className="text-blue-600" />
-            Add Property
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-8 sm:pb-10">
+        <div className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 md:p-8">
+
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold flex items-center gap-2 sm:gap-3">
+            <FaHome className="text-blue-600 shrink-0" />
+            <span>Add Property</span>
           </h1>
 
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-sm sm:text-base text-gray-600">
             List your property on PropertyHub.
           </p>
 
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-xs sm:text-sm text-gray-500">
             <span className="text-red-500">*</span> indicates required fields
           </p>
 
-          <form
-            onSubmit={handleSubmit}
-            className="mt-8"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form onSubmit={handleSubmit} className="mt-6 sm:mt-8">
+
+            {/* Basic Information */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Property Title <span className="text-red-500">*</span>
                 </label>
 
@@ -224,12 +232,12 @@ function AddProperty() {
                   value={formData.title}
                   onChange={handleChange}
                   placeholder="Enter property title"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Price <span className="text-red-500">*</span>
                 </label>
 
@@ -239,12 +247,12 @@ function AddProperty() {
                   value={formData.price}
                   onChange={handleChange}
                   placeholder="Enter price"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Listing Type <span className="text-red-500">*</span>
                 </label>
 
@@ -252,18 +260,17 @@ function AddProperty() {
                   name="listingType"
                   value={formData.listingType}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 >
                   <option value="">Select Listing Type</option>
                   <option value="Rent">Rent</option>
                   <option value="Sale">Sale</option>
                   <option value="Lease">Lease</option>
-
                 </select>
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Property Type <span className="text-red-500">*</span>
                 </label>
 
@@ -271,7 +278,7 @@ function AddProperty() {
                   name="propertyType"
                   value={formData.propertyType}
                   onChange={handleChange}
-                 className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 bg-white outline-none focus:border-gray-300 focus:ring-0"
                 >
                   <option value="">Select Property Type</option>
                   <option value="Apartment">Apartment</option>
@@ -282,7 +289,7 @@ function AddProperty() {
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Bedrooms
                 </label>
 
@@ -292,12 +299,12 @@ function AddProperty() {
                   value={formData.bedrooms}
                   onChange={handleChange}
                   placeholder="Enter bedrooms"
-                 className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Bathrooms
                 </label>
 
@@ -307,12 +314,12 @@ function AddProperty() {
                   value={formData.bathrooms}
                   onChange={handleChange}
                   placeholder="Enter bathrooms"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Area (sq.ft) <span className="text-red-500">*</span>
                 </label>
 
@@ -322,12 +329,12 @@ function AddProperty() {
                   value={formData.area}
                   onChange={handleChange}
                   placeholder="Enter area"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Furnishing
                 </label>
 
@@ -335,34 +342,36 @@ function AddProperty() {
                   name="furnishing"
                   value={formData.furnishing}
                   onChange={handleChange}
-className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 bg-white outline-none focus:border-gray-300 focus:ring-0"
                 >
                   <option value="Furnished">Furnished</option>
                   <option value="Semi-Furnished">Semi-Furnished</option>
                   <option value="Unfurnished">Unfurnished</option>
                 </select>
               </div>
-
             </div>
 
-            <div className="mt-6">
-              <label className="block mb-2 font-medium">
+            {/* Description */}
+            <div className="mt-5 sm:mt-6">
+              <label className="block mb-2 font-medium text-sm sm:text-base">
                 Description
               </label>
+
               <textarea
                 rows="4"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Enter property description"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0 resize-none"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Property Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 mt-5 sm:mt-6">
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Facing
                 </label>
 
@@ -370,7 +379,7 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                   name="facing"
                   value={formData.facing}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 bg-white outline-none focus:border-gray-300 focus:ring-0"
                 >
                   <option value="">Select Facing</option>
                   <option value="East">East</option>
@@ -385,7 +394,7 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Parking
                 </label>
 
@@ -393,7 +402,7 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                   name="parking"
                   value={formData.parking}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 bg-white outline-none focus:border-gray-300 focus:ring-0"
                 >
                   <option value="">Select Parking</option>
                   <option value="Car">Car</option>
@@ -404,7 +413,7 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Floor
                 </label>
 
@@ -414,12 +423,12 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                   value={formData.floor}
                   onChange={handleChange}
                   placeholder="Current Floor"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Total Floors
                 </label>
 
@@ -429,12 +438,12 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                   value={formData.totalFloors}
                   onChange={handleChange}
                   placeholder="Total Floors"
-                 className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Property Age
                 </label>
 
@@ -444,12 +453,12 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                   value={formData.ageOfProperty}
                   onChange={handleChange}
                   placeholder="Example: 5 Years"
-                 className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Available From
                 </label>
 
@@ -458,14 +467,14 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                   name="availableFrom"
                   value={formData.availableFrom}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
-
             </div>
 
-            <div className="mt-6">
-              <label className="block mb-2 font-medium">
+            {/* Highlights */}
+            <div className="mt-5 sm:mt-6">
+              <label className="block mb-2 font-medium text-sm sm:text-base">
                 Highlights
               </label>
 
@@ -475,16 +484,17 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                 value={formData.highlights}
                 onChange={handleChange}
                 placeholder="Corner Plot, Near Metro, Garden View"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
               />
 
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">
                 Separate multiple highlights using commas.
               </p>
             </div>
 
-            <div className="mt-6">
-              <label className="block mb-2 font-medium">
+            {/* Amenities */}
+            <div className="mt-5 sm:mt-6">
+              <label className="block mb-2 font-medium text-sm sm:text-base">
                 Amenities
               </label>
 
@@ -494,16 +504,17 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                 value={formData.amenities}
                 onChange={handleChange}
                 placeholder="Lift, Gym, CCTV, Club House"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
               />
 
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">
                 Separate amenities using commas.
               </p>
             </div>
 
-            <div className="mt-6">
-              <label className="block mb-2 font-medium">
+            {/* Address */}
+            <div className="mt-5 sm:mt-6">
+              <label className="block mb-2 font-medium text-sm sm:text-base">
                 Address <span className="text-red-500">*</span>
               </label>
 
@@ -513,14 +524,15 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                 value={formData.address}
                 onChange={handleChange}
                 placeholder="Enter address"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
+            {/* Location + Images */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 mt-5 sm:mt-6">
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   City <span className="text-red-500">*</span>
                 </label>
 
@@ -530,11 +542,12 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                   value={formData.city}
                   onChange={handleChange}
                   placeholder="Enter city"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
+
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Locality <span className="text-red-500">*</span>
                 </label>
 
@@ -544,12 +557,12 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                   value={formData.locality}
                   onChange={handleChange}
                   placeholder="Ex: Whitefield, BTM, HSR"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   State <span className="text-red-500">*</span>
                 </label>
 
@@ -559,12 +572,12 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                   value={formData.state}
                   onChange={handleChange}
                   placeholder="Enter state"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium text-sm sm:text-base">
                   Pincode <span className="text-red-500">*</span>
                 </label>
 
@@ -574,49 +587,55 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                   value={formData.pincode}
                   onChange={handleChange}
                   placeholder="Enter pincode"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                 />
-              </div>
-              <div className="mt-8">
-                <label className="block mb-2 font-medium">
-                  Property Images <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={(e) =>
-                    setImages([...e.target.files])
-                  }
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0 "
-                />
-
-                <p className="text-sm text-gray-500 mt-2">
-                  You can select multiple images.
-                </p>
-                {images.length > 0 && (
-                  <div className="mt-3 space-y-1">
-                    {images.map((image, index) => (
-                      <p
-                        key={index}
-                        className="text-sm text-gray-600"
-                      >
-                        {image.name}
-                      </p>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
-            <div className="mt-8">
-              <h2 className="text-2xl font-semibold mb-4">
+
+            {/* Images */}
+            <div className="mt-5 sm:mt-6">
+              <label className="block mb-2 font-medium text-sm sm:text-base">
+                Property Images <span className="text-red-500">*</span>
+              </label>
+
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) =>
+                  setImages([...e.target.files])
+                }
+                className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0 text-sm"
+              />
+
+              <p className="text-xs sm:text-sm text-gray-500 mt-2">
+                You can select multiple images.
+              </p>
+
+              {images.length > 0 && (
+                <div className="mt-3 space-y-1">
+                  {images.map((image, index) => (
+                    <p
+                      key={index}
+                      className="text-xs sm:text-sm text-gray-600 break-all"
+                    >
+                      {image.name}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Owner Information */}
+            <div className="mt-7 sm:mt-8">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-4">
                 Owner Information
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
 
                 <div>
-                  <label className="block mb-2 font-medium">
+                  <label className="block mb-2 font-medium text-sm sm:text-base">
                     Owner Name <span className="text-red-500">*</span>
                   </label>
 
@@ -626,12 +645,12 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                     value={formData.ownerName}
                     onChange={handleChange}
                     placeholder="Enter owner name"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                    className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-2 font-medium">
+                  <label className="block mb-2 font-medium text-sm sm:text-base">
                     Phone Number <span className="text-red-500">*</span>
                   </label>
 
@@ -641,12 +660,12 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                     value={formData.ownerPhone}
                     onChange={handleChange}
                     placeholder="Enter phone number"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                    className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-2 font-medium">
+                  <label className="block mb-2 font-medium text-sm sm:text-base">
                     Email <span className="text-red-500">*</span>
                   </label>
 
@@ -656,25 +675,26 @@ className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white outline-n
                     value={formData.ownerEmail}
                     onChange={handleChange}
                     placeholder="Enter email address"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
+                    className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:border-gray-300 focus:ring-0"
                   />
                 </div>
 
               </div>
             </div>
+
             <button
               type="submit"
               disabled={submitting}
-              className={`w-full mt-8 py-4 rounded-xl font-medium transition ${submitting
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                } text-white`}
+              className={`w-full mt-7 sm:mt-8 py-3.5 sm:py-4 rounded-xl font-medium transition ${
+                submitting
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+              } text-white`}
             >
               {submitting ? "Submitting..." : "Submit Property"}
             </button>
 
           </form>
-
         </div>
       </section>
 

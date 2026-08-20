@@ -30,9 +30,9 @@ function PropertyFilterBar() {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-2xl p-6 mt-8">
+    <div className="bg-white shadow-md rounded-2xl p-4 sm:p-6 mt-8">
 
-      <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4">
 
         <input
           type="text"
@@ -41,7 +41,7 @@ function PropertyFilterBar() {
           onChange={(e) =>
             setCity(e.target.value)
           }
-          className="border border-gray-300 rounded-lg px-4 py-3"
+          className="border border-gray-300 rounded-lg px-4 py-3 w-full"
         />
 
         <input
@@ -51,7 +51,7 @@ function PropertyFilterBar() {
           onChange={(e) =>
             setLocality(e.target.value)
           }
-          className="border border-gray-300 rounded-lg px-4 py-3"
+          className="border border-gray-300 rounded-lg px-4 py-3 w-full"
         />
 
         <select
@@ -59,7 +59,7 @@ function PropertyFilterBar() {
           onChange={(e) =>
             setPropertyType(e.target.value)
           }
-          className="border border-gray-300 rounded-lg px-4 py-3"
+          className="border border-gray-300 rounded-lg px-4 py-3 w-full"
         >
           <option value="">
             Property Type
@@ -83,7 +83,7 @@ function PropertyFilterBar() {
           onChange={(e) =>
             setListingType(e.target.value)
           }
-          className="border border-gray-300 rounded-lg px-4 py-3"
+          className="border border-gray-300 rounded-lg px-4 py-3 w-full"
         >
           <option value="">
             Listing Type
@@ -103,7 +103,7 @@ function PropertyFilterBar() {
           onChange={(e) =>
             setMinPrice(e.target.value)
           }
-          className="border border-gray-300 rounded-lg px-4 py-3"
+          className="border border-gray-300 rounded-lg px-4 py-3 w-full"
         />
 
         <input
@@ -113,12 +113,12 @@ function PropertyFilterBar() {
           onChange={(e) =>
             setMaxPrice(e.target.value)
           }
-          className="border border-gray-300 rounded-lg px-4 py-3"
+          className="border border-gray-300 rounded-lg px-4 py-3 w-full"
         />
 
         <button
           onClick={handleSearch}
-          className="bg-blue-600 text-white rounded-lg px-6 py-3 font-medium hover:bg-blue-700 transition"
+          className="bg-blue-600 text-white rounded-lg px-6 py-3 font-medium hover:bg-blue-700 transition w-full"
         >
           Search
         </button>

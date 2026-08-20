@@ -288,9 +288,9 @@ function EditPG() {
         />
       )}
 
-      <section className="max-w-5xl mx-auto px-6 pt-28 pb-10">
-        <div className="bg-white shadow-lg rounded-2xl p-8">
-          <h1 className="text-4xl font-bold">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-8 sm:pb-10">
+        <div className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 md:p-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
             Edit PG
           </h1>
 
@@ -301,10 +301,10 @@ function EditPG() {
 
           <form
             onSubmit={handleSubmit}
-            className="mt-8"
+            className="mt-6 sm:mt-8"
           >
             {/* BASIC DETAILS */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
               <div>
                 <label className="block mb-2 font-medium">
                   PG Title{" "}
@@ -357,9 +357,7 @@ function EditPG() {
                 <input
                   type="number"
                   name="maintenanceCharges"
-                  value={
-                    formData.maintenanceCharges
-                  }
+                  value={formData.maintenanceCharges}
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 />
@@ -380,15 +378,9 @@ function EditPG() {
                   <option value="">
                     Select Sharing Type
                   </option>
-                  <option value="Single">
-                    Single
-                  </option>
-                  <option value="Double">
-                    Double
-                  </option>
-                  <option value="Triple">
-                    Triple
-                  </option>
+                  <option value="Single">Single</option>
+                  <option value="Double">Double</option>
+                  <option value="Triple">Triple</option>
                 </select>
               </div>
 
@@ -400,24 +392,16 @@ function EditPG() {
 
                 <select
                   name="genderPreference"
-                  value={
-                    formData.genderPreference
-                  }
+                  value={formData.genderPreference}
                   onChange={handleChange}
                   className="w-full border border-gray-300 bg-white outline-none focus:border-gray-300 focus:ring-0 rounded-lg px-4 py-3"
                 >
                   <option value="">
                     Select Gender
                   </option>
-                  <option value="Boys">
-                    Boys
-                  </option>
-                  <option value="Girls">
-                    Girls
-                  </option>
-                  <option value="Co-live">
-                    Co-live
-                  </option>
+                  <option value="Boys">Boys</option>
+                  <option value="Girls">Girls</option>
+                  <option value="Co-live">Co-live</option>
                 </select>
               </div>
 
@@ -443,9 +427,7 @@ function EditPG() {
                 <input
                   type="number"
                   name="availableBeds"
-                  value={
-                    formData.availableBeds
-                  }
+                  value={formData.availableBeds}
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 />
@@ -469,11 +451,11 @@ function EditPG() {
 
             {/* AMENITIES */}
             <div className="mt-8">
-              <h2 className="text-2xl font-semibold mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-4">
                 Amenities
               </h2>
 
-              <div className="flex flex-wrap gap-6">
+              <div className="flex flex-wrap gap-x-5 sm:gap-x-6 gap-y-4">
                 {[
                   ["foodAvailable", "Food"],
                   ["wifiAvailable", "WiFi"],
@@ -518,7 +500,7 @@ function EditPG() {
                 ].map(([name, label]) => (
                   <label
                     key={name}
-                    className="flex items-center gap-2 cursor-pointer"
+                    className="flex items-center gap-2 cursor-pointer text-sm sm:text-base"
                   >
                     <input
                       type="checkbox"
@@ -550,14 +532,14 @@ function EditPG() {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 sm:gap-6 mt-6">
               <input
                 type="text"
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
                 placeholder="City"
-                className="border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
 
               <input
@@ -566,7 +548,7 @@ function EditPG() {
                 value={formData.locality}
                 onChange={handleChange}
                 placeholder="Locality"
-                className="border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
 
               <input
@@ -575,7 +557,7 @@ function EditPG() {
                 value={formData.state}
                 onChange={handleChange}
                 placeholder="State"
-                className="border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
 
               <input
@@ -584,60 +566,52 @@ function EditPG() {
                 value={formData.pincode}
                 onChange={handleChange}
                 placeholder="Pincode"
-                className="border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
             </div>
 
             {/* PG RULES */}
             <div className="mt-8">
-              <h2 className="text-2xl font-semibold mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-4">
                 PG Rules
               </h2>
 
-              <div className="flex flex-wrap gap-6">
-                <label className="flex items-center gap-2">
+              <div className="flex flex-wrap gap-x-5 sm:gap-x-6 gap-y-4">
+                <label className="flex items-center gap-2 text-sm sm:text-base">
                   <input
                     type="checkbox"
                     name="availableNow"
-                    checked={
-                      formData.availableNow
-                    }
+                    checked={formData.availableNow}
                     onChange={handleChange}
                   />
                   Available Now
                 </label>
 
-                <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2 text-sm sm:text-base">
                   <input
                     type="checkbox"
                     name="smokingAllowed"
-                    checked={
-                      formData.smokingAllowed
-                    }
+                    checked={formData.smokingAllowed}
                     onChange={handleChange}
                   />
                   Smoking Allowed
                 </label>
 
-                <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2 text-sm sm:text-base">
                   <input
                     type="checkbox"
                     name="petsAllowed"
-                    checked={
-                      formData.petsAllowed
-                    }
+                    checked={formData.petsAllowed}
                     onChange={handleChange}
                   />
                   Pets Allowed
                 </label>
 
-                <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2 text-sm sm:text-base">
                   <input
                     type="checkbox"
                     name="visitorsAllowed"
-                    checked={
-                      formData.visitorsAllowed
-                    }
+                    checked={formData.visitorsAllowed}
                     onChange={handleChange}
                   />
                   Visitors Allowed
@@ -647,18 +621,18 @@ function EditPG() {
 
             {/* OWNER INFORMATION */}
             <div className="mt-8">
-              <h2 className="text-2xl font-semibold mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-4">
                 Owner Information
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
                 <input
                   type="text"
                   name="ownerName"
                   value={formData.ownerName}
                   onChange={handleChange}
                   placeholder="Owner Name"
-                  className="border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 />
 
                 <input
@@ -667,7 +641,7 @@ function EditPG() {
                   value={formData.ownerPhone}
                   onChange={handleChange}
                   placeholder="Phone Number"
-                  className="border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 />
 
                 <input
@@ -676,7 +650,7 @@ function EditPG() {
                   value={formData.ownerEmail}
                   onChange={handleChange}
                   placeholder="Email"
-                  className="border border-gray-300 rounded-lg px-4 py-3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3"
                 />
               </div>
             </div>
@@ -695,17 +669,14 @@ function EditPG() {
                 onChange={(e) =>
                   setImages((prevImages) => [
                     ...prevImages,
-                    ...Array.from(
-                      e.target.files
-                    ),
+                    ...Array.from(e.target.files),
                   ])
                 }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3"
+                className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 text-sm sm:text-base"
               />
 
               <p className="text-sm text-gray-500 mt-2">
-                Upload new images or remove
-                existing ones before updating.
+                Upload new images or remove existing ones before updating.
               </p>
 
               {images.length > 0 && (
@@ -719,26 +690,22 @@ function EditPG() {
                         src={
                           typeof image === "string"
                             ? image
-                            : URL.createObjectURL(
-                                image
-                              )
+                            : URL.createObjectURL(image)
                         }
                         alt={`PG ${index + 1}`}
-                        className="w-28 h-20 rounded-lg object-cover border"
+                        className="w-24 h-20 sm:w-28 sm:h-20 rounded-lg object-cover border"
                       />
 
                       <button
                         type="button"
                         onClick={() =>
-                          setImages(
-                            (prevImages) =>
-                              prevImages.filter(
-                                (_, i) =>
-                                  i !== index
-                              )
+                          setImages((prevImages) =>
+                            prevImages.filter(
+                              (_, i) => i !== index
+                            )
                           )
                         }
-                        className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-red-600 text-white flex items-center justify-center transition-all duration-200"
+                        className="absolute top-1 right-1 sm:top-2 sm:right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-red-600 text-white flex items-center justify-center transition-all duration-200"
                       >
                         <FaTimes size={12} />
                       </button>
@@ -751,7 +718,7 @@ function EditPG() {
             <button
               type="submit"
               disabled={submitting}
-              className={`w-full mt-8 py-4 rounded-xl font-medium transition ${
+              className={`w-full mt-8 py-3.5 sm:py-4 rounded-xl font-medium transition ${
                 submitting
                   ? "bg-blue-400 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700 cursor-pointer"

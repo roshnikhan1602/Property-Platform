@@ -54,6 +54,7 @@ function MyVisits() {
     useEffect(() => {
         fetchMyVisits();
     }, []);
+
     const cancelVisit = async (visitId) => {
         try {
             const response = await fetch(
@@ -103,7 +104,7 @@ function MyVisits() {
             <>
                 <Navbar />
 
-                <div className="max-w-7xl mx-auto py-20 text-center">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-20 text-center">
                     <h2 className="text-2xl font-semibold">
                         Loading your visits...
                     </h2>
@@ -113,48 +114,49 @@ function MyVisits() {
             </>
         );
     }
+
     return (
         <>
             <Navbar />
 
-            <div className="max-w-7xl mx-auto px-6 py-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
 
-                <h1 className="text-4xl font-bold mb-8">
+                <h1 className="text-3xl sm:text-4xl font-bold mb-6 sm:mb-8">
                     My Visits
                 </h1>
 
                 {visits.length === 0 ? (
-                    <div className="bg-white rounded-2xl shadow p-10 text-center">
+                    <div className="bg-white rounded-2xl shadow p-6 sm:p-10 text-center">
 
-                        <div className="text-6xl mb-4">
+                        <div className="text-5xl sm:text-6xl mb-4">
                             📅
                         </div>
 
-                        <h2 className="text-2xl font-semibold">
+                        <h2 className="text-xl sm:text-2xl font-semibold">
                             No Visits Found
                         </h2>
 
-                        <p className="text-gray-500 mt-3">
+                        <p className="text-gray-500 mt-3 text-sm sm:text-base">
                             Book a property or PG visit to see it here.
                         </p>
 
                     </div>
                 ) : (
 
-                    <div className="grid gap-6">
+                    <div className="grid gap-5 sm:gap-6">
 
                         {visits.map((visit) => (
 
                             <div
                                 key={visit._id}
-                                className="bg-white rounded-2xl shadow-md p-6"
+                                className="bg-white rounded-2xl shadow-md p-4 sm:p-6"
                             >
 
                                 <div className="flex flex-col lg:flex-row justify-between gap-6">
 
                                     {/* Left */}
 
-                                    <div className="flex gap-5">
+                                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0">
 
                                         <img
                                             src={
@@ -163,21 +165,21 @@ function MyVisits() {
                                                 visit.propertyImage
                                             }
                                             alt={visit.propertyTitle}
-                                            className="w-32 h-32 rounded-xl object-cover"
+                                            className="w-full sm:w-32 h-48 sm:h-32 rounded-xl object-cover flex-shrink-0"
                                         />
 
-                                        <div>
+                                        <div className="min-w-0">
 
-                                            <h2 className="text-2xl font-bold">
+                                            <h2 className="text-xl sm:text-2xl font-bold break-words">
                                                 {visit.propertyTitle}
                                             </h2>
 
-                                            <p className="text-gray-600 mt-1">
+                                            <p className="text-gray-600 mt-1 break-words text-sm sm:text-base">
                                                 📍 {visit.propertyAddress},{" "}
                                                 {visit.propertyCity}
                                             </p>
 
-                                            <div className="mt-4 space-y-1">
+                                            <div className="mt-4 space-y-1 text-sm sm:text-base">
 
                                                 <p>
                                                     <strong>Date:</strong>{" "}
@@ -197,7 +199,7 @@ function MyVisits() {
 
                                                 <div className="mt-4 bg-gray-100 rounded-lg p-3">
 
-                                                    <p className="text-sm text-gray-700">
+                                                    <p className="text-sm text-gray-700 break-words">
                                                         <strong>Message:</strong>{" "}
                                                         {visit.message}
                                                     </p>
@@ -212,10 +214,10 @@ function MyVisits() {
 
                                     {/* Right */}
 
-                                    <div className="flex flex-col justify-between items-end">
+                                    <div className="flex flex-col lg:items-end w-full lg:w-auto">
 
                                         <span
-                                            className={`px-4 py-2 rounded-full font-semibold
+                                            className={`self-start lg:self-end px-4 py-2 rounded-full font-semibold text-sm sm:text-base text-center
                     ${visit.status === "Pending"
                                                     ? "bg-yellow-100 text-yellow-700"
                                                     : visit.status === "Approved"
@@ -238,19 +240,21 @@ function MyVisits() {
                                             }
 
                                         </span>
-                                       {visit.cancelledAt && (
-<p className="text-sm mt-2 text-red-500 font-medium">
-        You cancelled this visit on{" "}
-        {new Date(visit.cancelledAt).toLocaleString("en-IN", {
-  day: "2-digit",
-  month: "short",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-})}
-    </p>
-)}
-                                        <div className="mt-5 flex flex-col gap-3 w-44">
+
+                                        {visit.cancelledAt && (
+                                            <p className="text-sm mt-2 text-red-500 font-medium lg:text-right">
+                                                You cancelled this visit on{" "}
+                                                {new Date(visit.cancelledAt).toLocaleString("en-IN", {
+                                                    day: "2-digit",
+                                                    month: "short",
+                                                    year: "numeric",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                })}
+                                            </p>
+                                        )}
+
+                                        <div className="mt-5 flex flex-col gap-3 w-full lg:w-44">
 
                                             {(visit.status === "Pending" ||
                                                 visit.status === "Approved") && (
@@ -258,7 +262,7 @@ function MyVisits() {
                                                         onClick={() =>
                                                             cancelVisit(visit._id)
                                                         }
-                                                        className="bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition"
+                                                        className="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg font-medium transition"
                                                     >
                                                         ❌ Cancel Visit
                                                     </button>
@@ -266,24 +270,24 @@ function MyVisits() {
 
                                             {visit.status !== "Cancelled" && (
                                                 <button
-                                        onClick={() => {
-    if (visit.visitType === "Property") {
-        const propertyId =
-            typeof visit.property === "object"
-                ? visit.property?._id
-                : visit.property;
+                                                    onClick={() => {
+                                                        if (visit.visitType === "Property") {
+                                                            const propertyId =
+                                                                typeof visit.property === "object"
+                                                                    ? visit.property?._id
+                                                                    : visit.property;
 
-        window.location.href = `/properties/${propertyId}`;
-    } else {
-        const pgId =
-            typeof visit.pg === "object"
-                ? visit.pg?._id
-                : visit.pg;
+                                                            window.location.href = `/properties/${propertyId}`;
+                                                        } else {
+                                                            const pgId =
+                                                                typeof visit.pg === "object"
+                                                                    ? visit.pg?._id
+                                                                    : visit.pg;
 
-        window.location.href = `/pgs/${pgId}`;
-    }
-}}
-                                                    className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition"
+                                                            window.location.href = `/pgs/${pgId}`;
+                                                        }
+                                                    }}
+                                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg font-medium transition"
                                                 >
                                                     View Listing
                                                 </button>
@@ -304,6 +308,7 @@ function MyVisits() {
                 )}
 
             </div>
+
             {toast.show && (
                 <Toast
                     message={toast.message}

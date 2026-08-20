@@ -124,22 +124,22 @@ function AdminDashboard() {
   const [showReplyModal, setShowReplyModal] =
     useState(false);
 
-    const [visits, setVisits] = useState([]);
+  const [visits, setVisits] = useState([]);
 
-const [visitStats, setVisitStats] = useState({
-  totalVisits: 0,
-  pendingVisits: 0,
-  approvedVisits: 0,
-  completedVisits: 0,
-  rejectedVisits: 0,
-  cancelledVisits: 0,
-});
+  const [visitStats, setVisitStats] = useState({
+    totalVisits: 0,
+    pendingVisits: 0,
+    approvedVisits: 0,
+    completedVisits: 0,
+    rejectedVisits: 0,
+    cancelledVisits: 0,
+  });
 
-const [visitSearch, setVisitSearch] = useState("");
-const [visitStatus, setVisitStatus] = useState("All");
-const [visitSort, setVisitSort] = useState("Newest");
+  const [visitSearch, setVisitSearch] = useState("");
+  const [visitStatus, setVisitStatus] = useState("All");
+  const [visitSort, setVisitSort] = useState("Newest");
 
-const [visitPage, setVisitPage] = useState(1);
+  const [visitPage, setVisitPage] = useState(1);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -196,25 +196,25 @@ const [visitPage, setVisitPage] = useState(1);
         }
       });
 
-fetch(`${import.meta.env.VITE_API_URL}/api/visits/admin/all`, {
-  credentials: "include",
-})
-  .then((res) => res.json())
-  .then((data) => {
-    if (data.success) {
-      setVisits(data.visits);
-    }
-  });
+    fetch(`${import.meta.env.VITE_API_URL}/api/visits/admin/all`, {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setVisits(data.visits);
+        }
+      });
 
-fetch(`${import.meta.env.VITE_API_URL}/api/visits/admin/stats`, {
-  credentials: "include",
-})
-  .then((res) => res.json())
-  .then((data) => {
-    if (data.success) {
-      setVisitStats(data.stats);
-    }
-  });
+    fetch(`${import.meta.env.VITE_API_URL}/api/visits/admin/stats`, {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setVisitStats(data.stats);
+        }
+      });
 
     fetch(
       `${import.meta.env.VITE_API_URL}/api/admin/subscriptions`,
@@ -381,7 +381,7 @@ fetch(`${import.meta.env.VITE_API_URL}/api/visits/admin/stats`, {
   const handleExportSubscriptions = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/admin/export/subscriptions` ,
+        `${import.meta.env.VITE_API_URL}/api/admin/export/subscriptions`,
         {
           credentials: "include",
         }
@@ -735,42 +735,42 @@ fetch(`${import.meta.env.VITE_API_URL}/api/visits/admin/stats`, {
       ROWS_PER_PAGE
     );
 
-const filteredVisits = visits
-  .filter((visit) => {
-    const search = visitSearch.toLowerCase();
+  const filteredVisits = visits
+    .filter((visit) => {
+      const search = visitSearch.toLowerCase();
 
-    const matchesSearch =
-      (visit.user?.name || "")
-        .toLowerCase()
-        .includes(search) ||
-      (visit.owner?.name || "")
-        .toLowerCase()
-        .includes(search) ||
-      (visit.propertyTitle || "")
-        .toLowerCase()
-        .includes(search);
+      const matchesSearch =
+        (visit.user?.name || "")
+          .toLowerCase()
+          .includes(search) ||
+        (visit.owner?.name || "")
+          .toLowerCase()
+          .includes(search) ||
+        (visit.propertyTitle || "")
+          .toLowerCase()
+          .includes(search);
 
-    const matchesStatus =
-      visitStatus === "All" ||
-      visit.status === visitStatus;
+      const matchesStatus =
+        visitStatus === "All" ||
+        visit.status === visitStatus;
 
-    return matchesSearch && matchesStatus;
-  })
-  .sort((a, b) => {
-    if (visitSort === "Oldest") {
-      return new Date(a.createdAt) - new Date(b.createdAt);
-    }
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => {
+      if (visitSort === "Oldest") {
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      }
 
-    return new Date(b.createdAt) - new Date(a.createdAt);
-  });
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
 
-const visitTotalPages =
-  Math.ceil(filteredVisits.length / ROWS_PER_PAGE) || 1;
+  const visitTotalPages =
+    Math.ceil(filteredVisits.length / ROWS_PER_PAGE) || 1;
 
-const paginatedVisits = filteredVisits.slice(
-  (visitPage - 1) * ROWS_PER_PAGE,
-  visitPage * ROWS_PER_PAGE
-);
+  const paginatedVisits = filteredVisits.slice(
+    (visitPage - 1) * ROWS_PER_PAGE,
+    visitPage * ROWS_PER_PAGE
+  );
 
   const filteredUsers = users
     .filter((user) => {
@@ -853,9 +853,9 @@ const paginatedVisits = filteredVisits.slice(
     setUserPage(1);
   }, [userSearch, userRole, userSort]);
 
-useEffect(() => {
-  setVisitPage(1);
-}, [visitSearch, visitStatus, visitSort]);
+  useEffect(() => {
+    setVisitPage(1);
+  }, [visitSearch, visitStatus, visitSort]);
 
   const handleApprove = async (id) => {
     try {
@@ -1250,10 +1250,12 @@ useEffect(() => {
       )}
 
       <div
-        className={`transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-16"
+        className={`transition-all duration-300 ${sidebarOpen
+            ? "lg:ml-64"
+            : "lg:ml-16"
           }`}
       >
-        <section className="w-full px-8 pt-12 pb-10">
+        <section className="w-full px-3 sm:px-5 md:px-6 lg:px-8 pt-6 sm:pt-8 md:pt-10 lg:pt-12 pb-8 sm:pb-10">
 
 
           {/* Analytics Cards */}
@@ -1400,28 +1402,28 @@ useEffect(() => {
             />
           )}
 
-{activeTab === "visits" && (
-  <VisitsTable
-    visits={paginatedVisits}
-    visitStats={visitStats}
-    visitPage={visitPage}
-    visitTotalPages={visitTotalPages}
-    setVisitPage={setVisitPage}
-    visitSearch={visitSearch}
-    setVisitSearch={setVisitSearch}
-    visitStatus={visitStatus}
-    setVisitStatus={setVisitStatus}
-    visitSort={visitSort}
-    setVisitSort={setVisitSort}
-  />
-)}
+          {activeTab === "visits" && (
+            <VisitsTable
+              visits={paginatedVisits}
+              visitStats={visitStats}
+              visitPage={visitPage}
+              visitTotalPages={visitTotalPages}
+              setVisitPage={setVisitPage}
+              visitSearch={visitSearch}
+              setVisitSearch={setVisitSearch}
+              visitStatus={visitStatus}
+              setVisitStatus={setVisitStatus}
+              visitSort={visitSort}
+              setVisitSort={setVisitSort}
+            />
+          )}
 
         </section>
 
         {selectedUser && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
-            <div className="bg-white rounded-2xl p-8 w-full max-w-md">
+           <div className="bg-white rounded-2xl p-5 sm:p-6 md:p-8 w-[calc(100%-2rem)] sm:w-full max-w-md max-h-[90vh] overflow-y-auto">
 
               <h2 className="text-2xl font-bold mb-5">
                 User Details
@@ -1471,7 +1473,7 @@ useEffect(() => {
         {showReplyModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
-            <div className="bg-white p-6 rounded-2xl w-full max-w-md">
+            <div className="bg-white p-5 sm:p-6 rounded-2xl w-[calc(100%-2rem)] sm:w-full max-w-md max-h-[90vh] overflow-y-auto">
 
               <h2 className="text-xl font-bold mb-4">
                 Reply to {supportMessages.find(

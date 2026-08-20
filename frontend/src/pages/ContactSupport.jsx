@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Toast from "../components/common/Toast";
-
 import {
   FaPhoneAlt,
   FaEnvelope,
@@ -39,16 +38,19 @@ function ContactSupport({
         e.target.value,
     });
   };
-  const fetchMyTickets = async () => {
 
+  const fetchMyTickets = async () => {
     try {
-      const user = JSON.parse(localStorage.getItem("user"));
+      const user = JSON.parse(
+        localStorage.getItem("user")
+      );
+
       const response = await fetch(
-  `${import.meta.env.VITE_API_URL}/api/support/user/${user._id}`,
-  {
-    credentials: "include",
-  }
-);
+        `${import.meta.env.VITE_API_URL}/api/support/user/${user._id}`,
+        {
+          credentials: "include",
+        }
+      );
 
       const data =
         await response.json();
@@ -62,6 +64,7 @@ function ContactSupport({
       console.error(error);
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -105,30 +108,28 @@ function ContactSupport({
       });
     }
 
-   try {
-  setLoading(true);
+    try {
+      setLoading(true);
 
-  // 👇 ADD THIS
-  const user = JSON.parse(localStorage.getItem("user"));
+      const user = JSON.parse(
+        localStorage.getItem("user")
+      );
 
-  const response = await fetch(
-    `${import.meta.env.VITE_API_URL}/api/support`,
-    {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      // 👇 REPLACE THIS
-      body: JSON.stringify({
-        userId: user._id,
-        ...formData,
-      }),
-    }
-  );
-
-  
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/support`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            userId: user._id,
+            ...formData,
+          }),
+        }
+      );
 
       const data =
         await response.json();
@@ -146,6 +147,7 @@ function ContactSupport({
           email: "",
           message: "",
         });
+
         fetchMyTickets();
       } else {
         setToast({
@@ -168,16 +170,18 @@ function ContactSupport({
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchMyTickets();
   }, []);
+
   return (
     <>
       <Navbar
-  setShowLoginModal={
-    setShowLoginModal
-  }
-/>
+        setShowLoginModal={
+          setShowLoginModal
+        }
+      />
 
       {toast.show && (
         <Toast
@@ -193,67 +197,67 @@ function ContactSupport({
         />
       )}
 
-      <div className="min-h-screen bg-gray-50 py-16 px-6">
+      <div className="min-h-screen bg-gray-50 py-8 sm:py-10 md:py-12 lg:py-16 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
 
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-800">
+          <div className="text-center mb-8 sm:mb-10 md:mb-12">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">
               Contact & Support
             </h1>
 
-            <p className="text-gray-600 mt-4">
+            <p className="text-sm sm:text-base text-gray-600 mt-3 sm:mt-4 px-2">
               Need help? Our team is here
               to assist you.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-10">
 
-            <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-md">
-
-              <h2 className="text-2xl font-semibold mb-6">
+            {/* Get In Touch */}
+            <div className="bg-white p-5 sm:p-6 md:p-8 rounded-2xl border border-gray-200 shadow-md">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-5 sm:mb-6">
                 Get In Touch
               </h2>
 
-              <div className="space-y-6">
+              <div className="space-y-5 sm:space-y-6">
 
-                <div className="flex items-center gap-4">
-                  <FaPhoneAlt className="text-blue-600 text-xl" />
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <FaPhoneAlt className="text-blue-600 text-lg sm:text-xl mt-1 shrink-0" />
 
-                  <div>
+                  <div className="min-w-0">
                     <p className="font-medium">
                       Phone
                     </p>
 
-                    <p className="text-gray-600">
+                    <p className="text-sm sm:text-base text-gray-600 break-words">
                       +91 1234567890
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  <FaEnvelope className="text-blue-600 text-xl" />
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <FaEnvelope className="text-blue-600 text-lg sm:text-xl mt-1 shrink-0" />
 
-                  <div>
+                  <div className="min-w-0">
                     <p className="font-medium">
                       Email
                     </p>
 
-                    <p className="text-gray-600">
+                    <p className="text-sm sm:text-base text-gray-600 break-all">
                       support@propertyhub.com
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  <FaMapMarkerAlt className="text-blue-600 text-xl" />
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <FaMapMarkerAlt className="text-blue-600 text-lg sm:text-xl mt-1 shrink-0" />
 
-                  <div>
+                  <div className="min-w-0">
                     <p className="font-medium">
                       Address
                     </p>
 
-                    <p className="text-gray-600">
+                    <p className="text-sm sm:text-base text-gray-600">
                       Bengaluru,
                       Karnataka, India
                     </p>
@@ -261,12 +265,11 @@ function ContactSupport({
                 </div>
 
               </div>
-
             </div>
 
-            <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-md">
-
-              <h2 className="text-2xl font-semibold mb-6">
+            {/* Send Message */}
+            <div className="bg-white p-5 sm:p-6 md:p-8 rounded-2xl border border-gray-200 shadow-md">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-5 sm:mb-6">
                 Send a Message
               </h2>
 
@@ -276,7 +279,6 @@ function ContactSupport({
                 }
                 className="space-y-4"
               >
-
                 <input
                   type="text"
                   name="name"
@@ -287,7 +289,7 @@ function ContactSupport({
                   onChange={
                     handleChange
                   }
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm sm:text-base outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
                 <input
@@ -300,7 +302,7 @@ function ContactSupport({
                   onChange={
                     handleChange
                   }
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm sm:text-base outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
                 <textarea
@@ -313,110 +315,106 @@ function ContactSupport({
                   onChange={
                     handleChange
                   }
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm sm:text-base outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-60"
+                  className="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-60 text-sm sm:text-base"
                 >
                   {loading
                     ? "Sending..."
                     : "Submit"}
                 </button>
-
               </form>
-
             </div>
           </div>
-
         </div>
-     
-      
-    {myTickets && (
- <div className="max-w-6xl mx-auto px-6 pt-6 pb-10">
 
-    <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-md">
+        {/* My Support Tickets */}
+        {myTickets && (
+          <div className="max-w-6xl mx-auto px-0 sm:px-2 md:px-0 pt-6 sm:pt-8 pb-6 sm:pb-10">
 
-      <h2 className="text-2xl font-semibold mb-6">
-        My Support Tickets
-      </h2>
+            <div className="bg-white p-5 sm:p-6 md:p-8 rounded-2xl border border-gray-200 shadow-md">
 
-      {myTickets.length === 0 ? (
-        <p className="text-gray-500">
-          No support tickets found.
-        </p>
-      ) : (
-        <div className="overflow-x-auto">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-5 sm:mb-6">
+                My Support Tickets
+              </h2>
 
-          <table className="w-full">
+              {myTickets.length === 0 ? (
+                <p className="text-sm sm:text-base text-gray-500">
+                  No support tickets found.
+                </p>
+              ) : (
+                <div className="overflow-x-auto w-full">
 
-            <thead>
-              <tr className="border-b border-gray-200">
+                  <table className="w-full min-w-[650px]">
 
-                <th className="text-left py-3">
-                  Date
-                </th>
+                    <thead>
+                      <tr className="border-b border-gray-200">
 
-                <th className="text-left py-3">
-                  Status
-                </th>
+                        <th className="text-left py-3 px-2 text-sm sm:text-base whitespace-nowrap">
+                          Date
+                        </th>
 
-                <th className="text-left py-3">
-                  Message
-                </th>
+                        <th className="text-left py-3 px-2 text-sm sm:text-base whitespace-nowrap">
+                          Status
+                        </th>
 
-                <th className="text-left py-3">
-                  Admin Reply
-                </th>
+                        <th className="text-left py-3 px-2 text-sm sm:text-base whitespace-nowrap">
+                          Message
+                        </th>
 
-              </tr>
-            </thead>
+                        <th className="text-left py-3 px-2 text-sm sm:text-base whitespace-nowrap">
+                          Admin Reply
+                        </th>
 
-            <tbody>
+                      </tr>
+                    </thead>
 
-              {myTickets.map(
-                (ticket) => (
-                  <tr
-                    key={ticket._id}
-                    className="border-b border-gray-200"
-                  >
+                    <tbody>
+                      {myTickets.map(
+                        (ticket) => (
+                          <tr
+                            key={
+                              ticket._id
+                            }
+                            className="border-b border-gray-200"
+                          >
 
-                    <td className="py-3">
-                      {new Date(
-                        ticket.createdAt
-                      ).toLocaleDateString()}
-                    </td>
+                            <td className="py-3 px-2 text-sm sm:text-base whitespace-nowrap">
+                              {new Date(
+                                ticket.createdAt
+                              ).toLocaleDateString()}
+                            </td>
 
-                    <td className="py-3">
-                      {ticket.status}
-                    </td>
+                            <td className="py-3 px-2 text-sm sm:text-base whitespace-nowrap">
+                              {ticket.status}
+                            </td>
 
-                    <td className="py-3">
-                      {ticket.message}
-                    </td>
+                            <td className="py-3 px-2 text-sm sm:text-base min-w-[220px]">
+                              {ticket.message}
+                            </td>
 
-                    <td className="py-3">
-                      {ticket.reply || "-"}
-                    </td>
+                            <td className="py-3 px-2 text-sm sm:text-base min-w-[220px]">
+                              {ticket.reply ||
+                                "-"}
+                            </td>
 
-                  </tr>
-                )
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+
+                  </table>
+                </div>
               )}
+            </div>
+          </div>
+        )}
+      </div>
 
-            </tbody>
-
-          </table>
-
-        </div>
-      )}
-
-    </div>
-
-  </div>
-)}
-     </div>
       <Footer />
     </>
   );

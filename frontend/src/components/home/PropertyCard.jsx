@@ -16,9 +16,10 @@ function PropertyCard({
   const navigate = useNavigate();
 
   const propertyId =
-  property._id?.$oid ||
-  property._id?._id ||
-  property._id;
+    property._id?.$oid ||
+    property._id?._id ||
+    property._id;
+
   const [saved, setSaved] = useState(false);
 
   const [toast, setToast] = useState({
@@ -28,58 +29,58 @@ function PropertyCard({
   });
 
   useEffect(() => {
-  setSaved(
-    wishlistIds?.includes(property._id)
-  );
-}, [wishlistIds, property._id]);
+    setSaved(
+      wishlistIds?.includes(property._id)
+    );
+  }, [wishlistIds, property._id]);
 
   const handleWishlist = async () => {
-  try {
-    const url = saved
-      ? `${import.meta.env.VITE_API_URL}/api/wishlist/remove`
-      : `${import.meta.env.VITE_API_URL}/api/wishlist/add`;
+    try {
+      const url = saved
+        ? `${import.meta.env.VITE_API_URL}/api/wishlist/remove`
+        : `${import.meta.env.VITE_API_URL}/api/wishlist/add`;
 
-    const response = await fetch(url, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        itemId: property._id,
-        itemType: "Property",
-      }),
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      setSaved(!saved);
-
-      setToast({
-        show: true,
-        message: saved
-          ? "Property removed from wishlist"
-          : "Property added to wishlist",
-        type: "success",
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          itemId: property._id,
+          itemType: "Property",
+        }),
       });
-    } else {
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSaved(!saved);
+
+        setToast({
+          show: true,
+          message: saved
+            ? "Property removed from wishlist"
+            : "Property added to wishlist",
+          type: "success",
+        });
+      } else {
+        setToast({
+          show: true,
+          message: data.message,
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+
       setToast({
         show: true,
-        message: data.message,
+        message: "Please login first",
         type: "error",
       });
     }
-  } catch (error) {
-    console.error(error);
-
-    setToast({
-      show: true,
-      message: "Please login first",
-      type: "error",
-    });
-  }
-};
+  };
 
   const postedDate =
     property.createdAt
@@ -120,87 +121,79 @@ function PropertyCard({
         />
       )}
 
-  <div
-  onClick={() =>
-    navigate(`/properties/${propertyId}`)
-  }
-  className="group bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer"
->
+      <div
+        onClick={() =>
+          navigate(`/properties/${propertyId}`)
+        }
+        className="group bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer w-full"
+      >
+        <div className="relative h-52 sm:h-56 overflow-hidden">
+          {property.images &&
+          property.images.length > 0 ? (
+            <img
+              src={property.images[0]}
+              alt={property.title}
+              onClick={() =>
+                navigate(`/properties/${propertyId}`)
+              }
+              className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div
+              onClick={() =>
+                navigate(`/properties/${propertyId}`)
+              }
+              className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center cursor-pointer px-4 text-center"
+            >
+              <FaHome className="text-4xl sm:text-5xl text-blue-600" />
 
-        <div className="relative h-56 overflow-hidden">
+              <p className="mt-3 text-sm sm:text-base text-gray-600 font-medium">
+                Property Image Coming Soon
+              </p>
+            </div>
+          )}
 
-  {property.images &&
-  property.images.length > 0 ? (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleWishlist();
+            }}
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white/90 p-2.5 sm:p-3 rounded-full shadow-md hover:scale-110 transition-all duration-300 cursor-pointer"
+          >
+            {saved ? (
+              <FaHeart className="text-red-500 text-lg sm:text-xl" />
+            ) : (
+              <FaRegHeart className="text-gray-600 text-lg sm:text-xl" />
+            )}
+          </button>
+        </div>
 
-   <img
-  src={property.images[0]}
-  alt={property.title}
-  onClick={() =>
-    navigate(`/properties/${propertyId}`)
-  }
-  className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
-/>
+        <div className="p-4 sm:p-5">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-3">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-800 group-hover:text-blue-600 transition line-clamp-2">
+              {property.title}
+            </h3>
 
-  ) : (
-
-   <div
-  onClick={() =>
-    navigate(`/properties/${propertyId}`)
-  }
-  className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col items-center justify-center cursor-pointer"
->
-      <FaHome className="text-5xl text-blue-600" />
-
-      <p className="mt-3 text-gray-600 font-medium">
-        Property Image Coming Soon
-      </p>
-
-    </div>
-
-  )}
-
-  <button
-  onClick={(e) => {
-    e.stopPropagation();
-    handleWishlist();
-  }}
-    className="absolute top-4 right-4 bg-white/90 p-3 rounded-full shadow-md hover:scale-110 transition-all duration-300 cursor-pointer"
-  >
-    {saved ? (
-      <FaHeart className="text-red-500 text-xl" />
-    ) : (
-      <FaRegHeart className="text-gray-600 text-xl" />
-    )}
-  </button>
-
-</div>
-        <div className="p-5">
-
-          <div className="flex justify-between items-start gap-3">
-
-            <h3 className="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition">
-  {property.title}
-</h3>
-
-            <span className="bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
+            <span className="self-start bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
               {property.listingType}
             </span>
-
           </div>
 
-          <p className="text-gray-500 mt-2 flex items-center gap-2">
-            <FaMapMarkerAlt className="text-red-500" />
-            {property.locality},{" "}
-            {property.city},{" "}
-            {property.state}
+          <p className="text-gray-500 mt-2 flex items-start gap-2 text-sm sm:text-base">
+            <FaMapMarkerAlt className="text-red-500 flex-shrink-0 mt-1" />
+
+            <span>
+              {property.locality},{" "}
+              {property.city},{" "}
+              {property.state}
+            </span>
           </p>
 
           <p className="text-xs text-gray-400 mt-1">
             Posted on {postedDate}
           </p>
 
-          <div className="mt-4 flex justify-between text-sm text-gray-600">
-
+          <div className="mt-4 flex flex-wrap justify-between gap-2 text-sm text-gray-600">
             <span className="bg-gray-100 px-3 py-1 rounded-full">
               {property.propertyType}
             </span>
@@ -208,39 +201,33 @@ function PropertyCard({
             <span className="bg-gray-100 px-3 py-1 rounded-full">
               {property.area} sq.ft
             </span>
-
           </div>
 
- <div className="mt-5 flex items-end justify-between">
+          <div className="mt-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+              <p className="text-sm text-gray-500">
+                Starting From
+              </p>
 
-  <div>
-    <p className="text-sm text-gray-500">
-      Starting From
-    </p>
+              <h4 className="text-2xl sm:text-3xl font-bold text-blue-600 break-words">
+                ₹{" "}
+                {property.price.toLocaleString()}
+              </h4>
+            </div>
 
-    <h4 className="text-3xl font-bold text-blue-600">
-      ₹{" "}
-      {property.price.toLocaleString()}
-    </h4>
-  </div>
+            <div className="text-left sm:text-right pb-0 sm:pb-1">
+              <div className="text-yellow-500 text-base sm:text-lg leading-none">
+                {"★".repeat(filledStars)}
+                {"☆".repeat(5 - filledStars)}
+              </div>
 
-  <div className="text-right pb-1">
-    <div className="text-yellow-500 text-lg leading-none">
-      {"★".repeat(filledStars)}
-      {"☆".repeat(5 - filledStars)}
-    </div>
-
-    <span className="text-xs font-medium text-gray-500">
-      {rating} Rating
-    </span>
-  </div>
-
-</div>
-
+              <span className="text-xs font-medium text-gray-500">
+                {rating} Rating
+              </span>
+            </div>
+          </div>
         </div>
-
       </div>
-
     </>
   );
 }

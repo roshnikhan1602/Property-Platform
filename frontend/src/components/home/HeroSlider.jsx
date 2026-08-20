@@ -72,15 +72,13 @@ function HeroSlider() {
   if (properties.length === 0) {
     return (
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden w-full max-w-md mx-auto animate-pulse">
+        <div className="h-56 sm:h-64 bg-gray-200"></div>
 
-        <div className="h-64 bg-gray-200"></div>
-
-        <div className="p-5">
+        <div className="p-4 sm:p-5">
           <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
 
           <div className="h-4 bg-gray-200 rounded w-1/2"></div>
         </div>
-
       </div>
     );
   }
@@ -107,14 +105,13 @@ function HeroSlider() {
       <img
         src={image}
         alt={property.title}
-        className="w-full h-64 object-cover"
+        className="w-full h-56 sm:h-64 object-cover"
       />
 
-      <div className="p-5">
+      <div className="p-4 sm:p-5">
+        <div className="flex flex-col xs:flex-row sm:flex-row justify-between items-start gap-2">
 
-        <div className="flex justify-between items-start gap-2">
-
-          <h3 className="text-xl font-bold text-gray-800 line-clamp-2">
+          <h3 className="text-lg sm:text-xl font-bold text-gray-800 line-clamp-2">
             {property.title}
           </h3>
 
@@ -124,14 +121,16 @@ function HeroSlider() {
 
         </div>
 
-        <p className="text-gray-500 mt-3 flex items-center gap-2">
-          <FaMapMarkerAlt className="text-red-500" />
+        <p className="text-gray-500 mt-3 flex items-start gap-2 text-sm sm:text-base">
+          <FaMapMarkerAlt className="text-red-500 flex-shrink-0 mt-1" />
 
-          {property.locality},{" "}
-          {property.city}
+          <span>
+            {property.locality},{" "}
+            {property.city}
+          </span>
         </p>
 
-        <div className="mt-4 flex justify-between text-sm text-gray-600">
+        <div className="mt-4 flex flex-wrap justify-between gap-2 text-sm text-gray-600">
 
           <span className="bg-gray-100 px-3 py-1 rounded-full">
             {property.propertyType}
@@ -149,7 +148,7 @@ function HeroSlider() {
             Starting From
           </p>
 
-          <h4 className="text-2xl font-bold text-blue-600">
+          <h4 className="text-xl sm:text-2xl font-bold text-blue-600">
             ₹{" "}
             {property.price.toLocaleString()}
           </h4>
@@ -176,7 +175,6 @@ function HeroSlider() {
           )}
 
         </div>
-
       </div>
     </div>
   );

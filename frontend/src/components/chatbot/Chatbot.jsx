@@ -52,7 +52,7 @@ function Chatbot() {
 
     try {
       const response = await fetch(
-       `${import.meta.env.VITE_API_URL}/api/chatbot`,
+        `${import.meta.env.VITE_API_URL}/api/chatbot`,
         {
           method: "POST",
           headers: {
@@ -110,7 +110,7 @@ function Chatbot() {
         onClick={() =>
           setIsOpen(!isOpen)
         }
-        className="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 hover:scale-110 transition-all duration-300 z-50 cursor-pointer chatbot-float"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 bg-blue-600 text-white p-3.5 sm:p-4 rounded-full shadow-2xl hover:bg-blue-700 hover:scale-110 transition-all duration-300 z-50 cursor-pointer chatbot-float"
       >
         {isOpen ? (
           <FaTimes size={22} />
@@ -122,19 +122,19 @@ function Chatbot() {
       {/* Chat Window */}
 
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-96 bg-white rounded-2xl shadow-2xl overflow-hidden z-50 border border-gray-200">
+        <div className="fixed bottom-20 right-3 left-3 sm:bottom-24 sm:left-auto sm:right-6 w-auto sm:w-96 max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl shadow-2xl overflow-hidden z-50 border border-gray-200">
 
-          <div className="bg-blue-600 text-white px-5 py-4 font-semibold text-lg">
+          <div className="bg-blue-600 text-white px-4 sm:px-5 py-3 sm:py-4 font-semibold text-base sm:text-lg">
             PropertyHub Assistant
           </div>
 
-          <div className="h-96 overflow-y-auto p-4 space-y-3 bg-gray-50">
+          <div className="h-[60vh] max-h-96 min-h-64 overflow-y-auto p-3 sm:p-4 space-y-3 bg-gray-50">
 
             {messages.map(
               (msg, index) => (
                 <div
                   key={index}
-                  className={`max-w-[82%] px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap ${
+                  className={`max-w-[82%] px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl text-sm whitespace-pre-wrap break-words ${
                     msg.sender === "user"
                       ? "bg-blue-600 text-white ml-auto"
                       : "bg-white border border-gray-200 shadow-sm"
@@ -146,7 +146,7 @@ function Chatbot() {
             )}
 
             {loading && (
-              <div className="bg-white border border-gray-200 shadow-sm rounded-2xl px-4 py-3 text-sm w-fit animate-pulse">
+              <div className="bg-white border border-gray-200 shadow-sm rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm w-fit animate-pulse">
                 🤖 Thinking...
               </div>
             )}
@@ -171,13 +171,13 @@ function Chatbot() {
                 !loading &&
                 handleSend()
               }
-              className="flex-1 px-4 py-3 outline-none"
+              className="flex-1 min-w-0 px-3 sm:px-4 py-3 outline-none text-sm sm:text-base"
             />
 
             <button
               onClick={handleSend}
               disabled={loading}
-              className="bg-blue-600 text-white px-5 hover:bg-blue-700 transition disabled:bg-gray-400 cursor-pointer"
+              className="bg-blue-600 text-white px-4 sm:px-5 hover:bg-blue-700 transition disabled:bg-gray-400 cursor-pointer shrink-0"
             >
               <FaPaperPlane />
             </button>

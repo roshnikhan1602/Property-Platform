@@ -11,16 +11,12 @@ function PropertyAI() {
     const [style, setStyle] = useState("Modern");
     const [roomType, setRoomType] = useState("Living Room");
     const [prompt, setPrompt] = useState("");
-    const [generating, setGenerating] =
-        useState(false);
+    const [generating, setGenerating] = useState(false);
 
-    const [generatedImage, setGeneratedImage] =
-        useState("");
-
+    const [generatedImage, setGeneratedImage] = useState("");
     const [error, setError] = useState("");
 
     const generateDesign = async () => {
-
         try {
             setGenerating(true);
             setError("");
@@ -37,6 +33,7 @@ function PropertyAI() {
                         roomType,
                         style,
                         prompt,
+                        image: selectedImage,
                     }),
                 }
             );
@@ -46,7 +43,9 @@ function PropertyAI() {
             if (data.success) {
                 setGeneratedImage(data.image);
             } else {
-                setError(data.message);
+                setError(
+                    data.message || "Failed to generate AI design."
+                );
             }
         } catch (error) {
             console.error(error);
@@ -93,7 +92,7 @@ function PropertyAI() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex justify-center items-center text-xl">
+            <div className="min-h-screen flex justify-center items-center text-lg sm:text-xl px-4">
                 Loading...
             </div>
         );
@@ -101,33 +100,54 @@ function PropertyAI() {
 
     if (!property) {
         return (
-            <div className="min-h-screen flex justify-center items-center text-xl">
+            <div className="min-h-screen flex justify-center items-center text-lg sm:text-xl px-4 text-center">
                 Property not found.
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-100 py-10 px-6">
+        <div className="min-h-screen bg-gray-100 py-6 sm:py-10 px-3 sm:px-6">
 
-            <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl p-8">
+            <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8">
 
-                <h1 className="text-3xl font-bold mb-3">
+                {/* HEADER */}
+
+                <h1 className="text-2xl sm:text-3xl font-bold mb-3">
                     ✨ AI Property Elevation
                 </h1>
 
-                <p className="text-gray-600 mb-8">
+                <p className="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base leading-6">
                     Select one of this property's images and let AI redesign the room
                     with your preferred interior style.
                 </p>
 
 
-                {/* Thumbnail Gallery */}
+                {/* SELECTED IMAGE */}
+
+                {selectedImage && (
+                    <div className="mb-6">
+
+                        <h2 className="text-lg sm:text-xl font-semibold mb-3">
+                            Selected Property Image
+                        </h2>
+
+                        <img
+                            src={selectedImage}
+                            alt="Selected property"
+                            className="w-full max-h-[500px] object-cover rounded-2xl shadow-md"
+                        />
+
+                    </div>
+                )}
+
+
+                {/* THUMBNAIL GALLERY */}
 
                 {property.images &&
                     property.images.length > 1 && (
 
-                        <div className="flex gap-4 mt-5 overflow-x-auto pb-2">
+                        <div className="flex gap-3 sm:gap-4 mt-5 overflow-x-auto pb-3">
 
                             {property.images.map(
                                 (image, index) => (
@@ -138,10 +158,11 @@ function PropertyAI() {
                                         onClick={() =>
                                             setSelectedImage(image)
                                         }
-                                        className={`w-32 h-24 rounded-xl object-cover cursor-pointer border-4 transition ${selectedImage === image
-                                            ? "border-blue-600"
-                                            : "border-transparent hover:border-gray-300"
-                                            }`}
+                                        className={`flex-shrink-0 w-24 h-20 sm:w-32 sm:h-24 rounded-xl object-cover cursor-pointer border-4 transition ${
+                                            selectedImage === image
+                                                ? "border-blue-600"
+                                                : "border-transparent hover:border-gray-300"
+                                        }`}
                                     />
                                 )
                             )}
@@ -151,63 +172,53 @@ function PropertyAI() {
                     )}
 
 
-                {/* AI Interior Designer */}
+                {/* AI INTERIOR DESIGNER */}
 
-                <div className="mt-10 bg-white border rounded-2xl p-6">
+                <div className="mt-8 sm:mt-10 bg-white border rounded-2xl p-4 sm:p-6">
 
-                    <h2 className="text-2xl font-bold mb-6">
+                    <h2 className="text-xl sm:text-2xl font-bold mb-5 sm:mb-6">
                         ✨ AI Interior Designer
                     </h2>
 
-                    <div className="space-y-6">
+                    <div className="space-y-5 sm:space-y-6">
+
+                        {/* ROOM TYPE */}
 
                         <div>
+                            <label className="block font-medium mb-2 text-sm sm:text-base">
+                                Room Type
+                            </label>
 
-                            <div>
-                                <label className="block font-medium mb-2">
-                                    Room Type
-                                </label>
+                            <select
+                                value={roomType}
+                                onChange={(e) =>
+                                    setRoomType(e.target.value)
+                                }
+                                className="w-full border border-gray-300 rounded-xl p-3 bg-white outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-500"
+                            >
+                                <option>Living Room</option>
+                                <option>Bedroom</option>
+                                <option>Kitchen</option>
+                                <option>Bathroom</option>
+                                <option>Dining Room</option>
+                                <option>Office</option>
+                            </select>
+                        </div>
 
-                                <select
-                                    value={roomType}
-                                    onChange={(e) => setRoomType(e.target.value)}
-                                    className="w-full border rounded-xl p-3"
-                                >
-                                    <option>Living Room</option>
-                                    <option>Bedroom</option>
-                                    <option>Kitchen</option>
-                                    <option>Bathroom</option>
-                                    <option>Dining Room</option>
-                                    <option>Office</option>
-                                </select>
-                            </div>
 
-                            <div>
-                                <label className="block font-medium mb-2">
-                                    Interior Style
-                                </label>
+                        {/* INTERIOR STYLE */}
 
-                                <select
-                                    value={style}
-                                    onChange={(e) => setStyle(e.target.value)}
-                                    className="w-full border rounded-xl p-3"
-                                >
-                                    <option>Modern</option>
-                                    <option>Luxury</option>
-                                    <option>Minimal</option>
-                                    <option>Scandinavian</option>
-                                    <option>Industrial</option>
-                                    <option>Classic</option>
-                                    <option>Bohemian</option>
-                                </select>
-                            </div>
+                        <div>
+                            <label className="block font-medium mb-2 text-sm sm:text-base">
+                                Interior Style
+                            </label>
 
                             <select
                                 value={style}
                                 onChange={(e) =>
                                     setStyle(e.target.value)
                                 }
-                                className="w-full border rounded-xl p-3"
+                                className="w-full border border-gray-300 rounded-xl p-3 bg-white outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-500"
                             >
                                 <option>Modern</option>
                                 <option>Luxury</option>
@@ -217,12 +228,14 @@ function PropertyAI() {
                                 <option>Classic</option>
                                 <option>Bohemian</option>
                             </select>
-
                         </div>
+
+
+                        {/* PROMPT */}
 
                         <div>
 
-                            <label className="block font-medium mb-2">
+                            <label className="block font-medium mb-2 text-sm sm:text-base">
                                 Tell AI what you want
                             </label>
 
@@ -232,27 +245,30 @@ function PropertyAI() {
                                 onChange={(e) =>
                                     setPrompt(e.target.value)
                                 }
-                                placeholder="Example:Example:
-
-Luxury living room with beige sofa, marble flooring, wooden TV unit, warm lighting, indoor plants, false ceiling and large glass windows.
-."
-                                className="w-full border rounded-xl p-4 resize-none"
+                                placeholder="Example: Luxury living room with beige sofa, marble flooring, wooden TV unit, warm lighting, indoor plants, false ceiling and large glass windows."
+                                className="w-full border border-gray-300 rounded-xl p-3 sm:p-4 resize-none outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-500 text-sm sm:text-base"
                             />
 
                         </div>
 
+
+                        {/* GENERATE BUTTON */}
+
                         <button
                             onClick={generateDesign}
-                            disabled={generating}
-                            className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-8 py-3 rounded-xl font-semibold transition"
+                            disabled={generating || !selectedImage}
+                            className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-6 sm:px-8 py-3 rounded-xl font-semibold transition cursor-pointer disabled:cursor-not-allowed"
                         >
                             {generating
                                 ? "Generating..."
                                 : "✨ Generate AI Design"}
                         </button>
 
+
+                        {/* ERROR */}
+
                         {error && (
-                            <p className="text-red-600 font-medium">
+                            <p className="text-red-600 font-medium text-sm sm:text-base">
                                 {error}
                             </p>
                         )}
@@ -261,20 +277,21 @@ Luxury living room with beige sofa, marble flooring, wooden TV unit, warm lighti
 
                 </div>
 
-                {/* Generated Result */}
+
+                {/* GENERATED RESULT */}
 
                 {generatedImage && (
 
-                    <div className="mt-10">
+                    <div className="mt-8 sm:mt-10">
 
-                        <h2 className="text-2xl font-bold mb-5">
+                        <h2 className="text-xl sm:text-2xl font-bold mb-5">
                             AI Generated Design
                         </h2>
 
                         <img
                             src={generatedImage}
-                            alt="Generated"
-                            className="w-full rounded-2xl shadow-lg"
+                            alt="Generated AI interior design"
+                            className="w-full rounded-2xl shadow-lg object-cover"
                         />
 
                     </div>

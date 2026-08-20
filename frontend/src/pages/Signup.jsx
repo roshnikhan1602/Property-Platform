@@ -182,7 +182,6 @@ function Signup() {
       mobileNumber: "",
     });
 
-    // Reset OTP when country changes
     setOtpSent(false);
     setOtpVerified(false);
     setOtp("");
@@ -202,8 +201,6 @@ function Signup() {
       mobileNumber: formattedNumber,
     });
 
-    // If user changes number after OTP was sent,
-    // reset OTP verification.
     if (otpSent || otpVerified) {
       setOtpSent(false);
       setOtpVerified(false);
@@ -216,36 +213,32 @@ function Signup() {
   };
 
   const handleSendOTP = async () => {
-  const {
-    email,
-    countryCode,
-    mobileNumber,
-  } = formData;
+    const {
+      email,
+      countryCode,
+      mobileNumber,
+    } = formData;
 
-  const cleanNumber =
-    mobileNumber.replace(/\D/g, "");
+    const cleanNumber =
+      mobileNumber.replace(/\D/g, "");
 
-  if (!email.trim()) {
-    return showToast(
-      "Enter your email address.",
-      "error"
-    );
-  }
+    if (!email.trim()) {
+      return showToast(
+        "Enter your email address.",
+        "error"
+      );
+    }
 
-  if (!cleanNumber) {
-    return showToast(
-      "Enter mobile number.",
-      "error"
-    );
-  }
+    if (!cleanNumber) {
+      return showToast(
+        "Enter mobile number.",
+        "error"
+      );
+    }
 
     const fullNumber =
       `${countryCode}${cleanNumber}`;
 
-    /*
-      libphonenumber-js validates the number
-      according to the selected country.
-    */
     if (
       !isValidPhoneNumber(
         fullNumber,
@@ -261,11 +254,11 @@ function Signup() {
     try {
       setSendingOTP(true);
 
-     const response = await sendOTP(
-  countryCode,
-  cleanNumber,
-  email.trim()
-);
+      const response = await sendOTP(
+        countryCode,
+        cleanNumber,
+        email.trim()
+      );
 
       if (response.success) {
         setOtpSent(true);
@@ -425,15 +418,17 @@ function Signup() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-12">
+      {/* RESPONSIVE SIGNUP CONTAINER */}
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center px-3 sm:px-4 py-8 sm:py-12">
 
-        <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+        {/* SIGNUP CARD */}
+        <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-5 sm:p-8">
 
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-2">
             Create Account
           </h2>
 
-          <p className="text-center text-gray-500 mb-8">
+          <p className="text-center text-gray-500 text-sm sm:text-base mb-6 sm:mb-8">
             Sign up to continue
           </p>
 
@@ -454,7 +449,7 @@ function Signup() {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your name"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full min-w-0 border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -470,7 +465,7 @@ function Signup() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full min-w-0 border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -481,14 +476,16 @@ function Signup() {
                 Mobile Number
               </label>
 
-              <div className="flex gap-2">
+              {/* Mobile layout remains side-by-side but
+                  scales properly on small screens */}
+              <div className="flex gap-2 w-full min-w-0">
 
                 {/* COUNTRY */}
                 <select
                   value={selectedCountry.code}
                   onChange={handleCountryChange}
                   disabled={otpVerified}
-                  className="w-32 border border-gray-300 rounded-lg px-3 py-3 bg-white text-gray-700 outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                  className="w-[92px] sm:w-32 flex-shrink-0 border border-gray-300 rounded-lg px-2 sm:px-3 py-3 bg-white text-gray-700 text-sm sm:text-base outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                 >
                   {countries.map(
                     (country) => (
@@ -520,7 +517,7 @@ function Signup() {
                   }
                   disabled={otpVerified}
                   inputMode="tel"
-                  className="flex-1 border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                  className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                 />
 
               </div>
@@ -532,7 +529,7 @@ function Signup() {
                 type="button"
                 onClick={handleSendOTP}
                 disabled={sendingOTP}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition disabled:opacity-60"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition disabled:opacity-60 text-sm sm:text-base"
               >
                 {sendingOTP
                   ? "Sending OTP..."
@@ -565,7 +562,7 @@ function Signup() {
                       placeholder="Enter OTP"
                       maxLength={6}
                       inputMode="numeric"
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full min-w-0 border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
                   </div>
@@ -574,7 +571,7 @@ function Signup() {
                     type="button"
                     onClick={handleVerifyOTP}
                     disabled={verifyingOTP}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition disabled:opacity-60"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition disabled:opacity-60 text-sm sm:text-base"
                   >
                     {verifyingOTP
                       ? "Verifying..."
@@ -603,7 +600,7 @@ function Signup() {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter password"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full min-w-0 border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
 
             </div>
@@ -612,7 +609,7 @@ function Signup() {
             <button
               type="submit"
               disabled={!otpVerified || loading}
-              className="w-full bg-black hover:bg-gray-900 text-white py-3 rounded-lg transition disabled:opacity-60"
+              className="w-full bg-black hover:bg-gray-900 text-white py-3 rounded-lg transition disabled:opacity-60 text-sm sm:text-base"
             >
               {loading
                 ? "Creating Account..."

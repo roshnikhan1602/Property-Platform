@@ -49,11 +49,9 @@ function FeaturedProperties() {
   }, []);
 
   return (
-    <section className="max-w-7xl mx-auto px-6 py-16">
-
-      <div className="flex justify-between items-center mb-8">
-
-        <h2 className="text-3xl font-bold text-gray-900">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12 lg:py-16">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
           Featured Properties
         </h2>
 
@@ -61,36 +59,30 @@ function FeaturedProperties() {
           onClick={() =>
             navigate("/properties")
           }
-          className="text-blue-600 font-medium hover:text-blue-700 hover:underline transition cursor-pointer"
+          className="self-start sm:self-auto text-blue-600 font-medium hover:text-blue-700 hover:underline transition cursor-pointer"
         >
           View All →
         </button>
-
       </div>
 
       {loading ? (
         <div className="flex justify-center py-10">
-
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
-
         </div>
       ) : properties.length === 0 ? (
-        <p className="text-center text-gray-500">
+        <p className="text-center text-gray-500 px-4">
           No approved properties found.
         </p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {properties.map((property) => (
             <PropertyCard
               key={property._id}
               property={property}
             />
           ))}
-
         </div>
       )}
-
     </section>
   );
 }
