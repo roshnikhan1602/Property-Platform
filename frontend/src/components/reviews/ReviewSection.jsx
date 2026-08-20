@@ -18,9 +18,10 @@ function ReviewSection({
   loadReviews,
 }) {
   const isOwner =
-    user &&
-    property &&
-    String(property.owner) === String(user._id);
+  user &&
+  property &&
+  String(property.owner?._id || property.owner) ===
+    String(user._id);
 
   const ratingCounts = {
     5: reviews.filter((review) => review.rating === 5).length,
@@ -204,7 +205,7 @@ function ReviewSection({
                 onUpdate={handleUpdateReview}
                 onReply={handleReply}
                 onDeleteReply={handleDeleteReply}
-                canReply={canReply}
+                canReply={isOwner}
                 onUpdated={loadReviews}
               />
 
