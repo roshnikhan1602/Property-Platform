@@ -216,17 +216,28 @@ function Signup() {
   };
 
   const handleSendOTP = async () => {
-    const { countryCode, mobileNumber } = formData;
+  const {
+    email,
+    countryCode,
+    mobileNumber,
+  } = formData;
 
-    const cleanNumber =
-      mobileNumber.replace(/\D/g, "");
+  const cleanNumber =
+    mobileNumber.replace(/\D/g, "");
 
-    if (!cleanNumber) {
-      return showToast(
-        "Enter mobile number.",
-        "error"
-      );
-    }
+  if (!email.trim()) {
+    return showToast(
+      "Enter your email address.",
+      "error"
+    );
+  }
+
+  if (!cleanNumber) {
+    return showToast(
+      "Enter mobile number.",
+      "error"
+    );
+  }
 
     const fullNumber =
       `${countryCode}${cleanNumber}`;
@@ -250,10 +261,11 @@ function Signup() {
     try {
       setSendingOTP(true);
 
-      const response = await sendOTP(
-        countryCode,
-        cleanNumber
-      );
+     const response = await sendOTP(
+  countryCode,
+  cleanNumber,
+  email.trim()
+);
 
       if (response.success) {
         setOtpSent(true);

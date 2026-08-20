@@ -6,7 +6,8 @@ const BASE_URL = `${import.meta.env.VITE_API_URL}/api/auth`;
 
 export const sendOTP = async (
   countryCode,
-  mobileNumber
+  mobileNumber,
+  email
 ) => {
   const response = await fetch(
     `${BASE_URL}/send-otp`,
@@ -19,6 +20,7 @@ export const sendOTP = async (
       body: JSON.stringify({
         countryCode,
         mobileNumber,
+        email,
       }),
     }
   );

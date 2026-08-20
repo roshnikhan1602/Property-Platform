@@ -10,12 +10,12 @@ const welcomeUserEmail = require("../templates/welcomeUserEmail");
 
 const sendOTPController = async (req, res) => {
   try {
-    const { countryCode, mobileNumber } = req.body;
+    const { countryCode, mobileNumber, email } = req.body;
 
-    if (!countryCode || !mobileNumber) {
+    if (!countryCode || !mobileNumber || !email) {
       return res.status(400).json({
         success: false,
-        message: "Country code and mobile number are required",
+        message: "Country code, mobile number and email are required",
       });
     }
 
@@ -50,13 +50,23 @@ const sendOTPController = async (req, res) => {
       }
     );
 
-    console.log(
-      `OTP for ${fullMobileNumber}: ${otp}`
-    );
+    await sendEmail(
+  email,
+  "PropertyHub - Your Signup OTP",
+  `
+    <div style="font-family: Arial, sans-serif; padding: 20px;">
+      <h2>PropertyHub OTP Verification</h2>
+      <p>Your OTP for account verification is:</p>
+      <h1 style="letter-spacing: 5px;">${otp}</h1>
+      <p>This OTP is valid for 5 minutes.</p>
+      <p>Please do not share this OTP with anyone.</p>
+    </div>
+  `
+);
 
     res.status(200).json({
       success: true,
-      message: "OTP generated successfully",
+      message: "OTP sent successfully to your email",
     });
   } catch (error) {
     res.status(500).json({
@@ -164,13 +174,23 @@ const sendForgotPasswordOTP = async (req, res) => {
       }
     );
 
-    console.log(
-      `Forgot Password OTP for ${fullMobileNumber}: ${otp}`
-    );
+   await sendEmail(
+  user.email,
+  "PropertyHub - Your Password Reset OTP",
+  `
+    <div style="font-family: Arial, sans-serif; padding: 20px;">
+      <h2>PropertyHub Password Reset</h2>
+      <p>Your OTP to reset your password is:</p>
+      <h1 style="letter-spacing: 5px;">${otp}</h1>
+      <p>This OTP is valid for 5 minutes.</p>
+      <p>Please do not share this OTP with anyone.</p>
+    </div>
+  `
+);
 
     res.status(200).json({
       success: true,
-      message: "OTP sent successfully",
+      message: "OTP sent successfully to your email",
     });
   } catch (error) {
     res.status(500).json({
