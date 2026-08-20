@@ -214,7 +214,7 @@ useEffect(() => {
   {step === 1
     ? "Enter your registered mobile number"
     : step === 2
-    ? "Enter the OTP sent to your mobile number"
+    ? "Enter the OTP sent to your registered email"
     : "Choose a strong password for your account"}
 </p>
                     {step === 1 && (
@@ -260,10 +260,7 @@ useEffect(() => {
 
 <div className="mb-3 rounded-lg bg-green-50 border border-green-200 px-3 py-2">
   <p className="text-sm text-green-700">
-    OTP has been sent to{" "}
-    <span className="font-semibold">
-  +91 ******{formData.mobileNumber.slice(-4)}
-</span>
+    OTP has been sent to your registered email address.
   </p>
 </div>
 
