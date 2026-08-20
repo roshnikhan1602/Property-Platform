@@ -446,12 +446,12 @@ const login = async (req, res) => {
       }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+   res.cookie("token", token, {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
 
     const userData = user.toObject();
     delete userData.password;
@@ -493,11 +493,11 @@ const getMe = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: false,
-  });
+res.clearCookie("token", {
+  httpOnly: true,
+  sameSite: "none",
+  secure: true,
+});
 
   res.status(200).json({
     success: true,
