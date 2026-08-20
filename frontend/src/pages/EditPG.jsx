@@ -69,7 +69,7 @@ function EditPG() {
     const fetchPG = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/pgs/${id}`,
+          `${import.meta.env.VITE_API_URL}/api/pgs/${id}`,
           {
             credentials: "include",
           }
@@ -227,7 +227,7 @@ function EditPG() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/pgs/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/pgs/${id}`,
         {
           method: "PUT",
           credentials: "include",

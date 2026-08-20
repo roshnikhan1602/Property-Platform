@@ -132,7 +132,7 @@ function PGListing({
       if (availableFrom) params.append("availableFrom", availableFrom);
 
       const response = await fetch(
-        `http://localhost:5000/api/pgs?${params.toString()}`
+        `${import.meta.env.VITE_API_URL}/api/pgs?${params.toString()}`
       );
 
       const data = await response.json();

@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api/properties";
+const BASE_URL = `${import.meta.env.VITE_API_URL}/api/properties`;
 
 export const getPropertyById = async (id) => {
   const res = await fetch(`${BASE_URL}/${id}`);

@@ -36,8 +36,8 @@ function PropertyCard({
   const handleWishlist = async () => {
   try {
     const url = saved
-      ? "http://localhost:5000/api/wishlist/remove"
-      : "http://localhost:5000/api/wishlist/add";
+      ? `${import.meta.env.VITE_API_URL}/api/wishlist/remove`
+      : `${import.meta.env.VITE_API_URL}/api/wishlist/add`;
 
     const response = await fetch(url, {
       method: "POST",

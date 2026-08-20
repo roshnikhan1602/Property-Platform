@@ -43,7 +43,7 @@ function Subscription() {
   const fetchPlans = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/subscriptions/plans"
+        `${import.meta.env.VITE_API_URL}/api/subscriptions/plans`
       );
 
       const data = await response.json();
@@ -73,7 +73,7 @@ function Subscription() {
   const fetchCurrentPlan = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/subscriptions/current",
+        `${import.meta.env.VITE_API_URL}/api/subscriptions/current`,
         {
           credentials: "include",
         }
@@ -85,7 +85,7 @@ function Subscription() {
   setCurrentPlan(data.subscription);
 
   const response = await fetch(
-    "http://localhost:5000/api/auth/me",
+    `${import.meta.env.VITE_API_URL}/api/auth/me`,
     {
       credentials: "include",
     }

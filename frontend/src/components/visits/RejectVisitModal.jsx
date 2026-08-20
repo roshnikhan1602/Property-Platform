@@ -23,7 +23,7 @@ function RejectVisitModal({
       setLoading(true);
 
       const response = await fetch(
-        `http://localhost:5000/api/visits/reject/${visit._id}`,
+        `${import.meta.env.VITE_API_URL}/api/visits/reject/${visit._id}`,
         {
           method: "PUT",
           credentials: "include",

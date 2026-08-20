@@ -12,7 +12,7 @@ function HeroSlider() {
     const fetchProperties = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/properties"
+          `${import.meta.env.VITE_API_URL}/api/properties`
         );
 
         const data = await response.json();

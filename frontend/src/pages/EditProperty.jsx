@@ -55,7 +55,7 @@ function EditProperty() {
     const fetchProperty = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/properties/${id}`,
+          `${import.meta.env.VITE_API_URL}/api/properties/${id}`,
           {
             credentials: "include",
           }
@@ -163,7 +163,7 @@ function EditProperty() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/properties/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/properties/${id}`,
         {
           method: "PUT",
           credentials: "include",

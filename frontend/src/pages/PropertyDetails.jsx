@@ -319,7 +319,7 @@ function PropertyDetails({
     const fetchUser = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/auth/me",
+          `${import.meta.env.VITE_API_URL}/api/auth/me`,
           {
             credentials: "include",
           }
@@ -338,7 +338,7 @@ function PropertyDetails({
     const fetchProperty = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/properties/${id}`,
+          `${import.meta.env.VITE_API_URL}/api/properties/${id}`,
           {
             credentials: "include",
           }
@@ -367,7 +367,7 @@ function PropertyDetails({
           }
 
           await fetch(
-            `http://localhost:5000/api/properties/${id}/view`,
+            `${import.meta.env.VITE_API_URL}/api/properties/${id}/view`,
             {
               method: "PUT",
               credentials: "include",

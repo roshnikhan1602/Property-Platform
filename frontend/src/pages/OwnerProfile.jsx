@@ -29,7 +29,7 @@ function OwnerProfile() {
    const fetchUser = async () => {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/auth/me",
+      `${import.meta.env.VITE_API_URL}/api/auth/me`,
       {
         credentials: "include",
       }
@@ -63,7 +63,7 @@ fetchUser();
 
     try {
       const response = await fetch(
-  `http://localhost:5000/api/auth/profile`,
+  `${import.meta.env.VITE_API_URL}/api/auth/profile`,
   {
     method: "PUT",
     credentials: "include",
@@ -150,7 +150,7 @@ setSuccessMessage(
 
                   try {
                    const response = await fetch(
-  "http://localhost:5000/api/auth/profile-image",
+  `${import.meta.env.VITE_API_URL}/api/auth/profile-image`,
   {
     method: "PUT",
     credentials: "include",

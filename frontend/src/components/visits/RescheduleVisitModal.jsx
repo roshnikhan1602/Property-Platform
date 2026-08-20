@@ -59,7 +59,7 @@ if (visitTime < "09:00" || visitTime > "19:00") {
     setLoading(true);
 
     const response = await fetch(
-      `http://localhost:5000/api/visits/reschedule/${visit._id}`,
+      `${import.meta.env.VITE_API_URL}/api/visits/reschedule/${visit._id}`,
       {
         method: "PUT",
         credentials: "include",

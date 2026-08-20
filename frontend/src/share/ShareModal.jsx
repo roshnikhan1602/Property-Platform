@@ -125,7 +125,7 @@ ${url}`;
       setSending(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/share/email",
+        `${import.meta.env.VITE_API_URL}/api/share/email`,
         {
           method: "POST",
           headers: {

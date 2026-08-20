@@ -26,7 +26,7 @@ function PropertyAI() {
             setError("");
 
             const response = await fetch(
-                "http://localhost:5000/api/ai/generate-interior",
+                `${import.meta.env.VITE_API_URL}/api/ai/generate-interior`,
                 {
                     method: "POST",
                     headers: {
@@ -61,7 +61,7 @@ function PropertyAI() {
         const fetchProperty = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:5000/api/properties/${id}`,
+                    `${import.meta.env.VITE_API_URL}/api/properties/${id}`,
                     {
                         credentials: "include",
                     }

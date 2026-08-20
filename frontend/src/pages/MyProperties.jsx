@@ -54,7 +54,7 @@ function MyProperties() {
   const fetchMyProperties = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/properties/my-properties",
+        `${import.meta.env.VITE_API_URL}/api/properties/my-properties`,
         {
           credentials: "include",
         }
@@ -84,7 +84,7 @@ function MyProperties() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/properties/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/properties/${id}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -117,7 +117,7 @@ function MyProperties() {
 
         // Fetch remaining PGs
         const pgResponse = await fetch(
-          "http://localhost:5000/api/pgs/my-pgs",
+          `${import.meta.env.VITE_API_URL}/api/pgs/my-pgs`,
           {
             credentials: "include",
           }
@@ -159,7 +159,7 @@ function MyProperties() {
   const handleToggleStatus = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/properties/${id}/toggle-status`,
+        `${import.meta.env.VITE_API_URL}/api/properties/${id}/toggle-status`,
         {
           method: "PUT",
           headers: {
@@ -212,7 +212,7 @@ function MyProperties() {
       setLoadingInterestedUsers(true);
 
       const response = await fetch(
-        `http://localhost:5000/api/wishlist/property/${propertyId}/interested-users`,
+        `${import.meta.env.VITE_API_URL}/api/wishlist/property/${propertyId}/interested-users`,
         {
           credentials: "include",
         }

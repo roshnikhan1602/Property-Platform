@@ -21,7 +21,7 @@ function MyVisits() {
             setLoading(true);
 
             const response = await fetch(
-                "http://localhost:5000/api/visits/my-visits",
+                `${import.meta.env.VITE_API_URL}/api/visits/my-visits`,
                 {
                     credentials: "include",
                 }
@@ -57,7 +57,7 @@ function MyVisits() {
     const cancelVisit = async (visitId) => {
         try {
             const response = await fetch(
-                `http://localhost:5000/api/visits/cancel/${visitId}`,
+                `${import.meta.env.VITE_API_URL}/api/visits/cancel/${visitId}`,
                 {
                     method: "PUT",
                     credentials: "include",

@@ -23,8 +23,8 @@ function RecentlyViewed() {
     try {
       const url =
         item.itemType === "pg"
-          ? `http://localhost:5000/api/pgs/${item._id}`
-          : `http://localhost:5000/api/properties/${item._id}`;
+          ? `${import.meta.env.VITE_API_URL}/api/pgs/${item._id}`
+          : `${import.meta.env.VITE_API_URL}/api/properties/${item._id}`;
 
      const response = await fetch(url, {
   credentials: "include",

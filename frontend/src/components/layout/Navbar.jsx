@@ -29,7 +29,7 @@ const [subscription, setSubscription] = useState(null);
   const loadUser = async () => {
   try {
    const response = await fetch(
-  "http://localhost:5000/api/auth/me",
+  `${import.meta.env.VITE_API_URL}/api/auth/me`,
   {
     credentials: "include",
   }
@@ -48,7 +48,7 @@ if (data.success) {
 
   try {
     const subscriptionResponse = await fetch(
-      "http://localhost:5000/api/subscriptions/current",
+      `${import.meta.env.VITE_API_URL}/api/subscriptions/current`,
       {
         credentials: "include",
       }
@@ -141,7 +141,7 @@ if (data.success) {
 const handleLogout = async () => {
   try {
     await fetch(
-      "http://localhost:5000/api/auth/logout",
+      `${import.meta.env.VITE_API_URL}/api/auth/logout`,
       {
         method: "POST",
         credentials: "include",

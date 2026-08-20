@@ -26,7 +26,7 @@ function Wishlist() {
   const fetchWishlist = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/wishlist",
+        `${import.meta.env.VITE_API_URL}/api/wishlist`,
         {
           credentials: "include",
         }
@@ -47,7 +47,7 @@ function Wishlist() {
   const removeFromWishlist = async (wishlistId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/wishlist/${wishlistId}`,
+        `${import.meta.env.VITE_API_URL}/api/wishlist/${wishlistId}`,
         {
           method: "DELETE",
           credentials: "include",

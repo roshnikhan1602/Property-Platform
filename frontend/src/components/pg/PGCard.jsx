@@ -32,7 +32,7 @@ function PGCard({ pg }) {
   const checkWishlist = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/wishlist",
+        `${import.meta.env.VITE_API_URL}/api/wishlist`,
         {
           credentials: "include",
         }
@@ -64,8 +64,8 @@ function PGCard({ pg }) {
  const handleWishlist = async () => {
   try {
     const url = saved
-      ? "http://localhost:5000/api/wishlist/remove"
-      : "http://localhost:5000/api/wishlist/add";
+      ? `${import.meta.env.VITE_API_URL}/api/wishlist/remove`
+      : `${import.meta.env.VITE_API_URL}/api/wishlist/add`;
 
     const response = await fetch(url, {
       method: "POST",

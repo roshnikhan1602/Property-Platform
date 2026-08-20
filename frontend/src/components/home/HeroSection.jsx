@@ -33,7 +33,7 @@ function HeroSection({ setShowLoginModal }) {
 const handlePostProperty = async () => {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/auth/me",
+      `${import.meta.env.VITE_API_URL}/api/auth/me`,
       {
         credentials: "include",
       }
@@ -47,7 +47,7 @@ const handlePostProperty = async () => {
     }
 
     const subscriptionResponse = await fetch(
-      "http://localhost:5000/api/subscriptions/current",
+      `${import.meta.env.VITE_API_URL}/api/subscriptions/current`,
       {
         credentials: "include",
       }
@@ -83,7 +83,7 @@ const handlePostProperty = async () => {
  const handlePostPG = async () => {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/auth/me",
+      `${import.meta.env.VITE_API_URL}/api/auth/me`,
       {
         credentials: "include",
       }
@@ -97,7 +97,7 @@ const handlePostProperty = async () => {
     }
 
     const subscriptionResponse = await fetch(
-      "http://localhost:5000/api/subscriptions/current",
+      `${import.meta.env.VITE_API_URL}/api/subscriptions/current`,
       {
         credentials: "include",
       }

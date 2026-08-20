@@ -145,7 +145,7 @@ const [visitPage, setVisitPage] = useState(1);
   const location = useLocation();
 
   const fetchData = () => {
-    fetch("http://localhost:5000/api/admin/users", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/admin/users`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -154,7 +154,7 @@ const [visitPage, setVisitPage] = useState(1);
           setUsers(data.users);
         }
       });
-    fetch("http://localhost:5000/api/admin/properties", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/admin/properties`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -163,7 +163,7 @@ const [visitPage, setVisitPage] = useState(1);
           setProperties(data.properties);
         }
       });
-    fetch("http://localhost:5000/api/admin/pgs", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/admin/pgs`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -172,7 +172,7 @@ const [visitPage, setVisitPage] = useState(1);
           setPgs(data.pgs);
         }
       });
-    fetch("http://localhost:5000/api/support", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/support`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -184,7 +184,7 @@ const [visitPage, setVisitPage] = useState(1);
         }
       });
     fetch(
-      "http://localhost:5000/api/admin/dashboard-stats",
+      `${import.meta.env.VITE_API_URL}/api/admin/dashboard-stats`,
       {
         credentials: "include",
       }
@@ -196,7 +196,7 @@ const [visitPage, setVisitPage] = useState(1);
         }
       });
 
-fetch("http://localhost:5000/api/visits/admin/all", {
+fetch(`${import.meta.env.VITE_API_URL}/api/visits/admin/all`, {
   credentials: "include",
 })
   .then((res) => res.json())
@@ -206,7 +206,7 @@ fetch("http://localhost:5000/api/visits/admin/all", {
     }
   });
 
-fetch("http://localhost:5000/api/visits/admin/stats", {
+fetch(`${import.meta.env.VITE_API_URL}/api/visits/admin/stats`, {
   credentials: "include",
 })
   .then((res) => res.json())
@@ -217,7 +217,7 @@ fetch("http://localhost:5000/api/visits/admin/stats", {
   });
 
     fetch(
-      "http://localhost:5000/api/admin/subscriptions",
+      `${import.meta.env.VITE_API_URL}/api/admin/subscriptions`,
       {
         credentials: "include",
       }
@@ -235,7 +235,7 @@ fetch("http://localhost:5000/api/visits/admin/stats", {
   const handleExportUsers = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/admin/export/users",
+        `${import.meta.env.VITE_API_URL}/api/admin/export/users`,
         {
           credentials: "include",
         }
@@ -287,7 +287,7 @@ fetch("http://localhost:5000/api/visits/admin/stats", {
   const handleExportProperties = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/admin/export/properties",
+        `${import.meta.env.VITE_API_URL}/api/admin/export/properties`,
         {
           credentials: "include",
         }
@@ -334,7 +334,7 @@ fetch("http://localhost:5000/api/visits/admin/stats", {
   const handleExportPGs = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/admin/export/pgs",
+        `${import.meta.env.VITE_API_URL}/api/admin/export/pgs`,
         {
           credentials: "include",
         }
@@ -381,7 +381,7 @@ fetch("http://localhost:5000/api/visits/admin/stats", {
   const handleExportSubscriptions = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/admin/export/subscriptions",
+        `${import.meta.env.VITE_API_URL}/api/admin/export/subscriptions` ,
         {
           credentials: "include",
         }
@@ -859,7 +859,7 @@ useEffect(() => {
 
   const handleApprove = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/approve/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/approve/${id}`, {
         method: "PUT",
         credentials: "include",
       })
@@ -888,7 +888,7 @@ useEffect(() => {
   const handleDisapprove =
     async (id) => {
       try {
-        const response = await fetch(`http://localhost:5000/api/admin/disapprove/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/disapprove/${id}`, {
           method: "PUT",
           credentials: "include",
         })
@@ -922,7 +922,7 @@ useEffect(() => {
         "Are you sure you want to delete this property? This action cannot be undone.",
       onConfirm: async () => {
         try {
-          const response = await fetch(`http://localhost:5000/api/admin/property/${id}`, {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/property/${id}`, {
             method: "DELETE",
             credentials: "include",
           })
@@ -961,7 +961,7 @@ useEffect(() => {
   };
   const handleApprovePG = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/pg/approve/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/pg/approve/${id}`, {
         method: "PUT",
         credentials: "include",
       })
@@ -983,7 +983,7 @@ useEffect(() => {
 
   const handleDisapprovePG = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/pg/disapprove/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/pg/disapprove/${id}`, {
         method: "PUT",
         credentials: "include",
       })
@@ -1011,7 +1011,7 @@ useEffect(() => {
         "Are you sure you want to delete this PG? This action cannot be undone.",
       onConfirm: async () => {
         try {
-          const response = await fetch(`http://localhost:5000/api/admin/pg/${id}`, {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/pg/${id}`, {
             method: "DELETE",
             credentials: "include",
           })
@@ -1056,7 +1056,7 @@ useEffect(() => {
       onConfirm: async () => {
         try {
           const response = await fetch(
-            `http://localhost:5000/api/support/${id}`,
+            `${import.meta.env.VITE_API_URL}/api/support/${id}`,
             {
               method: "DELETE",
               credentials: "include",
@@ -1097,7 +1097,7 @@ useEffect(() => {
 
   const handleResolve = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/support/resolve/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/support/resolve/${id}`, {
         method: "PUT",
         credentials: "include",
       })
@@ -1122,7 +1122,7 @@ useEffect(() => {
 
   const handleReply = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/support/reply/${selectedMessageId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/support/reply/${selectedMessageId}`, {
         method: "PUT",
         credentials: "include",
         headers: {
@@ -1157,7 +1157,7 @@ useEffect(() => {
 
   const handleViewUser = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/user/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/user/${id}`, {
         credentials: "include",
       })
 
@@ -1184,7 +1184,7 @@ useEffect(() => {
         "Are you sure you want to delete this user? This action cannot be undone.",
       onConfirm: async () => {
         try {
-          const response = await fetch(`http://localhost:5000/api/admin/user/${id}`, {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/user/${id}`, {
             method: "DELETE",
             credentials: "include",
           })

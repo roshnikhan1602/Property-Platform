@@ -65,7 +65,7 @@ function PropertyListing({
           params.append("maxPrice", maxPrice);
 
         const response = await fetch(
-          `http://localhost:5000/api/properties?${params.toString()}`
+          `${import.meta.env.VITE_API_URL}/api/properties?${params.toString()}`
         );
 
         const data = await response.json();
@@ -89,7 +89,7 @@ function PropertyListing({
     const fetchWishlist = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/wishlist",
+          `${import.meta.env.VITE_API_URL}/api/wishlist`,
           {
             credentials: "include",
           }

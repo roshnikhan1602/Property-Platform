@@ -1,5 +1,5 @@
 const BASE_URL =
-  "http://localhost:5000/api/notifications";
+  `${import.meta.env.VITE_API_URL}/api/notifications`;
 
 // Get all notifications
 export const getNotifications =

@@ -134,7 +134,7 @@ function PGDetails({ setShowLoginModal }) {
       loadReviews();
 
       const response = await fetch(
-        `http://localhost:5000/api/pgs/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/pgs/${id}`,
         {
           credentials: "include",
         }
@@ -174,7 +174,7 @@ function PGDetails({ setShowLoginModal }) {
         loadReviews();
 
         const response = await fetch(
-          `http://localhost:5000/api/pgs/${id}`
+          `${import.meta.env.VITE_API_URL}/api/pgs/${id}`
         );
 
         const result = await response.json();
@@ -255,7 +255,7 @@ function PGDetails({ setShowLoginModal }) {
     const fetchUser = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/auth/me",
+          `${import.meta.env.VITE_API_URL}/api/auth/me`,
           {
             credentials: "include",
           }
@@ -274,7 +274,7 @@ function PGDetails({ setShowLoginModal }) {
     const fetchPG = async () => {
       try {
        const response = await fetch(
-  `http://localhost:5000/api/pgs/${id}`,
+  `${import.meta.env.VITE_API_URL}/api/pgs/${id}`,
   {
     credentials: "include",
   }

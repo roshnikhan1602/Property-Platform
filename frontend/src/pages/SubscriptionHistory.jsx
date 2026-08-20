@@ -61,7 +61,7 @@ function SubscriptionHistory() {
   const downloadInvoice = async (historyId) => {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/subscriptions/invoice/${historyId}`,
+      `${import.meta.env.VITE_API_URL}/api/subscriptions/invoice/${historyId}`,
       {
         credentials: "include",
       }

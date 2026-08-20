@@ -44,7 +44,7 @@ function ContactSupport({
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       const response = await fetch(
-  `http://localhost:5000/api/support/user/${user._id}`,
+  `${import.meta.env.VITE_API_URL}/api/support/user/${user._id}`,
   {
     credentials: "include",
   }
@@ -112,7 +112,7 @@ function ContactSupport({
   const user = JSON.parse(localStorage.getItem("user"));
 
   const response = await fetch(
-    "http://localhost:5000/api/support",
+    `${import.meta.env.VITE_API_URL}/api/support`,
     {
       method: "POST",
       credentials: "include",

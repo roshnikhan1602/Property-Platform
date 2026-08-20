@@ -21,7 +21,7 @@ function MyVisitRequests() {
       setLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/visits/owner",
+        `${import.meta.env.VITE_API_URL}/api/visits/owner`,
         {
           credentials: "include",
         }
@@ -58,7 +58,7 @@ function MyVisitRequests() {
   ) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/visits/${action}/${visitId}`,
+        `${import.meta.env.VITE_API_URL}/api/visits/${action}/${visitId}`,
         {
           method: "PUT",
           credentials: "include",

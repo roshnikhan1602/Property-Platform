@@ -39,7 +39,7 @@ function MyPGs() {
   const fetchMyPGs = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/pgs/my-pgs",
+        `${import.meta.env.VITE_API_URL}/api/pgs/my-pgs`,
         {
           credentials: "include",
         }
@@ -69,7 +69,7 @@ function MyPGs() {
   const fetchInterestedUsers = async (pgId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/wishlist/pg/${pgId}/interested-users`,
+        `${import.meta.env.VITE_API_URL}/api/wishlist/pg/${pgId}/interested-users`,
         {
           credentials: "include",
         }
@@ -102,7 +102,7 @@ function MyPGs() {
       setStatusLoading(pgId);
 
       const response = await fetch(
-        `http://localhost:5000/api/pgs/${pgId}/status`,
+        `${import.meta.env.VITE_API_URL}/api/pgs/${pgId}/status`,
         {
           method: "PUT",
           credentials: "include",
@@ -132,7 +132,7 @@ function MyPGs() {
       setStatusLoading(selectedDeactivatePG);
 
       const response = await fetch(
-        `http://localhost:5000/api/pgs/${selectedDeactivatePG}/status`,
+        `${import.meta.env.VITE_API_URL}/api/pgs/${selectedDeactivatePG}/status`,
         {
           method: "PUT",
           credentials: "include",
@@ -166,7 +166,7 @@ function MyPGs() {
     setShowDeleteModal(false);
     try {
       const response = await fetch(
-        `http://localhost:5000/api/pgs/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/pgs/${id}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -194,7 +194,7 @@ function MyPGs() {
 
         // Check remaining properties
         const propertyResponse = await fetch(
-          "http://localhost:5000/api/properties/my-properties",
+          `${import.meta.env.VITE_API_URL}/api/properties/my-properties`,
           {
             credentials: "include",
           }

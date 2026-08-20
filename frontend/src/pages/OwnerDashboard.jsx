@@ -31,7 +31,7 @@ useEffect(() => {
   const fetchUser = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/me",
+        `${import.meta.env.VITE_API_URL}/api/auth/me`,
         {
           credentials: "include",
         }
@@ -59,23 +59,23 @@ useEffect(() => {
   subscriptionResponse,
 ] = await Promise.all([
   fetch(
-    "http://localhost:5000/api/properties/my-properties",
+    `${import.meta.env.VITE_API_URL}/api/properties/my-properties`,
     {
       credentials: "include",
     }
   ),
   fetch(
-    "http://localhost:5000/api/pgs/my-pgs",
+    `${import.meta.env.VITE_API_URL}/api/pgs/my-pgs`,
     {
       credentials: "include",
     }
   ),
   fetch(
-  "http://localhost:5000/api/subscriptions/current",
-  {
-    credentials: "include",
-  }
-),
+    `${import.meta.env.VITE_API_URL}/api/subscriptions/current`,
+    {
+      credentials: "include",
+    }
+  ),
 ]);
       const propertyData = await propertyResponse.json();
       const pgData = await pgResponse.json();
