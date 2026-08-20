@@ -30,8 +30,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      process.env.FRONTEND_URL,
-    ].filter(Boolean),
+      "https://property-platform-phi-six.vercel.app",
+    ],
     credentials: true,
   })
 );
