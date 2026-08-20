@@ -669,34 +669,22 @@ function ForgotPassword() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center px-3 sm:px-4 py-8 sm:py-12">
-        <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-5 sm:p-6 md:p-8">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
 
           {/* ==========================================
               TITLE
           ========================================== */}
 
-          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-2">
-            {step === 1
-              ? "Forgot Password"
-              : step === 2
-              ? "Verify OTP"
-              : "Create New Password"}
-          </h2>
+<p className="text-center text-gray-500 mb-8">
+  {step === 1
+    ? "Enter your registered mobile number"
+    : step === 2
+    ? "Enter the OTP sent to your registered email"
+    : "Choose a strong password for your account"}
+</p>
+                    {step === 1 && (
 
-          <p className="text-center text-gray-500 text-sm sm:text-base mb-6 sm:mb-8">
-            {step === 1
-              ? "Enter your registered mobile number"
-              : step === 2
-              ? "Enter the OTP sent to your mobile number"
-              : "Choose a strong password for your account"}
-          </p>
-
-          {/* ==========================================
-              STEP 1 - MOBILE NUMBER
-          ========================================== */}
-
-          {step === 1 && (
             <>
               <div className="mb-5">
 
@@ -704,7 +692,7 @@ function ForgotPassword() {
                   Mobile Number
                 </label>
 
-                <div className="flex gap-2 w-full">
+                <div className="flex gap-2">
 
                   {/* COUNTRY CODE */}
 
@@ -712,7 +700,7 @@ function ForgotPassword() {
                     name="countryCode"
                     value={formData.countryCode}
                     onChange={handleCountryChange}
-                    className="w-[90px] sm:w-28 shrink-0 border border-gray-300 rounded-lg px-2 sm:px-3 py-3 bg-white outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                    className="w-28 border border-gray-300 rounded-lg px-3 py-3 bg-white outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="+91">
                       🇮🇳 +91
@@ -794,7 +782,7 @@ function ForgotPassword() {
                         : "Enter mobile number"
                     }
                     inputMode="numeric"
-                    className="min-w-0 flex-1 w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                    className="flex-1 border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                   />
 
                 </div>
@@ -803,7 +791,7 @@ function ForgotPassword() {
               <button
                 onClick={sendOTP}
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition disabled:opacity-60 text-sm sm:text-base"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition disabled:opacity-60"
               >
                 {loading
                   ? "Sending OTP..."
@@ -824,14 +812,13 @@ function ForgotPassword() {
                   Enter OTP
                 </label>
 
-                <div className="mb-3 rounded-lg bg-green-50 border border-green-200 px-3 py-2">
-                  <p className="text-xs sm:text-sm text-green-700 break-words">
-                    OTP has been sent to{" "}
-                    <span className="font-semibold">
-                      {formData.countryCode} ******{formData.mobileNumber.slice(-4)}
-                    </span>
-                  </p>
-                </div>
+
+<div className="mb-3 rounded-lg bg-green-50 border border-green-200 px-3 py-2">
+  <p className="text-sm text-green-700">
+    OTP has been sent to your registered email address.
+  </p>
+</div>
+
 
                 <input
                   type="text"
@@ -841,7 +828,7 @@ function ForgotPassword() {
                   placeholder="Enter 6-digit OTP"
                   maxLength={6}
                   inputMode="numeric"
-                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
               </div>
@@ -849,7 +836,7 @@ function ForgotPassword() {
               <button
                 onClick={verifyOTP}
                 disabled={loading}
-                className="w-full bg-black hover:bg-gray-900 text-white py-3 rounded-lg transition disabled:opacity-60 text-sm sm:text-base"
+                className="w-full bg-black hover:bg-gray-900 text-white py-3 rounded-lg transition disabled:opacity-60"
               >
                 {loading
                   ? "Verifying..."
@@ -861,7 +848,7 @@ function ForgotPassword() {
                 disabled={
                   loading || timer > 0
                 }
-                className="w-full mt-3 border border-gray-300 py-3 rounded-lg hover:bg-gray-100 transition disabled:opacity-60 disabled:cursor-not-allowed text-sm sm:text-base"
+                className="w-full mt-3 border border-gray-300 py-3 rounded-lg hover:bg-gray-100 transition disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {timer > 0
                   ? `Resend OTP in ${timer}s`
@@ -890,7 +877,7 @@ function ForgotPassword() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter new password"
-                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
               </div>
@@ -907,7 +894,7 @@ function ForgotPassword() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Confirm new password"
-                  className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
               </div>
@@ -915,7 +902,7 @@ function ForgotPassword() {
               <button
                 onClick={updatePassword}
                 disabled={loading}
-                className="w-full bg-black hover:bg-gray-900 text-white py-3 rounded-lg transition disabled:opacity-60 text-sm sm:text-base"
+                className="w-full bg-black hover:bg-gray-900 text-white py-3 rounded-lg transition disabled:opacity-60"
               >
                 {loading
                   ? "Updating..."
@@ -932,7 +919,7 @@ function ForgotPassword() {
 
             <button
               onClick={() => navigate("/login")}
-              className="text-blue-600 hover:underline font-medium text-sm sm:text-base"
+              className="text-blue-600 hover:underline font-medium"
             >
               Back to Login
             </button>

@@ -1,4 +1,4 @@
-const transporter = require("../config/mailer");
+const sendEmail = require("../config/mailer");
 
 const shareViaEmail = async (req, res) => {
   try {
@@ -17,11 +17,10 @@ const shareViaEmail = async (req, res) => {
       });
     }
 
-    await transporter.sendMail({
-      from: `"PropertyHub" <${process.env.EMAIL_USER}>`,
-      to: recipientEmail,
-      subject: `🏠 Check out this listing - ${title}`,
-      html: `
+    await sendEmail(
+  recipientEmail,
+  `🏠 Check out this listing - ${title}`,
+  `
         <div style="font-family:Arial,sans-serif;background:#f5f5f5;padding:30px;">
           <div style="max-width:600px;margin:auto;background:#ffffff;border-radius:12px;padding:30px;box-shadow:0 5px 15px rgba(0,0,0,0.1);">
 
@@ -80,8 +79,8 @@ const shareViaEmail = async (req, res) => {
 
           </div>
         </div>
-      `,
-    });
+      `
+    );
 
     res.status(200).json({
       success: true,

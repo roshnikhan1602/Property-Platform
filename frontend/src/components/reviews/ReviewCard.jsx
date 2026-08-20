@@ -10,15 +10,15 @@ import {
   FaReply,
 } from "react-icons/fa";
 
-import PGRatingStars from "./PGRatingStars";
+import RatingStars from "./RatingStars";
 
 import {
   updateReview,
   replyToReview,
   deleteReply,
-} from "../../services/pgReviewService";
+} from "../../services/reviewService";
 
-function PGReviewCard({
+function ReviewCard({
   review,
   currentUser,
   onLike,
@@ -132,7 +132,7 @@ function PGReviewCard({
             </p>
 
             <div className="mt-1.5">
-              <PGRatingStars
+              <RatingStars
                 rating={review.rating}
                 readonly
               />
@@ -199,7 +199,7 @@ function PGReviewCard({
         <div className="mt-3">
 
           <div className="mb-2">
-            <PGRatingStars
+            <RatingStars
               rating={rating}
               setRating={setRating}
             />
@@ -331,4 +331,4 @@ function PGReviewCard({
   );
 }
 
-export default PGReviewCard;
+export default ReviewCard;
