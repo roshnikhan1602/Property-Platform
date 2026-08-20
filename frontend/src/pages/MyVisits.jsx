@@ -266,13 +266,23 @@ function MyVisits() {
 
                                             {visit.status !== "Cancelled" && (
                                                 <button
-                                                    onClick={() => {
-                                                        if (visit.visitType === "Property") {
-                                                            window.location.href = `/properties/${visit.property}`;
-                                                        } else {
-                                                            window.location.href = `/pgs/${visit.pg}`;
-                                                        }
-                                                    }}
+                                        onClick={() => {
+    if (visit.visitType === "Property") {
+        const propertyId =
+            typeof visit.property === "object"
+                ? visit.property?._id
+                : visit.property;
+
+        window.location.href = `/properties/${propertyId}`;
+    } else {
+        const pgId =
+            typeof visit.pg === "object"
+                ? visit.pg?._id
+                : visit.pg;
+
+        window.location.href = `/pgs/${pgId}`;
+    }
+}}
                                                     className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition"
                                                 >
                                                     View Listing

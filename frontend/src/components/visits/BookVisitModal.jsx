@@ -31,6 +31,15 @@ const handleSubmit = async (e) => {
         return;
     }
 
+if (visitTime < "09:00" || visitTime > "19:00") {
+    setToast({
+        show: true,
+        message: "Visit time must be between 9:00 AM and 7:00 PM.",
+        type: "error",
+    });
+    return;
+}
+
     // Prevent past dates
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -115,7 +124,7 @@ const handleSubmit = async (e) => {
 
                 <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
 
-                    <div className="flex items-center justify-between p-6 border-b">
+                  <div className="flex items-center justify-between p-6 border-b border-gray-300">
                         <h2 className="text-2xl font-bold">
                             📅 Book a Visit
                         </h2>
@@ -174,7 +183,7 @@ const handleSubmit = async (e) => {
                                     setVisitDate(e.target.value)
                                 }
                                 required
-                                className="w-full border rounded-lg p-3"
+                                className="w-full border border-gray-300 rounded-lg p-3"
                             />
                         </div>
 
@@ -183,15 +192,17 @@ const handleSubmit = async (e) => {
                                 Visit Time
                             </label>
 
-                            <input
-                                type="time"
-                                value={visitTime}
-                                onChange={(e) =>
-                                    setVisitTime(e.target.value)
-                                }
-                                required
-                                className="w-full border rounded-lg p-3"
-                            />
+                          <input
+    type="time"
+    value={visitTime}
+    min="09:00"
+    max="19:00"
+    onChange={(e) =>
+        setVisitTime(e.target.value)
+    }
+    required
+    className="w-full border border-gray-300 rounded-lg p-3"
+/>
                         </div>
 
                         <div>
@@ -206,16 +217,16 @@ const handleSubmit = async (e) => {
                                     setMessage(e.target.value)
                                 }
                                 placeholder="Example: Please call me before the visit."
-                                className="w-full border rounded-lg p-3 resize-none"
+                               className="w-full border border-gray-300 rounded-lg p-3 resize-none"
                             />
                         </div>
 
-                        <div className="flex justify-end gap-3 pt-4 border-t">
+                       <div className="flex justify-end gap-3 pt-4 border-t border-gray-300">
 
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="px-5 py-3 rounded-lg border"
+                                className="px-5 py-3 rounded-lg border border-gray-300"
                             >
                                 Cancel
                             </button>
