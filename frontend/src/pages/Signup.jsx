@@ -442,7 +442,7 @@ function Signup() {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your name"
-                className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -458,7 +458,7 @@ function Signup() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
-                className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -476,7 +476,7 @@ function Signup() {
                   value={selectedCountry.code}
                   onChange={handleCountryChange}
                   disabled={otpVerified}
-                  className="w-32 border rounded-lg px-3 py-3 bg-white text-gray-700 outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                  className="w-32 border border-gray-300 rounded-lg px-3 py-3 bg-white text-gray-700 outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                 >
                   {countries.map(
                     (country) => (
@@ -508,7 +508,7 @@ function Signup() {
                   }
                   disabled={otpVerified}
                   inputMode="tel"
-                  className="flex-1 border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                  className="flex-1 border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                 />
 
               </div>
@@ -553,7 +553,7 @@ function Signup() {
                       placeholder="Enter OTP"
                       maxLength={6}
                       inputMode="numeric"
-                      className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
                   </div>
@@ -591,7 +591,7 @@ function Signup() {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter password"
-                className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
 
             </div>

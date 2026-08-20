@@ -570,7 +570,7 @@ function Login() {
                   name="countryCode"
                   value={formData.countryCode}
                   onChange={handleCountryChange}
-                  className="w-28 border rounded-lg px-3 py-3 bg-white outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-28 border border-gray-300 rounded-lg px-3 py-3 bg-white outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="+91">
                     🇮🇳 +91
@@ -651,7 +651,7 @@ function Login() {
                       : "Enter mobile number"
                   }
                   inputMode="numeric"
-                  className="flex-1 border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                 className="flex-1 border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
               </div>
@@ -669,7 +669,7 @@ function Login() {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter your password"
-                className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+               className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
 
               <div className="text-right mt-2">
