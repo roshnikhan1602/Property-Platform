@@ -127,7 +127,7 @@ function ReviewSection({
           </div>
 
           {/* ================= RIGHT : WRITE REVIEW ================= */}
-          {user && !isOwner && (
+          {user && (
             <div className="border-t lg:border-t-0 lg:border-l border-gray-200 mt-6 lg:mt-0 pt-6 lg:pt-0 pl-0 lg:pl-7">
 
               <ReviewForm
